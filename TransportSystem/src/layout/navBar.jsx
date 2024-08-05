@@ -5,21 +5,21 @@ const NavBar = () => {
     const options = [
         {
             name: "הנסיעות שלי",
-            link: "/my-trips",
-            img: "my-trips.png",
-            press_img: "my-trips-press.png",
+            link: "/my-rides",
+            img: "my-rides.png",
+            press_img: "my-rides-press.png",
         },
         {
             name: "רישום לנסיעה",
-            link: "/register-to-trip",
-            img: "register-to-trip.png",
-            press_img: "register-to-trip-press.png",
+            link: "/register-to-ride",
+            img: "register-to-ride.png",
+            press_img: "register-to-ride-press.png",
         },
         {
             name: "מידע על נסיעות",
-            link: "/trips-info",
-            img: "trips-info.png",
-            press_img: "trips-info-press.png",
+            link: "/rides-info",
+            img: "rides-info.png",
+            press_img: "rides-info-press.png",
         },
         {
             name: "צור קשר",
