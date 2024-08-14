@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
+import '../style/Layout.css';
 
 const NavBar = () => {
+
+    const [sizeScreen, setSizeScreen] = useState(window.innerWidth > 768 ? 2 : 1);
+    const [isHovered, setIsHovered] = useState(false);
+
+
 
     const options = [
         {
@@ -32,14 +38,24 @@ const NavBar = () => {
         
     return (
         <>
-            <nav className="nav-bar">
-                <ul>
+            <nav dir="rtl" className={sizeScreen>1? "sidebar": "bottombar"}>
+                <ul style={{margin: '0', padding: '0'}}>
                     {options.map((option, index) => {
                         return (
-                            <li key={index}>
+                            <li key={index} className="option"
+                            onMouseEnter={() => setIsHovered(index)}
+                            onMouseLeave={() => setIsHovered(-1)}>
                                 <a href={option.link}>
-                                    <img src={option.img} alt={option.name} />
+                                    <div className="option-img-container" style={{backgroundColor: isHovered===index? 'white': 'transparent' }}>
+                                    <img
+                                        src={`./icons/${isHovered===index ? option.img : option.press_img}`}
+                                        alt={option.name} 
+
+                                        />
+                                    </div>
+                                    <span className="option-title">{option.name}</span>
                                 </a>
+
                             </li>
                         )
                     })}

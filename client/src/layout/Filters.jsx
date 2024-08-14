@@ -1,4 +1,5 @@
 import React from "react";
+import '../style/Layout.css';
 
 const Filters = () => {
     return (

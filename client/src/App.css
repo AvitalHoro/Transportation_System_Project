@@ -3,13 +3,15 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  background-color: #f4f4f4;
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
+  height: 140%;
+  margin-top: -15px;
   will-change: filter;
   transition: filter 300ms;
+  margin-right: 20px;
 }
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);

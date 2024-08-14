@@ -4,14 +4,21 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/UserPages/Home';
+import Header from './layout/Header';
+import NavBar from './layout/NavBar';
 import NotFound from './pages/NotFound';
 
 
 function App() {
 
   return (
+    // <Home></Home>
     <Router>
-            <div className="app-container">
+
+      <Header></Header>
+
+      <NavBar></NavBar>
+            <div className="app-container" dir='rtl'>
 
       {/* <Sidebar handleInfo={handleInfo}/> */}
       <div className="main-content">
