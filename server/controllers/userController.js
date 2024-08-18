@@ -1,21 +1,43 @@
 const db = require('../config/db');
+const jwt = require('jsonwebtoken');
+const addToBlacklist = require('../middleware/authUtils');
+const { getAllTransportations, getTransportationsOfDriver, getTransportationsOfPassenger } = require('./transportationController');
 
-const login = (req, res) => {
+const login = async (req, res) => {
     const { email, password } = req.body;
 
-    const query = 'SELECT * FROM Users WHERE UserEmail = ?'; 
-    //Maybe check in a different way, because there may be duplicates in the email
-    db.query(query, [email, password], (err, results) => {
+    const query = 'SELECT * FROM Users WHERE UserEmail = ? AND UserPassword = ?';
+    db.query(query, [email, password], async (err, userResults) => {
         if (err) {
             return res.status(500).json({ message: 'Error querying the database', error: err });
         }
 
-        if (results.length > 0) {
-            // User found, return user details
-            res.status(200).json(results[0]);
+        if (userResults.length > 0) {
+            const user = userResults[0];
+            const token = jwt.sign({ userId: user.UserID }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+            try {
+                let transportationResults;
+
+                if (user.UserPermission === 'Manager') {
+                    transportationResults = await getAllTransportations();
+                } else if (user.UserPermission === 'Driver') {
+                    transportationResults = await getTransportationsOfDriver(user.UserID);
+                } else if (user.UserPermission === 'Passenger') {
+                    transportationResults = await getTransportationsOfPassenger(user.UserID);
+                }
+                return res.status(200).json({
+                    token, 
+                    user,
+                    transportations: transportationResults
+                });
+
+            } catch (err) {
+                return res.status(500).json({ message: 'Error querying transportation data', error: err });
+            }
+
         } else {
-            // User not found
-            res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: 'User not found' });
         }
     });
 };
@@ -50,4 +72,15 @@ const registerUser = (req, res) => {
     });
 };
 
-module.exports = { login, registerUser };
+const logout = (req, res) => {
+    const token = req.headers['authorization'];
+
+    if (token) {
+        addToBlacklist(token);
+        res.status(200).json({ message: 'Logout successful' });
+    } else {
+        res.status(400).json({ message: 'No token provided' });
+    }
+};
+
+module.exports = { login, registerUser, logout };

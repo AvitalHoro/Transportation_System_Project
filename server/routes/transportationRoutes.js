@@ -1,14 +1,20 @@
 const express = require('express');
-const { addTransportationת, deleteTransportation, getAllTransportations } = require('../controllers/transportationController'); 
+const authenticateJWT = require('../middleware/authenticateJWT'); 
+const { addTransportation, deleteTransportation, getAllTransportations, getTransportationsOfDriver, getTransportationsOfPassenger, replaceDriver} = require('../controllers/transportationController'); 
 
 const router = express.Router();
 
 // Route for adding new transportation
-router.post('/add', addTransportation);
+router.post('transportation/add', authenticateJWT, addTransportation);
 // Route for deleting a transportation
-router.delete('/transportation', deleteTransportation);
+router.delete('/transportation/delete/:transportationId', authenticateJWT, deleteTransportation);
 // Route for getting all transportations
-router.get('/all', getAllTransportations);
-
+router.get('/transportation/all', getAllTransportations);
+// Route for getting driver transportations
+router.get('/transportation/driver', getTransportationsOfDriver);
+// Route for getting passenger transportations
+router.get('/transportation/passenger', getTransportationsOfPassenger);
+// Route for replacing driver
+router.put('/transportation/replace-driver/:transportationId', authenticateJWT, replaceDriver);
 
 module.exports = router;

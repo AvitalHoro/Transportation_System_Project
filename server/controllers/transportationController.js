@@ -1,7 +1,49 @@
 const db = require('../config/db');
 
+const getAllTransportations = () => {
+    return new Promise((resolve, reject) => {
+        const query = 'SELECT * FROM Transportation';
+        db.query(query, (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(results);
+        });
+    });
+};
+
+const getTransportationsOfDriver = (driverId) => {
+    return new Promise((resolve, reject) => {
+        const query = 'SELECT * FROM Transportation WHERE Driver = ?';
+        db.query(query, [driverId], (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(results);
+        });
+    });
+};
+
+
+const getTransportationsOfPassenger = (passengerId) => {
+    return new Promise((resolve, reject) => {
+        const query = `SELECT T.TransportationID, T.Transportation_Date, T.Transportation_Time, T.Transportation_Status, T.MaxPassengers, 
+                        R.PickupStationID R.DropoffStationID, R.ExecutionDate, R.Registrations_Status
+                        FROM Registrations_To_Transportation R
+                        JOIN Transportation T ON R.TransportationID = T.TransportationID
+                        WHERE R.UserID = ?`;
+        db.query(query, [passengerId], (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(results);
+        });
+    });
+};
+
 const addTransportation = (req, res) => {
-    const { transportationDate, transportationTime, transportationStatus, driver, maxPassengers, userId } = req.body;
+    const { transportationDate, transportationTime, transportationStatus, driver, maxPassengers } = req.body;
+    const userId = req.userId;
 
     if (!transportationDate || !transportationTime || !transportationStatus || !maxPassengers || !userId) {
         return res.status(400).json({ message: 'All fields are required' });
@@ -29,7 +71,8 @@ const addTransportation = (req, res) => {
 };
 
 const deleteTransportation = (req, res) => {
-    const { transportationId , userId} = req.body; 
+    const { transportationId } = req.params;
+    const userId = req.userId; 
 
     // Validate input
     if (!transportationId) {
@@ -63,4 +106,37 @@ const deleteTransportation = (req, res) => {
     });
 };
 
-module.exports = { addTransportation, deleteTransportation };
+// Function to replace the driver of a specific transportation
+const replaceDriver = (req, res) => {
+    const { transportationId } = req.params;
+    const { newDriver } = req.body;
+    const userId = req.userId;
+
+    // Check if the current user is a Manager
+    const checkUserQuery = 'SELECT UserPermission FROM Users WHERE UserID = ?';
+    db.query(checkUserQuery, [userId], (err, userResults) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error querying the database', error: err });
+        }
+
+        if (userResults.length === 0 || userResults[0].UserPermission !== 'Manager') {
+            return res.status(403).json({ message: 'You do not have permission to perform this action' });
+        }
+
+        // Update the driver for the specific transportation
+        const updateDriverQuery = 'UPDATE Transportation SET Driver = ? WHERE TransportationID = ?';
+        db.query(updateDriverQuery, [newDriver, transportationId], (err, updateResults) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error updating the driver', error: err });
+            }
+
+            if (updateResults.affectedRows === 0) {
+                return res.status(404).json({ message: 'Transportation not found' });
+            }
+
+            res.status(200).json({ message: 'Driver replaced successfully' });
+        });
+    });
+};
+
+module.exports = { addTransportation, deleteTransportation, getAllTransportations, getTransportationsOfDriver , getTransportationsOfPassenger, replaceDriver};

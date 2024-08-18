@@ -31,6 +31,7 @@ CREATE TABLE Users (
     UserPermission ENUM('Driver', 'Manager', 'Passenger'),
     UserEmail VARCHAR(25)
 );
+
 CREATE TABLE Registrations_To_Transportation (
     UserID INT,
     TransportationID INT,
@@ -44,6 +45,7 @@ CREATE TABLE Registrations_To_Transportation (
     FOREIGN KEY (PickupStationID) REFERENCES Station(StationID),
     FOREIGN KEY (DropoffStationID) REFERENCES Station(StationID)
 );
+
 CREATE TABLE Message (
 	MessageID INT AUTO_INCREMENT PRIMARY KEY,
     SenderID INT,
@@ -73,6 +75,13 @@ ALTER TABLE Transportation
 ADD COLUMN DriverID INT,
 ADD CONSTRAINT FK_Driver
 FOREIGN KEY (DriverID) REFERENCES Users(UserID);
+
+
+ALTER TABLE Message
+CHANGE COLUMN GeneralMessage_Status Message_Status ENUM('Sent', 'Delivered', 'Pending', 'Failed', 'Archived', 'Not Delivered', 'Deleted');
+
+ALTER TABLE Registrations_To_Transportation
+CHANGE COLUMN Registrations_Status Registration_Status ENUM('Pending', 'Confirmed', 'Cancelled', 'Completed', 'Waiting List', 'In Transit');
 
 
 -- ALTER TABLE Message_To_Transportation
