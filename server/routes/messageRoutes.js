@@ -1,6 +1,6 @@
 const express = require('express');
 const authenticateJWT = require('../middleware/authenticateJWT'); 
-const { addMessageForEveryOne, addTransportationMessage, confirmMessageDelivery } = require('../controllers/messageConrtoller');
+const { addMessageForEveryOne, addTransportationMessage, confirmMessageDelivery } = require('../controllers/messageController');
 
 const router = express.Router();
 
