@@ -167,4 +167,66 @@ const confirmMessageDelivery = async (req, res) => {
     }
 };
 
-module.exports = { addMessageForEveryOne, addTransportationMessage, confirmMessageDelivery };
+const getGeneralMessages = async (req, res) => {
+    try {
+        const getGeneralMessagesQuery = `
+            SELECT 
+                m.MessageID,
+                m.SenderID,
+                m.MessageText,
+                m.Message_Status,
+                m.SendTime,
+                gm.AttachedFiles
+            FROM 
+                General_Message gm
+            JOIN 
+                Message m ON gm.MessageID = m.MessageID
+        `;
+
+        const [generalMessagesResults] = await db.query(getGeneralMessagesQuery);
+
+        res.status(200).json({ messages: generalMessagesResults });
+    } catch (err) {
+        res.status(500).json({ message: 'Error retrieving general messages', error: err });
+    }
+};
+
+
+const getMessagesForUser = async (req, res) => {
+    const userId = req.userId;
+
+    try {
+        // Get the transportation IDs the user is registered for
+        const transportations = await getTransportationsOfPassenger(userId);
+        
+        if (transportations.length === 0) {
+            return res.status(404).json({ message: 'No trips found for this user' });
+        }
+        // Extract transportation IDs
+        const transportationIds = transportations.map(t => t.TransportationID);
+
+        const getMessagesQuery = `
+            SELECT 
+                m.MessageID,
+                m.SenderID,
+                m.MessageText,
+                m.Message_Status,
+                m.SendTime,
+                mto.TransportationID
+            FROM 
+                Message m
+            JOIN 
+                Message_To_Transportation mto ON m.MessageID = mto.MessageID
+            WHERE 
+                mto.TransportationID IN (?)
+        `;
+        
+        const [messagesResults] = await db.query(getMessagesQuery, [transportationIds]);
+
+        res.status(200).json({ messages: messagesResults });
+    } catch (err) {
+        res.status(500).json({ message: 'Error retrieving messages', error: err });
+    }
+};
+
+module.exports = { addMessageForEveryOne, addTransportationMessage, confirmMessageDelivery, getGeneralMessages, getMessagesForUser};
