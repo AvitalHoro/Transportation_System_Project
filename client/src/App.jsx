@@ -7,6 +7,7 @@ import Home from './pages/UserPages/Home';
 import Header from './layout/Header';
 import NavBar from './layout/NavBar';
 import NotFound from './pages/NotFound';
+import RideRegister from './pages/UserPages/RideRegister';
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
 
       {/* <Sidebar handleInfo={handleInfo}/> */}
       <div className="main-content">
+        <RideRegister></RideRegister>
 
       <Routes>
         <Route path="/" element={<NavigateHandler />} />
