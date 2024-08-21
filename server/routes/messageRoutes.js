@@ -5,14 +5,14 @@ const { addMessageForEveryOne, addTransportationMessage, confirmMessageDelivery,
 const router = express.Router();
 
 // Route for send a message to everyone
-router.post('/message/add', authenticateJWT, addMessageForEveryOne);
+router.post('/add', authenticateJWT, addMessageForEveryOne);
 // Route for send a message to passengers of a specific transportation
-router.delete('/message/delete/:transportationId', authenticateJWT, addTransportationMessage);
+router.delete('/delete/:transportationId', authenticateJWT, addTransportationMessage);
 // Route for confirmation of the delivery of the message
-router.post('/messages/:messageId/confirm', confirmMessageDelivery);
+router.post('/:messageId/confirm', confirmMessageDelivery);
 // Route for getting general messages
-router.get('/messages/generals', getGeneralMessages);
+router.get('/generals', getGeneralMessages);
 // Route for getting transportation messages 
-router.get('/messages/passenger', authenticateJWT, getMessagesForUser);
+router.get('/passenger', authenticateJWT, getMessagesForUser);
 
 module.exports = router;

@@ -16,7 +16,7 @@ app.use(express.json());
 
 // Use routes
 app.use('/api/users', userRoutes);
-app.use('/api/transportations', authenticateJWT, transportationRoutes); 
+app.use('/api/transportations',authenticateJWT, transportationRoutes); 
 app.use('/api/stations', authenticateJWT, stationRoutes); 
 app.use('/api/messages', authenticateJWT, messagesRoutes);
 app.use('/api/registrations', authenticateJWT, registrationsRoutes);

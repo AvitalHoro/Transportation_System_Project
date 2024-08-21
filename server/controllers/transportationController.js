@@ -45,7 +45,7 @@ const getTransportationsOfDriver = (driverId) => {
 const getTransportationsOfPassenger = (passengerId) => {
     return new Promise((resolve, reject) => {
         const query = `SELECT T.TransportationID, T.Transportation_Date, T.Transportation_Time, T.Transportation_Status, T.MaxPassengers, 
-                        R.PickupStationID R.DropoffStationID, R.ExecutionDate, R.Registrations_Status
+                        R.PickupStationID, R.DropoffStationID, R.ExecutionDate, R.Registration_Status
                         FROM Registrations_To_Transportation R
                         JOIN Transportation T ON R.TransportationID = T.TransportationID
                         WHERE R.UserID = ?`;
@@ -57,6 +57,44 @@ const getTransportationsOfPassenger = (passengerId) => {
         });
     });
 };
+
+const getTransportations = async (req, res) => {
+    const userId = req.userId; //להוסיף בדיקת אימות
+    try { 
+        const transportationResults = await getAllTransportations();
+        return res.status(200).json({
+            transportations: transportationResults
+        });
+    } catch (err) {
+        return res.status(500).json({ message: 'Error querying transportation data', error: err });
+    }
+}
+
+const getTransportationsDriver = async (req, res) => {
+    const { driverId } = req.body;
+    const userId = req.userId; //להוסיף בדיקת אימות
+    try { 
+        const transportationResults = await getTransportationsOfDriver(driverId);
+        return res.status(200).json({
+            transportations: transportationResults
+        });
+    } catch (err) {
+        return res.status(500).json({ message: 'Error querying transportation data', error: err });
+    }
+}
+
+const getTransportationsPassenger = async (req, res) => {
+    const { passengerId } = req.body;
+    const userId = req.userId; //להוסיף בדיקת אימות
+    try { 
+        const transportationResults = await getTransportationsOfPassenger(passengerId);
+        return res.status(200).json({
+            transportations: transportationResults
+        });
+    } catch (err) {
+        return res.status(500).json({ message: 'Error querying transportation data', error: err });
+    }
+}
 
 const addTransportation = (req, res) => {
     const { transportationDate, transportationTime, transportationStatus, driver, maxPassengers } = req.body;
@@ -184,4 +222,4 @@ const getDetailsTransportation = async (req, res) => {
 };
 
 
-module.exports = { addTransportation, deleteTransportation, getAllTransportations, getTransportationsOfDriver , getTransportationsOfPassenger, replaceDriver, getDetailsTransportation};
+module.exports = { addTransportation, deleteTransportation, getTransportations, getTransportationsDriver, getTransportationsPassenger, getAllTransportations, getTransportationsOfDriver , getTransportationsOfPassenger, replaceDriver, getDetailsTransportation};
