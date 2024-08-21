@@ -1,0 +1,21 @@
+.ride-register-container {
+    background-color: white;
+    border-radius: 20%;
+    width: 200px;
+    padding: 20px;    
+}
+
+.details-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.detail {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
