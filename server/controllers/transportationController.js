@@ -1,4 +1,6 @@
 const db = require('../config/db');
+const { getStationsOfTransportation } = require('./stationController');
+const { getPassengersOfTransportation } = require('./registrationController');
 
 const getAllTransportations = () => {
     return new Promise((resolve, reject) => {
@@ -14,7 +16,23 @@ const getAllTransportations = () => {
 
 const getTransportationsOfDriver = (driverId) => {
     return new Promise((resolve, reject) => {
-        const query = 'SELECT * FROM Transportation WHERE Driver = ?';
+       // const query = 'SELECT * FROM Transportation WHERE Driver = ?';
+       const query = `
+       SELECT 
+           Transportation.TransportationID,
+           Transportation.Transportation_Date,
+           Transportation.Transportation_Time,
+           Transportation.Transportation_Status,
+           Transportation.DriverID,
+           Users.Username AS DriverName,
+           Transportation.MaxPassengers
+       FROM 
+           Transportation
+       JOIN 
+           Users ON Transportation.DriverID = Users.UserID
+       WHERE 
+            Transportation.DriverID = ?;
+        `;
         db.query(query, [driverId], (err, results) => {
             if (err) {
                 return reject(err);
@@ -23,7 +41,6 @@ const getTransportationsOfDriver = (driverId) => {
         });
     });
 };
-
 
 const getTransportationsOfPassenger = (passengerId) => {
     return new Promise((resolve, reject) => {
@@ -139,4 +156,32 @@ const replaceDriver = (req, res) => {
     });
 };
 
-module.exports = { addTransportation, deleteTransportation, getAllTransportations, getTransportationsOfDriver , getTransportationsOfPassenger, replaceDriver};
+const getDetailsTransportation = async (req, res) => {
+    const { transportationId } = req.body;
+    const userId = req.userId;
+
+    if (!transportationId) {
+        return res.status(400).json({ message: 'transportationId is required' });
+    }
+
+    try {
+        // Check if the current user has the correct permissions
+        const [userResults] = await db.query('SELECT UserPermission FROM Users WHERE UserID = ?', [userId]);
+
+        if (userResults.length === 0 || (userResults[0].UserPermission !== 'Manager' && userResults[0].UserPermission !== 'Driver')) {
+            return res.status(403).json({ message: 'You do not have permission to perform this action' });
+        }
+
+        // Get details of passengers
+        const passengersDetails = await getPassengersOfTransportation(transportationId);
+        // Get details of stations
+        const stationsDetails = await getStationsOfTransportation(transportationId);
+
+        res.status(200).json({ passengers: passengersDetails, stations: stationsDetails });
+    } catch (err) {
+        res.status(500).json({ message: 'Error querying transportation data', error: err });
+    }
+};
+
+
+module.exports = { addTransportation, deleteTransportation, getAllTransportations, getTransportationsOfDriver , getTransportationsOfPassenger, replaceDriver, getDetailsTransportation};

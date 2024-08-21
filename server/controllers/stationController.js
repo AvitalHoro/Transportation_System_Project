@@ -1,5 +1,29 @@
 const db = require('../config/db');
 
+//return details stations of specific transportation
+const getStationsOfTransportation = (transportationID) => {
+    return new Promise((resolve, reject) => {
+        const query = `SELECT 
+            s.StationID,
+            s.Address,
+            s.City,
+            sit.Station_Status,
+            sit.Station_Type
+            FROM 
+                Station_In_Transportation sit
+            JOIN 
+                Station s ON sit.StationID = s.StationID
+            WHERE 
+                sit.TransportationID = ?`;
+        db.query(query, [transportationID], (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(results);
+        });
+    });
+};
+
 const addStation = (req, res) => {
     const { address, city } = req.body;
     const userId = req.userId;
@@ -69,4 +93,4 @@ const deleteStation = (req, res) => {
     });
 };
 
-module.exports = { addStation, deleteStation };
+module.exports = { addStation, deleteStation, getStationsOfTransportation};

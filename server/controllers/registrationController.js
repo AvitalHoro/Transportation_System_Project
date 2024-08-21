@@ -1,5 +1,39 @@
 const db = require('../config/db');
 
+//return details passengers of specific transportation
+const getPassengersOfTransportation = (transportationID) => {
+    return new Promise((resolve, reject) => {
+        const query = `SELECT 
+                u.UserID,
+                u.Username,
+                rtt.PickupStationID,
+                rtt.DropoffStationID,
+                pickup.Address AS PickupAddress,
+                dropoff.Address AS DropoffAddress,
+                total_passengers.TotalCount AS TotalPassengers
+            FROM 
+                Registrations_To_Transportation rtt
+            JOIN 
+                Users u ON rtt.UserID = u.UserID
+            JOIN 
+                Station pickup ON rtt.PickupStationID = pickup.StationID
+            JOIN 
+                Station dropoff ON rtt.DropoffStationID = dropoff.StationID
+            JOIN 
+                (SELECT COUNT(*) AS TotalCount
+                FROM Registrations_To_Transportation
+                WHERE TransportationID = ?) total_passengers
+            WHERE 
+                rtt.TransportationID = ?`;
+        db.query(query, [transportationID], (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(results);
+        });
+    });
+};
+
 const registerForTransportation = async (req, res) => {
     const { transportationId, pickupStationId, dropoffStationId, executionDate } = req.body;
     const userId = req.userId;
@@ -96,5 +130,5 @@ const updateStation = (req, res) => {
     });
 };
 
-module.exports = { registerForTransportation, deleteRegistration, updateStation };
+module.exports = { registerForTransportation, deleteRegistration, updateStation, getPassengersOfTransportation };
 
