@@ -1,45 +1,46 @@
 const db = require('../config/db');
 
-//return details passengers of specific transportation
-const getPassengersOfTransportation = (transportationID) => {
-    return new Promise((resolve, reject) => {
-        const query = `SELECT 
-                u.UserID,
-                u.Username,
-                rtt.PickupStationID,
-                rtt.DropoffStationID,
-                pickup.Address AS PickupAddress,
-                dropoff.Address AS DropoffAddress,
-                total_passengers.TotalCount AS TotalPassengers
-            FROM 
-                Registrations_To_Transportation rtt
-            JOIN 
-                Users u ON rtt.UserID = u.UserID
-            JOIN 
-                Station pickup ON rtt.PickupStationID = pickup.StationID
-            JOIN 
-                Station dropoff ON rtt.DropoffStationID = dropoff.StationID
-            JOIN 
-                (SELECT COUNT(*) AS TotalCount
-                FROM Registrations_To_Transportation
-                WHERE TransportationID = ?) total_passengers
-            WHERE 
-                rtt.TransportationID = ?`;
-        db.query(query, [transportationID], (err, results) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(results);
-        });
-    });
+// Return details passengers of specific transportation
+const getPassengersOfTransportation = async (transportationID) => {
+    const query = `SELECT 
+            u.UserID,
+            u.Username,
+            rtt.PickupStationID,
+            rtt.DropoffStationID,
+            pickup.Address AS PickupAddress,
+            dropoff.Address AS DropoffAddress,
+            total_passengers.TotalCount AS TotalPassengers
+        FROM 
+            Registrations_To_Transportation rtt
+        JOIN 
+            Users u ON rtt.UserID = u.UserID
+        JOIN 
+            Station pickup ON rtt.PickupStationID = pickup.StationID
+        JOIN 
+            Station dropoff ON rtt.DropoffStationID = dropoff.StationID
+        JOIN 
+            (SELECT COUNT(*) AS TotalCount
+            FROM Registrations_To_Transportation
+            WHERE TransportationID = ?) total_passengers
+        WHERE 
+            rtt.TransportationID = ?`;
+
+    try {
+        const [results] = await db.query(query, [transportationID, transportationID]);
+        return results;
+    } catch (err) {
+        throw err;
+    }
 };
 
+//register passenger to transpportation
 const registerForTransportation = async (req, res) => {
     const { transportationId, pickupStationId, dropoffStationId, executionDate } = req.body;
     const userId = req.userId;
+    const db = req.db;
 
     // Validate input
-    if ( !transportationId || !pickupStationId || !dropoffStationId || !executionDate ) {
+    if (!transportationId || !pickupStationId || !dropoffStationId || !executionDate) {
         return res.status(400).json({ message: 'These fields are required' });
     }
 
@@ -50,17 +51,7 @@ const registerForTransportation = async (req, res) => {
             (UserID, TransportationID, PickupStationID, DropoffStationID, ExecutionDate, Registration_Status) 
             VALUES (?, ?, ?, ?, ?, ?)
         `;
-        
-        await new Promise((resolve, reject) => {
-            db.query(insertRegistrationQuery, [userId, transportationId, pickupStationId, dropoffStationId, executionDate, 'Confirmed'], (err, results) => {
-                if (err) {
-                    return reject(err);
-                }
-                resolve(results);
-            });
-        });
-
-        res.status(201).json({ message: 'User registered for transportation successfully' });
+        await db.query(insertRegistrationQuery, [userId, transportationId, pickupStationId, dropoffStationId, executionDate, 'Confirmed']);
 
         // Update registration status to Completed
         const updateStatusQuery = `
@@ -68,67 +59,64 @@ const registerForTransportation = async (req, res) => {
             SET Registration_Status = 'Completed' 
             WHERE UserID = ? AND TransportationID = ?
         `;
-        
-        await new Promise((resolve, reject) => {
-            db.query(updateStatusQuery, [userId, transportationId], (err, results) => {
-                if (err) {
-                    console.error('Error updating registration status', err);
-                }
-                resolve(results);
-            });
-        });
+        await db.query(updateStatusQuery, [userId, transportationId]);
+
+        res.status(201).json({ message: 'User registered for transportation successfully' });
 
     } catch (err) {
         res.status(500).json({ message: 'Error registering user for transportation', error: err });
     }
 };
 
-const deleteRegistration = (req, res) => {
+const deleteRegistration = async (req, res) => {
     const { transportationID } = req.params;
-    const userId = req.userId; 
+    const userId = req.userId;
+    const db = req.db;
 
     // Validate input
     if (!transportationID) {
         return res.status(400).json({ message: 'transportationID is required' });
     }
 
-    // Delete registration
-    const deleteRegistrationQuery = 'DELETE FROM Registrations_To_Transportation WHERE UserID = ? AND TransportationID = ?';
-    db.query(deleteRegistrationQuery, [userId, transportationID], (err, results) => {
-        if (err) {
-            return res.status(500).json({ message: 'Error deleting registration', error: err });
-        }
+    try {
+        // Delete registration
+        const deleteRegistrationQuery = 'DELETE FROM Registrations_To_Transportation WHERE UserID = ? AND TransportationID = ?';
+        await db.query(deleteRegistrationQuery, [userId, transportationID]);
+
         res.status(200).json({ message: 'Registration deleted successfully' });
-    });
+    } catch (err) {
+        res.status(500).json({ message: 'Error deleting registration', error: err });
+    }
 };
 
-const updateStation = (req, res) => {
+const updateStation = async (req, res) => {
     const { transportationID, stationID } = req.params;
     const { typeStation } = req.body;
-    const userId = req.userId; 
+    const userId = req.userId;
+    const db = req.db;
 
     // Validate input
     if (!transportationID || !stationID || !typeStation) {
         return res.status(400).json({ message: 'transportationID, stationID, and typeStation are required' });
     }
 
-    if (typeStation != '' && typeStation != '') {
+    if (typeStation !== 'PickupStationID' && typeStation !== 'DropoffStationID') {
         return res.status(400).json({ message: 'Invalid typeStation value' });
     }
 
-    // Update station
-    const updateStationQuery = `
-        UPDATE Registrations_To_Transportation 
-        SET ${typeStation} = ?
-        WHERE UserID = ? AND TransportationID = ?
-    `;
-    db.query(updateStationQuery, [typeStation, stationID, userId, transportationID], (err, results) => {
-        if (err) {
-            return res.status(500).json({ message: 'Error updating staion', error: err });
-        }
-        res.status(200).json({ message: 'The staion updated successfully' });
-    });
+    try {
+        // Update station
+        const updateStationQuery = `
+            UPDATE Registrations_To_Transportation 
+            SET ${typeStation} = ?
+            WHERE UserID = ? AND TransportationID = ?
+        `;
+        await db.query(updateStationQuery, [stationID, userId, transportationID]);
+
+        res.status(200).json({ message: 'The station updated successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error updating station', error: err });
+    }
 };
 
 module.exports = { registerForTransportation, deleteRegistration, updateStation, getPassengersOfTransportation };
-

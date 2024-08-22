@@ -1,10 +1,10 @@
-const db = require('../config/db');
 const jwt = require('jsonwebtoken');
 const addToBlacklist = require('../middleware/authUtils');
 const { getAllTransportations, getTransportationsOfDriver, getTransportationsOfPassenger } = require('./transportationController');
 
 const login = async (req, res) => {
     const { email, password } = req.body;
+    const db = req.db;
 
     const query = 'SELECT * FROM Users WHERE UserEmail = ? AND UserPassword = ?';
     db.query(query, [email, password], async (err, userResults) => {
@@ -44,6 +44,7 @@ const login = async (req, res) => {
 
 const registerUser = (req, res) => {
     const { username, password, phone, permission, email } = req.body;
+    const db = req.db;
 
     // Validate input
     if (!username || !password || !phone || !permission || !email) {
@@ -73,7 +74,8 @@ const registerUser = (req, res) => {
 };
 
 const logout = (req, res) => {
-    const token = req.headers['authorization'];
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Extract token from "Bearer TOKEN"
 
     if (token) {
         addToBlacklist(token);
@@ -82,5 +84,6 @@ const logout = (req, res) => {
         res.status(400).json({ message: 'No token provided' });
     }
 };
+
 
 module.exports = { login, registerUser, logout };

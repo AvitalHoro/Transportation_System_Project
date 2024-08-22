@@ -1,30 +1,25 @@
 const db = require('../config/db');
 
 //return details stations of specific transportation
-const getStationsOfTransportation = (transportationID) => {
-    return new Promise((resolve, reject) => {
-        const query = `SELECT 
-            s.StationID,
-            s.Address,
-            s.City,
-            sit.Station_Status,
-            sit.Station_Type
-            FROM 
-                Station_In_Transportation sit
-            JOIN 
-                Station s ON sit.StationID = s.StationID
-            WHERE 
-                sit.TransportationID = ?`;
-        db.query(query, [transportationID], (err, results) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(results);
-        });
-    });
+const getStationsOfTransportation = async (transportationID) => {
+    const query = `SELECT 
+        s.StationID,
+        s.Address,
+        s.City,
+        sit.Station_Status,
+        sit.Station_Type
+        FROM 
+            Station_In_Transportation sit
+        JOIN 
+            Station s ON sit.StationID = s.StationID
+        WHERE 
+            sit.TransportationID = ?`;
+    const [results] = await db.query(query, [transportationID]);
+    return results;
 };
 
 const addStation = async (req, res) => {
+    const db = req.db;
     const { address, city, station_Status, station_Type } = req.body;
     const { transportationId } = req.params;
     const userId = req.userId;
@@ -88,6 +83,7 @@ const addStation = async (req, res) => {
 };
 
 const cancelStation = async (req, res) => {
+    const db = req.db;
     const { stationId } = req.params;
     const {transportationId} = req.body;
     const userId = req.userId; 
@@ -122,6 +118,7 @@ const cancelStation = async (req, res) => {
 }
 
 const updateStation = async (req, res) => {
+    const db = req.db;
     const { stationId } = req.params;
     const { address, city } = req.body;
     const userId = req.userId;  

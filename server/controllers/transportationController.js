@@ -2,64 +2,56 @@ const db = require('../config/db');
 const { getStationsOfTransportation } = require('./stationController');
 const { getPassengersOfTransportation } = require('./registrationController');
 
-const getAllTransportations = () => {
-    return new Promise((resolve, reject) => {
-        const query = 'SELECT * FROM Transportation';
-        db.query(query, (err, results) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(results);
-        });
-    });
+// const getAllTransportations = () => {
+//     return new Promise((resolve, reject) => {
+//         const query = 'SELECT * FROM Transportation';
+//         db.query(query, (err, results) => {
+//             if (err) {
+//                 return reject(err);
+//             }
+//             resolve(results);
+//         });
+//     });
+// };
+
+const getAllTransportations = async () => {
+    const query = 'SELECT * FROM Transportation';
+    const [results] = await db.query(query);
+    return results;
 };
 
-const getTransportationsOfDriver = (driverId) => {
-    return new Promise((resolve, reject) => {
-       // const query = 'SELECT * FROM Transportation WHERE Driver = ?';
-       const query = `
-       SELECT 
-           Transportation.TransportationID,
-           Transportation.Transportation_Date,
-           Transportation.Transportation_Time,
-           Transportation.Transportation_Status,
-           Transportation.DriverID,
-           Users.Username AS DriverName,
-           Transportation.MaxPassengers
-       FROM 
-           Transportation
-       JOIN 
-           Users ON Transportation.DriverID = Users.UserID
-       WHERE 
-            Transportation.DriverID = ?;
-        `;
-        db.query(query, [driverId], (err, results) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(results);
-        });
-    });
+const getTransportationsOfDriver = async (driverId) => {
+    const query = `
+    SELECT 
+        Transportation.TransportationID,
+        Transportation.Transportation_Date,
+        Transportation.Transportation_Time,
+        Transportation.Transportation_Status,
+        Transportation.DriverID,
+        Users.Username AS DriverName,
+        Transportation.MaxPassengers
+    FROM 
+        Transportation
+    JOIN 
+        Users ON Transportation.DriverID = Users.UserID
+    WHERE 
+        Transportation.DriverID = ?;
+    `;
+    const [results] = await db.query(query, [driverId]);
+    return results;
 };
 
-const getTransportationsOfPassenger = (passengerId) => {
-    return new Promise((resolve, reject) => {
-        const query = `SELECT T.TransportationID, T.Transportation_Date, T.Transportation_Time, T.Transportation_Status, T.MaxPassengers, 
-                        R.PickupStationID, R.DropoffStationID, R.ExecutionDate, R.Registration_Status
-                        FROM Registrations_To_Transportation R
-                        JOIN Transportation T ON R.TransportationID = T.TransportationID
-                        WHERE R.UserID = ?`;
-        db.query(query, [passengerId], (err, results) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(results);
-        });
-    });
+const getTransportationsOfPassenger = async (passengerId) => {
+    const query = `SELECT T.TransportationID, T.Transportation_Date, T.Transportation_Time, T.Transportation_Status, T.MaxPassengers, 
+                    R.PickupStationID, R.DropoffStationID, R.ExecutionDate, R.Registration_Status
+                    FROM Registrations_To_Transportation R
+                    JOIN Transportation T ON R.TransportationID = T.TransportationID
+                    WHERE R.UserID = ?`;
+    const [results] = await db.query(query, [passengerId]);
+    return results;
 };
 
 const getTransportations = async (req, res) => {
-    const userId = req.userId; //להוסיף בדיקת אימות
     try { 
         const transportationResults = await getAllTransportations();
         return res.status(200).json({
@@ -97,6 +89,7 @@ const getTransportationsPassenger = async (req, res) => {
 }
 
 const addTransportation = (req, res) => {
+    const db = req.db;
     const { transportationDate, transportationTime, transportationStatus, driver, maxPassengers } = req.body;
     const userId = req.userId;
 
@@ -126,6 +119,7 @@ const addTransportation = (req, res) => {
 };
 
 const deleteTransportation = (req, res) => {
+    const db = req.db;
     const { transportationId } = req.params;
     const userId = req.userId; 
 
@@ -163,6 +157,7 @@ const deleteTransportation = (req, res) => {
 
 // Function to replace the driver of a specific transportation
 const replaceDriver = (req, res) => {
+    const db = req.db;
     const { transportationId } = req.params;
     const { newDriver } = req.body;
     const userId = req.userId;
@@ -195,6 +190,7 @@ const replaceDriver = (req, res) => {
 };
 
 const getDetailsTransportation = async (req, res) => {
+    const db = req.db;
     const { transportationId } = req.body;
     const userId = req.userId;
 

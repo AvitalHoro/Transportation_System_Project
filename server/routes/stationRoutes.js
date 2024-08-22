@@ -9,6 +9,6 @@ router.post('/add/:transportationId', authenticateJWT, addStation);
 // Route for deleting a station
 router.delete('/delete/:stationId', authenticateJWT, cancelStation);
 // Route for updeting a station
-router.put('/delete/:stationId', authenticateJWT, updateStation);
+router.put('/update/:stationId', authenticateJWT, updateStation);
 
 module.exports = router;

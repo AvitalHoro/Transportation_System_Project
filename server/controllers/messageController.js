@@ -1,19 +1,26 @@
 const db = require('../config/db');
 
-const insertMessage = async (userId, messageText, sendTime) => {
+// const insertMessage = async (userId, messageText, sendTime) => {
+//     const insertMessageQuery = 'INSERT INTO Message (SenderID, MessageText, Message_Status, SendTime) VALUES (?, ?, ?, ?)';
+    
+//     return new Promise((resolve, reject) => {
+//         db.query(insertMessageQuery, [userId, messageText, 'Sent', sendTime], (err, results) => {
+//             if (err) {
+//                 return reject(err);
+//             }
+//             resolve(results.insertId);
+//         });
+//     });
+// };
+
+const insertMessage = async (db, userId, messageText, sendTime) => {
     const insertMessageQuery = 'INSERT INTO Message (SenderID, MessageText, Message_Status, SendTime) VALUES (?, ?, ?, ?)';
     
-    return new Promise((resolve, reject) => {
-        db.query(insertMessageQuery, [userId, messageText, 'Sent', sendTime], (err, results) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(results.insertId);
-        });
-    });
+    const [results] = await db.query(insertMessageQuery, [userId, messageText, 'Sent', sendTime]);
+    return results.insertId;
 };
 
-const getRegisteredUsers = async (transportationId) => {
+const getRegisteredUsers = async (db, transportationId) => {
     const getRegisteredUsersQuery = `
         SELECT u.UserID
         FROM Users u
@@ -21,19 +28,14 @@ const getRegisteredUsers = async (transportationId) => {
         WHERE rtt.TransportationID = ?
     `;
 
-    return new Promise((resolve, reject) => {
-        db.query(getRegisteredUsersQuery, [transportationId], (err, results) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(results);
-        });
-    });
+    const [results] = await db.query(getRegisteredUsersQuery, [transportationId]);
+    return results;
 };
 
 const addMessageForEveryOne = async (req, res) => {
     const { messageText, sendTime, attachedFiles } = req.body;
     const userId = req.userId;
+    const db = req.db;
 
     // Validate input
     if (!messageText || !sendTime) {
@@ -43,14 +45,7 @@ const addMessageForEveryOne = async (req, res) => {
     try {
         // Check user permissions
         const checkPermissionQuery = 'SELECT UserPermission FROM Users WHERE UserID = ?';
-        const permissionResults = await new Promise((resolve, reject) => {
-            db.query(checkPermissionQuery, [userId], (err, results) => {
-                if (err) {
-                    return reject(err);
-                }
-                resolve(results);
-            });
-        });
+        const [permissionResults] = await db.query(checkPermissionQuery, [userId]);
 
         if (permissionResults.length === 0) {
             return res.status(404).json({ message: 'User not found' });
@@ -63,17 +58,10 @@ const addMessageForEveryOne = async (req, res) => {
         }
 
         // Insert new message and general message
-        const messageId = await insertMessage(userId, messageText, sendTime);
+        const messageId = await insertMessage(db, userId, messageText, sendTime);
         
         const insertGeneralMessageQuery = 'INSERT INTO General_Message (AttachedFiles, MessageID) VALUES (?, ?)';
-        await new Promise((resolve, reject) => {
-            db.query(insertGeneralMessageQuery, [attachedFiles, messageId], (err, results) => {
-                if (err) {
-                    return reject(err);
-                }
-                resolve(results);
-            });
-        });
+        await db.query(insertGeneralMessageQuery, [attachedFiles, messageId]);
 
         res.status(201).json({ message: 'General Message added successfully', messageId });
 
@@ -86,6 +74,7 @@ const addTransportationMessage = async (req, res) => {
     const { transportationId } = req.params; 
     const { messageText, sendTime } = req.body;
     const userId = req.userId; 
+    const db = req.db;
 
     // Validate input
     if (!messageText || !sendTime || !transportationId) {
@@ -95,14 +84,7 @@ const addTransportationMessage = async (req, res) => {
     try {
         // Check user permissions
         const checkPermissionQuery = 'SELECT UserPermission FROM Users WHERE UserID = ?';
-        const permissionResults = await new Promise((resolve, reject) => {
-            db.query(checkPermissionQuery, [userId], (err, results) => {
-                if (err) {
-                    return reject(err);
-                }
-                resolve(results);
-            });
-        });
+        const [permissionResults] = await db.query(checkPermissionQuery, [userId]);
 
         if (permissionResults.length === 0) {
             return res.status(404).json({ message: 'User not found' });
@@ -115,20 +97,13 @@ const addTransportationMessage = async (req, res) => {
         }
 
         // Insert new message and transportation message
-        const messageId = await insertMessage(userId, messageText, sendTime);
+        const messageId = await insertMessage(db, userId, messageText, sendTime);
         
         const insertTransportationMessageQuery = 'INSERT INTO Message_To_Transportation (TransportationID, MessageID) VALUES (?, ?)';
-        await new Promise((resolve, reject) => {
-            db.query(insertTransportationMessageQuery, [transportationId, messageId], (err, results) => {
-                if (err) {
-                    return reject(err);
-                }
-                resolve(results);
-            });
-        });
+        await db.query(insertTransportationMessageQuery, [transportationId, messageId]);
 
         // Get registered users
-        const registeredUsers = await getRegisteredUsers(transportationId);
+        const registeredUsers = await getRegisteredUsers(db, transportationId);
 
         // Return response with messageId and registered user IDs
         res.status(201).json({ 
@@ -143,6 +118,7 @@ const addTransportationMessage = async (req, res) => {
 };
 
 const confirmMessageDelivery = async (req, res) => {
+    const db = req.db;
     const { messageId } = req.params;
     const { deliveryConfirmation } = req.body;
 
@@ -152,22 +128,17 @@ const confirmMessageDelivery = async (req, res) => {
 
     try {
         const updateMessageStatusQuery = 'UPDATE Message SET Message_Status = ? WHERE MessageID = ?';
-        await new Promise((resolve, reject) => {
-            db.query(updateMessageStatusQuery, ['Delivered', messageId], (err, results) => {
-                if (err) {
-                    return reject(err);
-                }
-                resolve(results);
-            });
-        });
-
+        await db.query(updateMessageStatusQuery, ['Delivered', messageId]);
         res.status(200).json({ message: 'Message status updated to Delivered' });
+
     } catch (err) {
         res.status(500).json({ message: 'Error updating message status', error: err });
     }
 };
 
 const getGeneralMessages = async (req, res) => {
+    const db = req.db;
+
     try {
         const getGeneralMessagesQuery = `
             SELECT 
@@ -191,8 +162,8 @@ const getGeneralMessages = async (req, res) => {
     }
 };
 
-
 const getMessagesForUser = async (req, res) => {
+    const db = req.db;
     const userId = req.userId;
 
     try {
