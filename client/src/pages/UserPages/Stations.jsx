@@ -1,12 +1,93 @@
 import React from "react";
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
+
 
 const Stations = () => {
+
+    const getFromStations = () => {
+        return [
+"מרכזית בית שאן", 
+"מרכזית בית שמש", 
+"מרכזית בית יהושע", 
+"מרכזית בית קמה", 
+"מרכזית בית שקמה", 
+"מרכזית ביתר עילית", 
+"ארלוזורוב תל אביב",
+"ארסוף",
+"אשדוד עד הלום",      ]
+    }
+
+    const getToStations = () => {
+        return [
+"מרכזית בית שאן",
+"מרכזית בית שמש",
+"מרכזית בית יהושע",
+"מרכזית בית קמה",
+"מרכזית בית שקמה",
+"מרכזית ביתר עילית",
+"ארלוזורוב תל אביב",
+"ארסוף",
+"אשדוד עד הלום",
+        ]
+    }
+
+    const fromStations = getFromStations();
+    const toStations = getToStations();
+
+    const myFromStation = fromStations[0];
+    const myToStation = toStations[0];
+
     return (
-        <div>
-            <span>תחנת עזיבה</span>
-            <input type="text" placeholder="תחנת עזיבה" />
-            <span>תחנת יעד</span>
-            <input type="text" placeholder="תחנת יעד" />
+        <div style={{
+            width: "100%", 
+            display: "flex", 
+            flexDirection: "row", 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            marginTop: "15px",
+            marginBottom: "5px"
+            }}>
+
+            <Autocomplete
+                disablePortal
+                disableClearable
+                id="combo-box-drop-station"
+                options={toStations}
+                sx={{ width: "46%", 
+                    '& .MuiOutlinedInput-root': {
+                        borderRadius: '40px',
+                        height: '45px',
+                      },
+                    '& .MuiFormLabel-root': {
+                        lineHeight: '0.8', 
+                    }
+            }}
+                renderInput={(params) => <TextField {...params} label="תחנת עלייה" />}
+            />            
+                                <ArrowCircleLeftIcon style={{ color: "#A6A6A6", 
+                                    fontSize: "200%", 
+                                    margin: "-5px",
+                                    zIndex: 100
+                                    }} />
+
+            <Autocomplete
+                disablePortal
+                disableClearable
+                id="combo-box-drop-station"
+                options={toStations}
+                sx={{ width: "46%",                     
+                    '& .MuiOutlinedInput-root': {
+                    borderRadius: '40px', 
+                    height: '45px',
+                },
+                '& .MuiFormLabel-root': {
+                    lineHeight: '0.8', 
+                }
+                }}
+                renderInput={(params) => <TextField {...params} label="תחנת ירידה" />}
+            />
         </div>
     )
 }

@@ -7,7 +7,8 @@ import Home from './pages/UserPages/Home';
 import Header from './layout/Header';
 import NavBar from './layout/NavBar';
 import NotFound from './pages/NotFound';
-import RideRegister from './pages/UserPages/RideRegister';
+import Filters from './layout/Filters';
+import Message from './pages/Message';
 
 
 function App() {
@@ -23,7 +24,8 @@ function App() {
 
       {/* <Sidebar handleInfo={handleInfo}/> */}
       <div className="main-content">
-        <RideRegister></RideRegister>
+      <Message isMyMessege={true} content={"הי מה קורה"} date={"12/07/2024"} hour={"13:30"}></Message>
+      <Message isMyMessege={false} content={"עהס דחסעדנ חדלעבד דשתעדנדת דךשיןד תשדעגד ןטעו הי מה קורה"} date={"12/07/2024"} hour={"13:30"}></Message>
 
       <Routes>
         <Route path="/" element={<NavigateHandler />} />

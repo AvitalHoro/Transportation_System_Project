@@ -104,3 +104,47 @@ header {
 {
     font-size: 24px;
 }
+
+.filters-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+    /* background-color: #c4c4c4;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+    border-radius: 40px; */
+}
+
+.filter-title {
+    font-size: 16px;
+    border-radius: 40px;
+    color: #50bb82;
+    background-color: white;
+    padding-right: 15px;
+    padding-left: 15px;
+    height: 45px;
+    border: 1px solid rgba(0, 0, 0, 0.23);
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+
+}
+
+.clear-filter-container {
+  border-radius: 100%;
+  background-color: #FFD700;
+  cursor: pointer;
+  padding: 10px;
+width: 25px;
+  height: 25px;
+  transition: transform 0.2s ease-in-out;
+  margin-top: 8px;
+}
+
+.clear-filter-container:hover {
+  transform: scale(1.1);
+  opacity: 0.8;
+}
+
