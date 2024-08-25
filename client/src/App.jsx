@@ -3,47 +3,40 @@ import './App.css'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Home from './pages/UserPages/Home';
+import Home from './pages/Home';
 import Header from './layout/Header';
-import NavBar from './layout/NavBar';
 import NotFound from './pages/NotFound';
-import Filters from './layout/Filters';
-import Message from './pages/Message';
 
 
 function App() {
 
+  const user = {
+    name: "אביטל",
+    type: "user"
+  }
+
   return (
-    // <Home></Home>
     <Router>
 
-      <Header></Header>
+      <Header userType={user.type} name={user.name}></Header>
 
-      <NavBar></NavBar>
-            <div className="app-container" dir='rtl'>
+      <div className="app-container" dir='rtl'>
 
-      {/* <Sidebar handleInfo={handleInfo}/> */}
-      <div className="main-content">
-      <Message isMyMessege={true} content={"הי מה קורה"} date={"12/07/2024"} hour={"13:30"}></Message>
-      <Message isMyMessege={false} content={"עהס דחסעדנ חדלעבד דשתעדנדת דךשיןד תשדעגד ןטעו הי מה קורה"} date={"12/07/2024"} hour={"13:30"}></Message>
 
-      <Routes>
-        <Route path="/" element={<NavigateHandler />} />
-        <Route path="/login" element={<Login/>} />
-        <Route path="/register" element={<Register />} />
-        {/* <Route path="/completion_of_details" element={<CompletionOfDetails setUser={setUser}/>} /> */}
-        <Route path="/home" element={<PrivateRoute><Home/></PrivateRoute>} />
-       
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-      </div>
+        <Routes>
+          <Route path="/" element={<NavigateHandler />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/home/*" element={<Home userType={user.type} />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </div>
     </Router>
   );
 };
 
 const NavigateHandler = () => {
-  const user = localStorage.getItem('user');
+  const user = "hj"//localStorage.getItem('user');
 
   if (user) {
     return <Navigate to="/home" />;
@@ -51,15 +44,5 @@ const NavigateHandler = () => {
     return <Navigate to="/login" />;
   }
 };
-
-const PrivateRoute = ({ children }) => {
-  const user = localStorage.getItem('user');
-
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
-
-  return children;
-}
 
 export default App

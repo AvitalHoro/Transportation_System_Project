@@ -1,15 +1,16 @@
 import React from "react";
 import '../style/Layout.css';
 
-const Header = ( { name } ) => {
+const Header = ( { userType, name } ) => {
     
         return (
             <>
                 <header dir="rtl">
-                    <img className="logo" src="logo.png" alt="logo" />
+                    <img className="logo" src={userType=='user'? "../../userLogo.png" : "../../adminLogo.png"} alt="בדרך שלך" />
                     <div className="spacer"></div>
                     <span className="hello_user">שלום {name? name: "נוסע"}</span>
-                    <img  className="profile_button"  src="./profile.png" alt="פרופיל" />
+                    {userType=='user' &&
+                    <img  className="profile_button"  src="../../profile.png" alt="פרופיל" />}
                 </header>
             </>
         )

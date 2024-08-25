@@ -5,8 +5,8 @@
     align-items: center;
     background-color: white;
     border-radius: 25px;
-    min-width: 290px;
-    max-width: 500px;
+    /* min-width: 290px; */
+    /* max-width: 500px; */
     padding: 20px;    
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
     transition: transform 0.2s ease-in-out;

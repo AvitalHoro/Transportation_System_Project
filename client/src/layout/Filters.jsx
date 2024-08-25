@@ -73,7 +73,7 @@ const Filters = ({ _color }) => {
                 id="combo-box-drop-station"
                 options={stationsList}
                 sx={{
-                    minWidth: '150px',
+                    minWidth: '200px',
                     '& .MuiOutlinedInput-root': {
                         borderRadius: '40px',
                         height: '45px',
@@ -96,7 +96,7 @@ const Filters = ({ _color }) => {
                 id="combo-box-drop-station"
                 options={stationsList}
                 sx={{
-                    minWidth: '150px',
+                    minWidth: '200px',
                     '& .MuiOutlinedInput-root': {
                         borderRadius: '40px',
                         height: '45px',

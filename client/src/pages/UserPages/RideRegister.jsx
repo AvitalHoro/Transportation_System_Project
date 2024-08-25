@@ -6,16 +6,16 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Stations from "./Stations";
 
-const RideRegister = () => {
+const RideRegister = ({rideId, exit, target, date, time}) => {
 
-    const ride = {
-        exit: "תל אביב",
-        target: "ירושלים",
-        date: "2021-06-01",
-        time: "08:00",
-        seats: 3,
-        price: 30
-    }
+    // const ride = {
+    //     exit: "תל אביב",
+    //     target: "ירושלים",
+    //     date: "2021-06-01",
+    //     time: "08:00",
+    //     seats: 3,
+    //     price: 30
+    // }
     return (
         <div className="ride-register-container">
             <div className="top-register-container">
@@ -23,17 +23,17 @@ const RideRegister = () => {
                     <div className="detail">
                         <ArrowCircleLeftIcon style={{ color: "#50bb82" }} />
                         {/* <img src="./icons/direction-icon.png"></img> */}
-                        <span style={{ fontWeight: 'bold', color: "#50bb82", fontSize: "18px" }}>מ{ride.exit} ל{ride.target}</span>
+                        <span style={{ fontWeight: 'bold', color: "#50bb82", fontSize: "18px" }}>מ{exit} ל{target}</span>
                     </div>
                     <div className="detail">
                         <CalendarMonthIcon style={{ color: "#50bb82" }} />
                         {/* <img src="./icons/date-icon.png"></img> */}
-                        <span>{ride.date}</span>
+                        <span>{date}</span>
                     </div>
                     <div className="detail">
                         <ScheduleIcon style={{ color: "#50bb82" }} />
                         {/* <img src="./icons/time-icon.png"></img> */}
-                        <span>{ride.time}</span>
+                        <span>{time}</span>
                     </div>
                 </div>
 

@@ -42,3 +42,18 @@
 .read-the-docs {
   color: #888;
 }
+
+.app-container {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #F4F4F4;
+  overflow: auto;
+  /* If content overflows, make it scrollable */
+}
+
+.page-container {
+  padding: 1.5rem;
+}
