@@ -6,20 +6,20 @@ import ScheduleIcon from '@mui/icons-material/Schedule';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import PeopleIcon from '@mui/icons-material/People';
 import PersonIcon from '@mui/icons-material/Person';
-import AdminOptions from "./AdminOptions";
+import AdminOptions from "./AdminRideOptions";
 
-const RideItem = () => {
+const RideItem = ({ride}) => {
 
-    const ride = {
-        exit: "תל אביב",
-        target: "ירושלים",
-        date: "2021-06-01",
-        time: "08:00",
-        seats: 30,
-        price: 30,
-        driver: "דוד כהן",
-        registerNum: "12",
-    }
+    // const ride = {
+    //     exit: "תל אביב",
+    //     target: "ירושלים",
+    //     date: "2021-06-01",
+    //     time: "08:00",
+    //     seats: 30,
+    //     price: 30,
+    //     driver: "דוד כהן",
+    //     registerNum: "12",
+    // }
     return (
         <div className="ride-item-container">
                 <div className="details-container">

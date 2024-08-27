@@ -4,6 +4,8 @@ import "../../style/UserPage.css";
 import { Routes, Route, Navigate } from 'react-router-dom';
 import MyRidePage from "./MyRidePage";
 import RegisterPage from "./RegisterPage";
+import InfoPage from "./InfoPage";
+import ContactPage from "./ContactPage";
 
 
 const MainUserPage = () => {
@@ -13,13 +15,13 @@ const MainUserPage = () => {
     return (
         <div>
             <NavBar navigateNum={navigateNum} setNavigateNum={setNavigateNum} />
-            <div className="user-page-container">
+            <div className="user-user-page-container">
                 <Routes>
                     <Route path="/" element={<NavigateHandler navigateNum={navigateNum} />} />
                     <Route path="my-rides" element={<MyRidePage />} />
                     <Route path="register-to-ride" element={<RegisterPage />} />
-                    <Route path="info" element={<div />} />
-                    <Route path="contact" element={<div/>} />
+                    <Route path="info" element={<InfoPage />} />
+                    <Route path="contact" element={<ContactPage/>} />
                 </Routes>
             </div>
         </div>

@@ -1,53 +1,58 @@
 import React from "react";
 import Filters from "../../layout/Filters";
-import RideRegister from "./RideRegister";
+import RideItem from "./RideItem";
 
-const RegisterPage = () => {
+const RideGalleryPage = () => {
 
-    const getAllNextRides = () => {
+
+    const getAllRides = () => {
         return [
             {
-                id: 1234,
                 exit: "תל אביב",
                 target: "ירושלים",
                 date: "2021-06-01",
                 time: "08:00",
+                seats: 30,
+                price: 30,
+                driver: "דוד כהן",
+                registerNum: "12",
             },
             {
-                id: 456,
                 exit: "חיפה",
                 target: "קצרין",
                 date: "2024-06-01",
                 time: "16:30",
+                seats: 30,
+                price: 30,
+                driver: "דוד כהן",
+                registerNum: "124",
             },
             {
-                id: 789,
                 exit: "תל אביב",
                 target: "חיפה",
                 date: "2021-06-01",
                 time: "08:00",
+                seats: 30,
+                price: 30,
+                driver: "דוד כהן",
+                registerNum: "8",
             },
-
         ];
     }
 
-    const allRideList = getAllNextRides();
+    const allRideList = getAllRides();
 
     return (
-        <div className="user-page-container register-page">
+<div className="page-container register-page">
             <div className="register-page-title">
-                <span>בחר את הנסיעה אליה אתה רוצה להירשם</span>
+                <span>בחר את הנסיעה אותה ברצונך לערוך</span>
             </div>
             <Filters />
-            <div className="register-page-content">
+            <div className="ride-gallery-content">
                 {
                     allRideList.map((ride) =>
-                        <RideRegister
-                            rideId={ride.id}
-                            exit={ride.exit}
-                            target={ride.target}
-                            date={ride.date}
-                            time={ride.time} 
+                        <RideItem
+                           ride={ride}
                         />
                     )
                 }
@@ -56,4 +61,4 @@ const RegisterPage = () => {
     )
 }
 
-export default RegisterPage;
+export default RideGalleryPage;

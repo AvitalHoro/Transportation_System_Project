@@ -25,13 +25,13 @@ const NavBar = ({navigateNum, setNavigateNum}) => {
         },
         {
             name: "מידע על נסיעות",
-            link: "/rides-info",
+            link: "/info",
             img: "rides-info.png",
             press_img: "rides-info-press.png",
         },
         {
             name: "צור קשר",
-            link: "/contact-us",
+            link: "/contact",
             img: "contact-us.png",
             press_img: "contact-us-press.png",
         }

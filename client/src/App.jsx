@@ -12,7 +12,7 @@ function App() {
 
   const user = {
     name: "אביטל",
-    type: "user"
+    type: "admin"
   }
 
   return (

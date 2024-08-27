@@ -38,7 +38,7 @@ const MyRidePage = () => {
 
 
     return (
-        <div className="page-container my-ride-page">
+        <div className="user-page-container my-ride-page">
 
             <div className="my-ride-container" style={{width: isComputerScreen? '60%': '100%'}}>
                 <div className="my-ride-title">
