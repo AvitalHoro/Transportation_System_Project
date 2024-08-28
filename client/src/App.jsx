@@ -6,21 +6,22 @@ import Register from './pages/Register';
 import Home from './pages/Home';
 import Header from './layout/Header';
 import NotFound from './pages/NotFound';
+import Nisayon from './Nisayon';
 
 
 function App() {
 
   const user = {
     name: "אביטל",
-    type: "admin"
+    type: "driver"
   }
 
   return (
     <Router>
 
       <Header userType={user.type} name={user.name}></Header>
-
-      <div className="app-container" dir='rtl'>
+      <Nisayon></Nisayon>
+      {/* <div className="app-container" dir='rtl'>
 
 
         <Routes>
@@ -30,7 +31,7 @@ function App() {
           <Route path="/home/*" element={<Home userType={user.type} />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </div>
+      </div> */}
     </Router>
   );
 };

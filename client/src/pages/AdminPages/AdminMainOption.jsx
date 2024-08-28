@@ -5,7 +5,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
 import "../../style/AdminPage.css";
 
-const AdminMainOption = ({}) => {
+const AdminMainOption = ({setNavigate}) => {
 
     const mainOption = ["להוסיף נסיעה", "להוסיף נהג", "לערוך נסיעות קיימות", "לשלוח הודעה לכולם"]
 
@@ -15,7 +15,7 @@ const AdminMainOption = ({}) => {
                 <span>מה תרצה לעשות היום?</span>
             </div>
             <div className="admin-main-option-container">
-                <div className="option-a-m-co">
+                <div className="option-a-m-co"  onClick={()=> setNavigate(1)}>
                     <div className="icon-container">
                     <AddIcon sx={{
                         color: "white",
@@ -24,7 +24,7 @@ const AdminMainOption = ({}) => {
                     </div>
                     <span>{mainOption[0]}</span>
                 </div>
-                <div className="option-a-m-co">
+                <div className="option-a-m-co" onClick={()=> setNavigate(2)}>
                     <div className="icon-container">
                     <PersonAddIcon sx={{
                         color: "white",
@@ -33,7 +33,7 @@ const AdminMainOption = ({}) => {
                     </div>
                     <span>{mainOption[1]}</span>
                 </div>
-                <div className="option-a-m-co">
+                <div className="option-a-m-co"  onClick={()=> setNavigate(3)}>
                     <div className="icon-container">
                     <DirectionsBusIcon sx={{
                         color: "white",
@@ -42,7 +42,7 @@ const AdminMainOption = ({}) => {
                     </div>
                     <span>{mainOption[2]}</span>
                 </div>
-                <div className="option-a-m-co">
+                <div className="option-a-m-co"  onClick={()=> setNavigate(4)}>
                     <div className="icon-container">
                     <EmailIcon sx={{
                         color: "white",

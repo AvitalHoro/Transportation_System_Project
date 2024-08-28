@@ -20,7 +20,7 @@ const CancelButton = () => {
     )
 }
 
-const SendMessegeToPassengers = () => {
+const SendMessegeToPassengers = ({isAdmin}) => {
     const stopsList = [];
     return (
         <div className="send-mess-father-con">
@@ -36,7 +36,7 @@ const SendMessegeToPassengers = () => {
                      }}/>
                 </div>
             </div>
-            <CancelButton />
+            {isAdmin? <CancelButton />: null}
         </div>
     )
 }

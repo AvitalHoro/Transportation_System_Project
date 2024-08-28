@@ -7,10 +7,9 @@ import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { useMediaQuery } from '@mui/material';
+
 
 const ResponsiveDatePickers = () => {
   return (
@@ -37,8 +36,13 @@ const ResponsiveDatePickers = () => {
                 borderRadius: '40px',
                 height: '45px',
                 overflow: 'hidden',
-
             },
+            '& .MuiButtonBase-root:focus-visible': {
+                outline: 'none',
+              },
+              '& .MuiButtonBase-root:focus': {
+                outline: 'none',
+              },
             }} defaultValue={dayjs('2022-04-17')} />
         </DemoItem>
       </DemoContainer>
@@ -46,8 +50,19 @@ const ResponsiveDatePickers = () => {
   );
 }
 
+const ClearFilters = ({_color}) => {
+    return (
+        <div className="clear-filter-container"  style={{ backgroundColor: "white" }}>
+        <FilterAltOffIcon sx={{
+            color: _color,
+        }} />
+    </div>
+    )
+}
+
 
 const Filters = ({ _color }) => {
+
     const getStationsList = () => {
         return [
             "מרכזית בית שאן",
@@ -61,11 +76,16 @@ const Filters = ({ _color }) => {
             "אשדוד עד הלום",
         ]
     }
+
+    const isComputerScreen = useMediaQuery('(min-width:830px)');
+
     const stationsList = getStationsList();
     return (
         <div className="filters-container">
-            <span className="filter-title">סנן לפי</span>
-
+            <div className="row-flex">
+            <span className="filter-title" style={{color: _color }}>סנן לפי</span>
+            {!isComputerScreen? <ClearFilters/> : null}
+            </div>
             <div style={{marginTop: "8px"}}>
             <Autocomplete
                 disablePortal
@@ -77,8 +97,8 @@ const Filters = ({ _color }) => {
                     '& .MuiOutlinedInput-root': {
                         borderRadius: '40px',
                         height: '45px',
-                        backgroundColor: "#50BB82",
-                        color: 'white',
+                        // backgroundColor: "#50BB82",
+                        // color: 'white',
 
                     },
                     '& .MuiFormLabel-root': {
@@ -100,8 +120,8 @@ const Filters = ({ _color }) => {
                     '& .MuiOutlinedInput-root': {
                         borderRadius: '40px',
                         height: '45px',
-                        backgroundColor: "#50BB82",
-                        color: 'white',
+                        // backgroundColor: "#50BB82",
+                        // color: 'white',
 
                     },
                     '& .MuiFormLabel-root': {
@@ -113,11 +133,7 @@ const Filters = ({ _color }) => {
             </div>
             <ResponsiveDatePickers/> 
 
-            <div className="clear-filter-container"  style={{ backgroundColor: "white" }}>
-                    <FilterAltOffIcon sx={{
-                        color: "#50BB82",
-                    }} />
-                </div>
+            {isComputerScreen? <ClearFilters _color={_color}/>: null}
         </div>
 
     )

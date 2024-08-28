@@ -25,7 +25,7 @@ const Passengers = ({rideId}) => {
 
     return (
         <div className="pass-father-con">
-            <span style={{fontSize: "22px", fontWeight: '700', color: "#FF914D"}}>נוסעים</span>
+            <span style={{fontSize: "22px", fontWeight: '700', color: "#1F628E"}}>נוסעים</span>
         <div className="passenger-container" style={{marginTop: "10px"}}>
             <div className="pass-name">
                 <div className="title">שם הנוסע</div>

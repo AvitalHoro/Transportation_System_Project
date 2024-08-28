@@ -2,13 +2,12 @@ import React from "react";
 import "../../style/RideRegister.css";
 import "../../style/RideItem.css";
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
-import ScheduleIcon from '@mui/icons-material/Schedule';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import PeopleIcon from '@mui/icons-material/People';
 import PersonIcon from '@mui/icons-material/Person';
-import AdminOptions from "./AdminRideOptions";
+ 
 
-const RideItem = ({ride, setRide, setEditOrGallery}) => {
+const RideItem = ({ride, setRide, setViewOrGallery}) => {
 
     // const ride = {
     //     exit: "תל אביב",
@@ -21,41 +20,36 @@ const RideItem = ({ride, setRide, setEditOrGallery}) => {
     //     registerNum: "12",
     // }
     return (
-        <div className="ride-item-container">
-                <div className="details-container">
+        <div className="ride-item-container" style={{cursor: 'pointer'}}
+        onClick={()=>{setRide(ride); setViewOrGallery(1);}}>
+                <div className="details-container" style={{width: '100%'}}>
                     <div className="detail">
-                        <ArrowCircleLeftIcon style={{ color: "#FF914D" }} />
+                        <ArrowCircleLeftIcon style={{ color: "#1F628E" }} />
                         {/* <img src="./icons/direction-icon.png"></img> */}
-                        <span style={{ fontWeight: 'bold', color: "#FF914D", fontSize: "18px" }}>מ{ride.exit} ל{ride.target}</span>
+                        <span style={{ fontWeight: 'bold', color: "#1F628E", fontSize: "18px" }}>מ{ride.exit} ל{ride.target}</span>
                     </div>
                     <div className="detail">
-                        <PersonIcon style={{ color: "#FF914D" }} />
+                        <PersonIcon style={{ color: "#1F628E" }} />
                         {/* <img src="./icons/date-icon.png"></img> */}
-                        <span>{ride.driver}</span>
+                        <span>אתה הנהג</span>
                     </div>
                     <div className="detail">
-                        <PeopleIcon style={{ color: "#FF914D" }} />
+                        <PeopleIcon style={{ color: "#1F628E" }} />
                         {/* <img src="./icons/date-icon.png"></img> */}
                         <span>{ride.registerNum} רשומים</span>
                     </div>
                     <div className="detail">
-                        <CalendarMonthIcon style={{ color: "#FF914D" }} />
+                        <CalendarMonthIcon style={{ color: "#1F628E" }} />
                         {/* <img src="./icons/date-icon.png"></img> */}
                         <span>{ride.date}</span>
                     </div>
                     <div className="detail">
-                        {/* <ScheduleIcon style={{ color: "#FF914D" }} /> */}
+                        {/* <ScheduleIcon style={{ color: "#1F628E" }} /> */}
                         {/* <img src="./icons/time-icon.png"></img> */}
-                        <span style={{color: "#FF914D", fontSize: "22px"}}>{ride.time}</span>
+                        <span style={{color: "#1F628E", fontSize: "22px"}}>{ride.time}</span>
                     </div>
 
                 </div>
-
-            <AdminOptions 
-            setEditOrGallery={setEditOrGallery} 
-            setRide={setRide} 
-            ride={ride} />
-
         </div>
 
     )

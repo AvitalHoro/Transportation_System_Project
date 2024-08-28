@@ -38,7 +38,7 @@ const RegisterPage = () => {
             <div className="register-page-title">
                 <span>בחר את הנסיעה אליה אתה רוצה להירשם</span>
             </div>
-            <Filters />
+            <Filters _color={"#50BB82"}/>
             <div className="register-page-content">
                 {
                     allRideList.map((ride) =>

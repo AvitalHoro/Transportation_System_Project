@@ -166,6 +166,18 @@ header {
     border-radius: 40px; */
 }
 
+@media (max-width: 830px) {
+    .filters-container {
+      flex-direction: column;
+  }
+  .row-flex {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  }
+  
+}
+
 .filter-title {
   font-size: 16px;
   border-radius: 40px;
@@ -178,7 +190,6 @@ header {
   display: flex;
   align-items: center;
   margin-top: 8px;
-
 }
 
 .clear-filter-container {

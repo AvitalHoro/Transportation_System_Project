@@ -6,7 +6,7 @@ const Header = ( { userType, name } ) => {
         return (
             <>
                 <header dir="rtl">
-                    <img className="logo" src={userType=='user'? "../../userLogo.png" : "../../adminLogo.png"} alt="בדרך שלך" />
+                    <img className="logo" src={userType=='user'? "../../userLogo.png" : userType=='admin'? "../../adminLogo.png": "../../driverLogo.png"} alt="בדרך שלך" />
                     <div className="spacer"></div>
                     <span className="hello_user">שלום {name? name: "נוסע"}</span>
                     {userType=='user' &&

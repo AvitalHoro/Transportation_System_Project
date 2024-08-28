@@ -2,7 +2,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #50bb82;
+    background-color: #FF914D;
     border-radius: 100%;
     width: 50px;
     height: 50px;
@@ -85,3 +85,33 @@
       flex: 1 1 100%; /* Each item takes full width of the container */
     }
   }
+
+  .menu-button {
+    position: fixed;
+    top: 80px;
+    right: 10px;
+    padding: 13px 10px 5px 10px;
+    width: 40px;
+    height: 40px;
+    background-color: #FF914D;
+    color: white;
+    border: none;
+    border-radius: 100%;
+    cursor: pointer;
+    z-index: 1000;
+  }
+
+  .add-ride-container, .add-driver-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 30px;
+    background-color: white;
+    border-radius: 25px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  }
+
+  .page-add-driver-container, .send-messege-for-all-page {
+    padding: 6%;
+  }
+

@@ -2,7 +2,7 @@ import React from "react";
 import Filters from "../../layout/Filters";
 import RideItem from "./RideItem";
 
-const RideGalleryPage = () => {
+const RideGalleryPage = ({setEditOrGallery, setRide}) => {
 
 
     const getAllRides = () => {
@@ -47,11 +47,13 @@ const RideGalleryPage = () => {
             <div className="register-page-title">
                 <span>בחר את הנסיעה אותה ברצונך לערוך</span>
             </div>
-            <Filters />
+            <Filters _color={"#FF914D"} />
             <div className="ride-gallery-content">
                 {
                     allRideList.map((ride) =>
                         <RideItem
+                    setEditOrGallery={setEditOrGallery}
+                    setRide={setRide}
                            ride={ride}
                         />
                     )
