@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&display=swap');
+
 .info-horizonal-container {
     display: flex;
     flex-direction: row;
@@ -222,7 +224,7 @@
     border: #888888 1px solid;
     color: rgba(136, 136, 136, 0.9);
     font-size: 1.1em;
-    font-family: sans-serif;
+    font-family: "Assistant", sans-serif;
     background-color: transparent;
 }
 

@@ -11,37 +11,40 @@ import Nisayon from './Nisayon';
 
 function App() {
 
-  const user = {
-    name: "אביטל",
-    type: "driver"
-  }
+  const user = localStorage.getItem('user') || null;
+  console.log(user);  
+  // const user = {
+  //   name: "אביטל",
+  //   type: "driver"
+  // }
 
   return (
     <Router>
 
-      <Header userType={user.type} name={user.name}></Header>
-      <Nisayon></Nisayon>
-      {/* <div className="app-container" dir='rtl'>
+      {user? <Header userType={user.type} name={user.name}></Header> : <Header></Header>}
+      {/* <Nisayon></Nisayon> */}
+      <div className="app-container" dir='rtl'>
 
 
         <Routes>
-          <Route path="/" element={<NavigateHandler />} />
+          <Route path="/" element={<NavigateHandler user={user} />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/home/*" element={<Home userType={user.type} />} />
+          <Route path="/home/*" element={<Home userType={user? user.type: null} />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </div> */}
+      </div>
     </Router>
   );
 };
 
-const NavigateHandler = () => {
-  const user = "hj"//localStorage.getItem('user');
+const NavigateHandler = ({user}) => {
 
   if (user) {
+    console.log("user");
     return <Navigate to="/home" />;
   } else {
+    console.log("no user");
     return <Navigate to="/login" />;
   }
 };

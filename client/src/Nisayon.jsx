@@ -1,23 +1,16 @@
 import React from "react";
 
-
+import { getRequest } from "./requests";
 
 const Nisayon = () => {
 
-    fetch('http://localhost:5000/api/messages/generals', {
-        method: 'GET',
-        headers: {
-            'Authorization': 'Bearer TOKEN'
-        }
-    })
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => console.error('Error:', error));
+    const data = getRequest('/messages/generals');
 
+    console.log("data from nisayon: ",data);
 
     return (
         <div>
-            <h1>ניסיון</h1>
+            {data.map(n=> <div>{n.content}</div>)}
         </div>
     )
 }
