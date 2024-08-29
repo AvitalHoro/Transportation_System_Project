@@ -10,15 +10,22 @@ const Login = () => {
 
   const handleLogin =  async () => {
     {
+
+      if( !username || !password) {
+        console.error('All fields are required');
+        alert('כל השדות הינם חובה');
+        return;
+      }
+
       console.log('Logging in with:', username, password);
       const result = await login(username, password);
 
       if (result) {
         console.log('Logged in successfully:', result);
-        // Handle the successful login (e.g., save the token, redirect the user)
+        window.location.replace('/home');
       } else {
         console.error('Login failed');
-        // Handle the failed login (e.g., show an error message to the user)
+        alert('ההתחברות נכשלה. נסה שנית או פנה לתמיכה');
       }
     }
   }

@@ -11,60 +11,92 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useMediaQuery } from '@mui/material';
 
 
-const ResponsiveDatePickers = () => {
-  return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DemoContainer
-        components={[
-          'DatePicker',
-          'MobileDatePicker',
-          'DesktopDatePicker',
-          'StaticDatePicker',
-        ]}
-      >
-      
-        <DemoItem>
-          <DatePicker
-          id="date-picker-inline"
-          sx={{ 
-            backgroundColor: "#50BB82",
-            color: 'white',
-            borderRadius: '40px',
-            minWidth: '100px',
-            maxWidth: '200px',
-            '& .MuiInputBase-root': {
-                borderRadius: '40px',
-                height: '45px',
-                overflow: 'hidden',
-            },
-            '& .MuiButtonBase-root:focus-visible': {
-                outline: 'none',
-              },
-              '& .MuiButtonBase-root:focus': {
-                outline: 'none',
-              },
-            }} defaultValue={dayjs('2022-04-17')} />
-        </DemoItem>
-      </DemoContainer>
-    </LocalizationProvider>
-  );
+const ResponsiveDatePickers = ({ setFilterDate }) => {
+
+    const handleChangeDate = (date) => {
+        const thisDate = new Date(date);
+        const year = thisDate.getFullYear();
+        const month = String(thisDate.getMonth() + 1).padStart(2, '0'); // Adding 1 because getMonth() returns 0-11
+        const day = String(thisDate.getDate()).padStart(2, '0');
+
+        const formattedDate = `${year}-${month}-${day}`;
+        console.log(formattedDate);
+        setFilterDate(formattedDate);
+    }
+    return (
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer
+                components={[
+                    'DatePicker',
+                    'MobileDatePicker',
+                    'DesktopDatePicker',
+                    'StaticDatePicker',
+                ]}
+            >
+
+                <DemoItem>
+                    <DatePicker
+                        onChange={(date) => handleChangeDate(date)}
+                        id="date-picker-inline"
+                        format="DD/MM/YYYY"
+                        sx={{
+                            backgroundColor: "#50BB82",
+                            color: 'white',
+                            borderRadius: '40px',
+                            minWidth: '100px',
+                            maxWidth: '200px',
+                            '& .MuiInputBase-root': {
+                                borderRadius: '40px',
+                                height: '45px',
+                                overflow: 'hidden',
+                            },
+                            '& .MuiButtonBase-root:focus-visible': {
+                                outline: 'none',
+                            },
+                            '& .MuiButtonBase-root:focus': {
+                                outline: 'none',
+                            },
+                        }} />
+                </DemoItem>
+            </DemoContainer>
+        </LocalizationProvider>
+    );
 }
 
-const ClearFilters = ({_color}) => {
+const ClearFilters = ({ _color, setFilterDate, setFilterToStation, setFilterFromStation, setDateValue, setFromSat, setToSat }) => {
+
+    const handleClearFilters = () => {
+        setFilterDate("");
+        setFilterToStation("");
+        setFilterFromStation("");
+        setDateValue(null);
+        setFromSat(null);
+        setToSat(null);
+    }
     return (
-        <div className="clear-filter-container"  style={{ backgroundColor: "white" }}>
-        <FilterAltOffIcon sx={{
-            color: _color,
-        }} />
-    </div>
+        <div className="clear-filter-container" style={{ backgroundColor: "white" }}
+            onClick={handleClearFilters}>
+            <FilterAltOffIcon sx={{
+                color: _color,
+            }} />
+        </div>
     )
 }
 
 
-const Filters = ({ _color }) => {
+const Filters = ({ _color, setFilterDate, setFilterToStation, setFilterFromStation }) => {
 
-    const getStationsList = () => {
+    const getAllStations = () => {
+
+        //wait for server
+        //only station names
+
         return [
+            "תחנה מרכזית תל אביב",
+            "תחנה מרכזית חיפה",
+            "תחנה מרכזית ירושלים",
+            "צומת מסובים",
+            "מחלף חמד",
             "מרכזית בית שאן",
             "מרכזית בית שמש",
             "מרכזית בית יהושע",
@@ -77,63 +109,93 @@ const Filters = ({ _color }) => {
         ]
     }
 
+    const [dateValue, setDateValue] = React.useState(null);
+    const [toSat, setToSat] = React.useState(null);
+    const [fromSat, setFromSat] = React.useState(null);
+
     const isComputerScreen = useMediaQuery('(min-width:830px)');
 
-    const stationsList = getStationsList();
+    const stationsList = getAllStations();
     return (
         <div className="filters-container">
             <div className="row-flex">
-            <span className="filter-title" style={{color: _color }}>סנן לפי</span>
-            {!isComputerScreen? <ClearFilters/> : null}
+                <span className="filter-title" style={{ color: _color }}>סנן לפי</span>
+                {!isComputerScreen ? <ClearFilters
+                    _color={_color}
+                    setFilterDate={setFilterDate}
+                    setFilterToStation={setFilterToStation}
+                    setFilterFromStation={setFilterFromStation}
+                /> : null}
             </div>
-            <div style={{marginTop: "8px"}}>
-            <Autocomplete
-                disablePortal
-                disableClearable
-                id="combo-box-drop-station"
-                options={stationsList}
-                sx={{
-                    minWidth: '200px',
-                    '& .MuiOutlinedInput-root': {
-                        borderRadius: '40px',
-                        height: '45px',
-                        // backgroundColor: "#50BB82",
-                        // color: 'white',
-
-                    },
-                    '& .MuiFormLabel-root': {
-                        lineHeight: '0.8',
+            <div style={{ marginTop: "8px" }}>
+                <Autocomplete
+                    value={fromSat}
+                    onChange={(event, newValue) => {
+                            setFilterFromStation(newValue);
+                            setFromSat(newValue);
+                            console.log(newValue);
+                        }
                     }
-                }}
-                renderInput={(params) => <TextField {...params} label="מוצא" />}
-            />
+                    disablePortal
+                    disableClearable
+                    id="combo-box-drop-station"
+                    options={stationsList}
+                    sx={{
+                        minWidth: '200px',
+                        '& .MuiOutlinedInput-root': {
+                            borderRadius: '40px',
+                            height: '45px',
+                            // backgroundColor: "#50BB82",
+                            // color: 'white',
+
+                        },
+                        '& .MuiFormLabel-root': {
+                            lineHeight: '0.8',
+                        }
+                    }}
+                    renderInput={(params) => <TextField {...params} label="מוצא" />}
+                />
             </div>
 
-            <div style={{marginTop: "8px"}}>
-            <Autocomplete
-                disablePortal
-                disableClearable
-                id="combo-box-drop-station"
-                options={stationsList}
-                sx={{
-                    minWidth: '200px',
-                    '& .MuiOutlinedInput-root': {
-                        borderRadius: '40px',
-                        height: '45px',
-                        // backgroundColor: "#50BB82",
-                        // color: 'white',
+            <div style={{ marginTop: "8px" }}>
+                <Autocomplete
+                    value={toSat}
+                    onChange={(event, newValue) => {
+                        setFilterToStation(newValue);
+                        setToSat(newValue);
+                        console.log(newValue);
+                    }}
+                    disablePortal
+                    disableClearable
+                    id="combo-box-drop-station"
+                    options={stationsList}
+                    sx={{
+                        minWidth: '200px',
+                        '& .MuiOutlinedInput-root': {
+                            borderRadius: '40px',
+                            height: '45px',
+                            // backgroundColor: "#50BB82",
+                            // color: 'white',
 
-                    },
-                    '& .MuiFormLabel-root': {
-                        lineHeight: '0.8',
-                    }
-                }}
-                renderInput={(params) => <TextField {...params} label="יעד" />}
-            />
+                        },
+                        '& .MuiFormLabel-root': {
+                            lineHeight: '0.8',
+                        }
+                    }}
+                    renderInput={(params) => <TextField {...params} label="יעד" />}
+                />
             </div>
-            <ResponsiveDatePickers/> 
+            <ResponsiveDatePickers setFilterDate={setFilterDate} dateValue={dateValue} />
 
-            {isComputerScreen? <ClearFilters _color={_color}/>: null}
+            {isComputerScreen ? <ClearFilters
+                _color={_color}
+                setFilterDate={setFilterDate}
+                setFilterToStation={setFilterToStation}
+                setFilterFromStation={setFilterFromStation}
+                setDateValue={setDateValue}
+                setFromSat={setFromSat}
+                setToSat={setToSat}
+            /> : null}
         </div>
 
     )

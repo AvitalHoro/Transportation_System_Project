@@ -21,7 +21,8 @@ const RideItem = ({ride, setRide, setEditOrGallery}) => {
     //     registerNum: "12",
     // }
     return (
-        <div className="ride-item-container">
+        <div className="ride-item-container" style={{
+            border: ride.status==="active"? "" : "rgb(237, 29, 43) 4px solid" }}>
                 <div className="details-container">
                     <div className="detail">
                         <ArrowCircleLeftIcon style={{ color: "#FF914D" }} />

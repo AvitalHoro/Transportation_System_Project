@@ -4,6 +4,7 @@ import Message from "../Message";
 const MyMessagePage = ({ rideIds, userId }) => {
 
     const getGeneralmessage = () => {
+        //wait for server
         return [
             {
             content: "הודעה כללית",
@@ -15,20 +16,24 @@ const MyMessagePage = ({ rideIds, userId }) => {
     }
 
     const getRidemessage = (rideId) => {
+        //wait for server
         return [
             {
             content: "הודעה כללית",
             date: "2021-06-01",
             hour: "08:00",
-            from: "admin",
+            fromId: 123,
         }
     ]
     }
 
-
     const generalmessage = getGeneralmessage();
-    const ridemessage = rideIds.map(rideId => getRidemessage(rideId));
 
+    let ridemessage = [];
+    rideIds.map(rideId => ridemessage.push(...getRidemessage(rideId)));
+
+    console.log(ridemessage);
+    console.log(generalmessage);
     return (
         <div>
             <div className="general-message-container">

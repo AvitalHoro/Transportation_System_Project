@@ -29,7 +29,6 @@ const getTransportationsOfDriver = async (driverId) => {
         Transportation.Transportation_Status,
         Transportation.DriverID,
         Users.Username AS DriverName,
-        Transportation.MaxPassengers
     FROM 
         Transportation
     JOIN 
@@ -42,7 +41,7 @@ const getTransportationsOfDriver = async (driverId) => {
 };
 
 const getTransportationsOfPassenger = async (passengerId) => {
-    const query = `SELECT T.TransportationID, T.Transportation_Date, T.Transportation_Time, T.Transportation_Status, T.MaxPassengers, 
+    const query = `SELECT T.TransportationID, T.Transportation_Date, T.Transportation_Time, T.Transportation_Status, 
                     R.PickupStationID, R.DropoffStationID, R.ExecutionDate, R.Registration_Status
                     FROM Registrations_To_Transportation R
                     JOIN Transportation T ON R.TransportationID = T.TransportationID

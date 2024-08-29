@@ -23,10 +23,11 @@ const Register = () => {
 
         if (result) {
             console.log('User registered successfully:', result);
-            // Redirect to a login page or another part of the application
+            window.location.replace('/login');
+            alert('ההרשמה בוצעה בהצלחה, כעת ניתן להתחבר');
         } else {
             console.error('Registration failed');
-            // Show an error message to the user
+            alert('ההרשמה נכשלה. נסה שנית או פנה לתמיכה');
         }
     };
 

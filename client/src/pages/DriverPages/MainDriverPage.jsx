@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import RideItem from "./RideItem";
 import Filters from "../../layout/Filters";
 import RideViewPage from "./RideViewPage";
@@ -7,64 +7,112 @@ const MainDriverPage = () => {
 
 
     const getMyRides = () => {
+
+        //wait for server
         return [
             {
-                exit: "תל אביב",
-                target: "ירושלים",
-                date: "2021-06-01",
+                rideId: 123,
                 time: "08:00",
-                seats: 30,
-                price: 30,
-                driver: "דוד כהן",
-                registerNum: "12",
+                date: "2021-06-01",
+                fromCity: "ירושלים",
+                toCity: "תל אביב",
+                RideStations: [{
+                    name: "תחנה מרכזית ירושלים",
+                    id: 1,
+                    type: "Starting"
+                },
+                {
+                    name: "תחנה מרכזית תל אביב",
+                    id: 2,
+                    type: "Destination"
+                },
+                {
+                    name: "מחלף חמד",
+                    id: 3,
+                    type: "Intermediate"
+                }
+                ],
+                Registers: [
+                    {
+                        name: "אבי רבינוביץ'"
+                        fromStation: "תחנה מרכזית חיפה"
+                        toStation: "צומת מסובים"
+                    },
+                    {
+                        
+                    },
+
+                ]
             },
             {
-                exit: "חיפה",
-                target: "קצרין",
-                date: "2024-06-01",
-                time: "16:30",
-                seats: 30,
-                price: 30,
-                driver: "דוד כהן",
-                registerNum: "124",
-            },
-            {
-                exit: "תל אביב",
-                target: "חיפה",
-                date: "2021-06-01",
+                id: 124,
                 time: "08:00",
-                seats: 30,
-                price: 30,
-                driver: "דוד כהן",
-                registerNum: "8",
-            },
-        ];
+                date: "2021-06-01",
+                fromCity: "חיפה",
+                toCity: "תל אביב",
+                RideStations: [
+                    {
+                        name: "תחנה מרכזית תל אביב",
+                        id: 1,
+                        type: "Destination"
+                    },
+                    {
+                        name: "תחנה מרכזית חיפה",
+                        id: 2,
+                        type: "Starting"
+                    },
+                    {
+                        name: "צומת מסובים",
+                        id: 3,
+                        type: "Intermediate"
+                    }
+                ],
+            }
+        ]
     }
+
+    const [filterDate, setFilterDate] = React.useState("");
+    const [filterToStation, setFilterToStation] = React.useState("");
+    const [filterFromStation, setFilterFromStation] = React.useState("");
+
+    const myRideList = getMyRides().filter(ride => {
+        return (
+            (ride.date === filterDate || filterDate === "") &&
+            (filterToStation === "" || ride.stationsList.find(station => station.name === filterToStation && station.type !== "Starting")) &&
+            (filterFromStation === "" || ride.stationsList.find(station => station.name === filterFromStation && station.type !== "Destination"))
+        );
+    });
+
 
     const [viewOrGallery, setViewOrGallery] = useState(0);
     const [ride, setRide] = useState({});
-    const MyRideList = getMyRides();
+
     return (
-        <div style={{padding:'1.5em'}}>
-                
-                {viewOrGallery? <RideViewPage ride={ride} setViewOrGallery={setViewOrGallery}/> : 
-        <div style={{padding:'1.5em'}}>
-  <div className="register-page-title">
-                <span>לחץ על נסיעה כדי לראות פרטים נוספים</span>
-            </div>
-            <Filters _color={"#1F628E"} />
-            <div className="ride-gallery-content">
-                {
-                    MyRideList.map((ride) =>
-                        <RideItem
-                    setViewOrGallery={setViewOrGallery}
-                    setRide={setRide}
-                           ride={ride}
-                        />
-                    )
-                }
-            </div>        </div>}
-            </div>
+        <div style={{ padding: '1.5em' }}>
+
+            {viewOrGallery ? <RideViewPage ride={ride} setViewOrGallery={setViewOrGallery} /> :
+                <div style={{ padding: '1.5em' }}>
+                    <div className="register-page-title">
+                        <span>לחץ על נסיעה כדי לראות פרטים נוספים</span>
+                    </div>
+                    <Filters _color={"#1F628E"}
+                        setFilterDate={setFilterDate}
+                        setFilterToStation={setFilterToStation}
+                        setFilterFromStation={setFilterFromStation}
+                    />
+                    <div className="ride-gallery-content">
+                        {
+                            myRideList.map((ride) =>
+                                <RideItem
+                                    setViewOrGallery={setViewOrGallery}
+                                    setRide={setRide}
+                                    ride={ride}
+                                />
+                            )
+                        }
+                    </div>
+                </div>}
+        </div>
     )
 }
 

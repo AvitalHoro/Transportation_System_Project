@@ -6,16 +6,21 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Stations from "./Stations";
 
-const RideRegister = ({rideId, exit, target, date, time}) => {
+const RideRegister = ({rideId, exit, target, date, time, stationsList}) => {
 
-    // const ride = {
-    //     exit: "תל אביב",
-    //     target: "ירושלים",
-    //     date: "2021-06-01",
-    //     time: "08:00",
-    //     seats: 3,
-    //     price: 30
-    // }
+    const [fromStation, setFromStation] = React.useState(null);
+    const [toStation, setToStation] = React.useState(null);
+
+    const handleRegister = () => {
+        if (!fromStation || !toStation) {
+            alert("אנא בחר תחנות");
+            return;
+        }
+        //wait for server
+        //send rideId, fromStation, toStation
+        console.log("Register to ride ", rideId, fromStation, toStation);
+    }
+
     return (
         <div className="ride-register-container">
             <div className="top-register-container">
@@ -38,7 +43,8 @@ const RideRegister = ({rideId, exit, target, date, time}) => {
                 </div>
 
 
-                <div className="plus-container">
+                <div className="plus-container"
+                onClick={handleRegister}>
                     <AddCircleIcon sx={{
                         color: "#50bb82",
                         fontSize: "550%",
@@ -51,7 +57,12 @@ const RideRegister = ({rideId, exit, target, date, time}) => {
                     }} />
                 </div>
             </div>
-            <Stations />
+            <Stations 
+            stationsList={stationsList}
+            isRegister={true}
+            setToStation={setToStation}
+            setFromStation={setFromStation}
+            />
         </div>
 
     )

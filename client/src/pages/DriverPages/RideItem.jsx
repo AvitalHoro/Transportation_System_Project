@@ -26,7 +26,7 @@ const RideItem = ({ride, setRide, setViewOrGallery}) => {
                     <div className="detail">
                         <ArrowCircleLeftIcon style={{ color: "#1F628E" }} />
                         {/* <img src="./icons/direction-icon.png"></img> */}
-                        <span style={{ fontWeight: 'bold', color: "#1F628E", fontSize: "18px" }}>מ{ride.exit} ל{ride.target}</span>
+                        <span style={{ fontWeight: 'bold', color: "#1F628E", fontSize: "18px" }}>מ{ride.fromCity} ל{ride.toCity}</span>
                     </div>
                     <div className="detail">
                         <PersonIcon style={{ color: "#1F628E" }} />

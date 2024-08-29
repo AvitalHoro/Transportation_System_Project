@@ -5,15 +5,15 @@ import MainAdminPage from './AdminPages/MainAdminPage';
 import MainDriverPage from './DriverPages/MainDriverPage';
 
 
-const Home = ({ userType }) => {
+const Home = ({ user }) => {
 
     return (
         <>
         <Routes>
-            <Route path="/" element={<NavigateHandler userType={userType} />} />
-          <Route path="user/*" element={<MainUserPage />} />
+            <Route path="/" element={<NavigateHandler userType={user.type} />} />
+          <Route path="user/*" element={<MainUserPage user={user}/>} />
           <Route path="admin/*" element={<MainAdminPage />} />
-          <Route path="driver/*" element={<MainDriverPage />} />
+          <Route path="driver/*" element={<MainDriverPage user={user}/>} />
         </Routes>
         </>
     )

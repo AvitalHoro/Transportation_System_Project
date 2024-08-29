@@ -5,6 +5,7 @@ import RideRegister from "./RideRegister";
 const RegisterPage = () => {
 
     const getAllNextRides = () => {
+        //wait for server
         return [
             {
                 id: 1234,
@@ -12,6 +13,23 @@ const RegisterPage = () => {
                 target: "ירושלים",
                 date: "2021-06-01",
                 time: "08:00",
+                stationsList: [
+                    {
+                        name: "תחנה מרכזית תל אביב",
+                        id: 1,
+                        type: "Starting"
+                    },
+                    {
+                        name: "תחנה מרכזית ירושלים",
+                        id: 2,
+                        type: "Destination"
+                    },
+                    {
+                        name: "מחלף חמד",
+                        id: 3,
+                        type: "Intermediate"
+                    }
+                ]
             },
             {
                 id: 456,
@@ -19,6 +37,23 @@ const RegisterPage = () => {
                 target: "קצרין",
                 date: "2024-06-01",
                 time: "16:30",
+                stationsList: [
+                    {
+                        name: "תחנה מרכזית חיפה",
+                        id: 1,
+                        type: "Starting"
+                    },
+                    {
+                        name: "תחנה מרכזית קצרין",
+                        id: 2,
+                        type: "Destination"
+                    },
+                    {
+                        name: "צומת מסובים",
+                        id: 3,
+                        type: "Intermediate"
+                    }
+                ]
             },
             {
                 id: 789,
@@ -26,19 +61,52 @@ const RegisterPage = () => {
                 target: "חיפה",
                 date: "2021-06-01",
                 time: "08:00",
+                stationsList: [
+                    {
+                        name: "תחנה מרכזית תל אביב",
+                        id: 1,
+                        type: "Starting"
+                    },
+                    {
+                        name: "תחנה מרכזית חיפה",
+                        id: 2,
+                        type: "Destination"
+                    },
+                    {
+                        name: "צומת מסובים",
+                        id: 3,
+                        type: "Intermediate"
+                    }
+                ]
             },
 
         ];
     }
 
-    const allRideList = getAllNextRides();
+    const [filterDate, setFilterDate] = React.useState("");
+    const [filterToStation, setFilterToStation] = React.useState("");
+    const [filterFromStation, setFilterFromStation] = React.useState("");
 
+    const allRideList = getAllNextRides().filter(ride => {
+        return (
+            (ride.date === filterDate || filterDate === "") &&
+            (filterToStation === "" || ride.stationsList.find(station => station.name === filterToStation && station.type !== "Starting")) &&
+            (filterFromStation === "" || ride.stationsList.find(station => station.name === filterFromStation && station.type !== "Destination"))
+        );
+    });
+
+    console.log(allRideList);
+    
     return (
-        <div className="user-page-container register-page">
+        <div className="register-page">
             <div className="register-page-title">
                 <span>בחר את הנסיעה אליה אתה רוצה להירשם</span>
             </div>
-            <Filters _color={"#50BB82"}/>
+            <Filters _color={"#50BB82"}
+                setFilterDate={setFilterDate}
+                setFilterToStation={setFilterToStation}
+                setFilterFromStation={setFilterFromStation}
+            />
             <div className="register-page-content">
                 {
                     allRideList.map((ride) =>
@@ -47,7 +115,8 @@ const RegisterPage = () => {
                             exit={ride.exit}
                             target={ride.target}
                             date={ride.date}
-                            time={ride.time} 
+                            time={ride.time}
+                            stationsList={ride.stationsList}
                         />
                     )
                 }

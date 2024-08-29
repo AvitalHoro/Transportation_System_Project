@@ -4,43 +4,41 @@ import Autocomplete from '@mui/material/Autocomplete';
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 
 
-const Stations = ({ rideId, defaultToStation, defaultFromStation }) => {
+const Stations = ({ registerId, defaultToStation, defaultFromStation, stationsList, isRegister, setToStation, setFromStation }) => {
 
-    const getFromStations = (rideId) => {
-        return [
-            "מרכזית בית שאן",
-            "מרכזית בית שמש",
-            "מרכזית בית יהושע",
-            "מרכזית בית קמה",
-            "מרכזית בית שקמה",
-            "מרכזית ביתר עילית",
-            "ארלוזורוב תל אביב",
-            "ארסוף",
-            "אשדוד עד הלום",]
+    function getIdByName(name) {
+        const station = stationsList.find(station => station.name === name);
+        return station ? station.id : null; // Return the id if found, otherwise return null
     }
 
-    const getToStations = (rideId) => {
-        return [
-            "מרכזית בית שאן",
-            "מרכזית בית שמש",
-            "מרכזית בית יהושע",
-            "מרכזית בית קמה",
-            "מרכזית בית שקמה",
-            "מרכזית ביתר עילית",
-            "ארלוזורוב תל אביב",
-            "ארסוף",
-            "אשדוד עד הלום",
-        ]
+    const handleSetStation = (station, type) => {
+        if (isRegister) {
+            if (type === "from") {
+                setFromStation(station);
+            } else {
+                setToStation(station);
+            }
+            return;
+        }
+        const newStationId = getIdByName(station);
+        if (type === "from") {
+
+            //wait for server
+            //replace the station id in the register, use newStationId
+            console.log("From station:", station);
+            setDefaultFrom(station);
+        } else {
+            //wait for server
+            console.log("To station:", station);
+            setDefaultTo(station);
+        }
     }
 
     const [defaultFrom, setDefaultFrom] = useState(defaultFromStation);
     const [defaultTo, setDefaultTo] = useState(defaultToStation);
 
-    const fromStations = getFromStations(rideId);
-    const toStations = getToStations(rideId);
-
-    const myFromStation = fromStations[0];
-    const myToStation = toStations[0];
+    const fromStations = stationsList.filter(station => station.type !== "Destination").map(station => station.name);
+    const toStations = stationsList.filter(station => station.type !== "Starting").map(station => station.name);
 
     return (
         <div style={{
@@ -58,7 +56,11 @@ const Stations = ({ rideId, defaultToStation, defaultFromStation }) => {
                 disablePortal
                 disableClearable
                 id="combo-box-drop-station"
-                options={toStations}
+                options={fromStations}
+                onChange={(event, newValue) => {
+                    setDefaultTo(newValue);
+                    handleSetStation(newValue, "to");
+                }}
                 sx={{
                     width: "46%",
                     '& .MuiOutlinedInput-root': {
@@ -84,6 +86,11 @@ const Stations = ({ rideId, defaultToStation, defaultFromStation }) => {
                 disableClearable
                 id="combo-box-drop-station"
                 options={toStations}
+                onChange={(event, newValue) => {
+                    setDefaultFrom(newValue);
+                    handleSetStation(newValue, "from");
+                }
+                }
                 sx={{
                     width: "46%",
                     '& .MuiOutlinedInput-root': {
@@ -92,7 +99,7 @@ const Stations = ({ rideId, defaultToStation, defaultFromStation }) => {
                     },
                     '& .MuiFormLabel-root': {
                         lineHeight: '0.8',
-                    }
+                    },
                 }}
                 renderInput={(params) => <TextField {...params} label="תחנת ירידה" />}
             />

@@ -1,9 +1,11 @@
 .user-page-container {
+    padding: 1.5em;
     position: fixed;
     right: 120px;
     left: 0;
     bottom: 0;
     top: 70px;
+    overflow-y: scroll;
 }
 
 @media (max-width: 600px) {
@@ -58,7 +60,7 @@
     align-items: start;
     justify-content: space-between;
     gap: 10px;
-    padding: 10px;
+    /* padding: 10px; */
 }
 
 .general-message-container, .ride-message-container {
@@ -162,6 +164,12 @@
         width: 100%;
     }
 
+    @media (max-width: 800px) {
+        .info-schedule {
+            flex-direction: column;
+        }
+    }
+
     .day-title {
         border-radius: 25px;
         background-color: #50BB82;
@@ -205,5 +213,9 @@
         flex-direction: column;
         gap: 10px;
     }
+
+    /* .my-message-single-page {
+        padding: 1.5em;
+    } */
 
     
