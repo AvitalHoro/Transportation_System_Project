@@ -5,6 +5,7 @@ import Passengers from "../AdminPages/RideEditPageComponent/Passengers";
 import Stops from "../AdminPages/RideEditPageComponent/Stops";
 import SendMessegeToPassengers from "../AdminPages/RideEditPageComponent/SendMessegeToPassengers";
 import '../../style/AdminRideEdit.css'
+import { register } from "../../requests";
 
 const RideViewPage = ({ ride, setViewOrGallery }) => {
         return (
@@ -30,8 +31,8 @@ const RideViewPage = ({ ride, setViewOrGallery }) => {
                     <InfoRideComponent ride={ride} _color={"#1F628E"}/>
                     </div>
                     <div className="bottom-ride-edit-main">
-                    <Passengers rideId={ride.id} />
-                    <Stops rideId={ride.id} isAdmin={false}/>
+                    <Passengers registers={ride.Registers} />
+                    <Stops stops={ride.RideStations} isAdmin={false}/>
                     <SendMessegeToPassengers rideId={ride.id} isAdmin={false} />
                     </div>
                 </div>

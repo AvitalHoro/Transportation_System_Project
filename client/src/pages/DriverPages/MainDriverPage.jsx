@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import RideItem from "./RideItem";
 import Filters from "../../layout/Filters";
 import RideViewPage from "./RideViewPage";
+import Register from "../Register";
 
 const MainDriverPage = () => {
 
@@ -34,13 +35,20 @@ const MainDriverPage = () => {
                 ],
                 Registers: [
                     {
-                        name: "אבי רבינוביץ'"
-                        fromStation: "תחנה מרכזית חיפה"
-                        toStation: "צומת מסובים"
+                        name: "אבי רבינוביץ'",
+                        fromStation: "תחנה מרכזית חיפה",
+                        toStation: "צומת מסובים",
                     },
                     {
-                        
+                        name: "יסכה גדות",
+                        fromStation: "תחנה מרכזית חיפה",
+                        toStation: "צומת מסובים",
                     },
+                    {
+                        name: "אבי רבינוביץ'",
+                        fromStation: "תחנה מרכזית קצרין",
+                        toStation: "מחלף חמד",
+                    }
 
                 ]
             },
@@ -67,6 +75,18 @@ const MainDriverPage = () => {
                         type: "Intermediate"
                     }
                 ],
+                Registers: [
+                    {
+                        name: "אבי רבינוביץ'",
+                        fromStation: "תחנה מרכזית חיפה",
+                        toStation: "צומת מסובים",
+                    },
+                    {
+                        name: "יסכה גדות",
+                        fromStation: "תחנה מרכזית חיפה",
+                        toStation: "צומת מסובים",
+                    },
+                ],
             }
         ]
     }
@@ -78,8 +98,8 @@ const MainDriverPage = () => {
     const myRideList = getMyRides().filter(ride => {
         return (
             (ride.date === filterDate || filterDate === "") &&
-            (filterToStation === "" || ride.stationsList.find(station => station.name === filterToStation && station.type !== "Starting")) &&
-            (filterFromStation === "" || ride.stationsList.find(station => station.name === filterFromStation && station.type !== "Destination"))
+            (filterToStation === "" || ride.RideStations.find(station => station.name === filterToStation && station.type !== "Starting")) &&
+            (filterFromStation === "" || ride.RideStations.find(station => station.name === filterFromStation && station.type !== "Destination"))
         );
     });
 
@@ -90,7 +110,11 @@ const MainDriverPage = () => {
     return (
         <div style={{ padding: '1.5em' }}>
 
-            {viewOrGallery ? <RideViewPage ride={ride} setViewOrGallery={setViewOrGallery} /> :
+            {viewOrGallery ?
+                <RideViewPage
+                    ride={ride}
+                    setViewOrGallery={setViewOrGallery}
+                /> :
                 <div style={{ padding: '1.5em' }}>
                     <div className="register-page-title">
                         <span>לחץ על נסיעה כדי לראות פרטים נוספים</span>

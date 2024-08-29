@@ -36,7 +36,7 @@ const RideItem = ({ride, setRide, setViewOrGallery}) => {
                     <div className="detail">
                         <PeopleIcon style={{ color: "#1F628E" }} />
                         {/* <img src="./icons/date-icon.png"></img> */}
-                        <span>{ride.registerNum} רשומים</span>
+                        <span>{ride.Registers.length} רשומים</span>
                     </div>
                     <div className="detail">
                         <CalendarMonthIcon style={{ color: "#1F628E" }} />

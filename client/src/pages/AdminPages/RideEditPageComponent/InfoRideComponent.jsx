@@ -15,7 +15,7 @@ const InfoRideComponent = ({ ride, _color }) => {
                 <div className="detail">
                     <ArrowCircleLeftIcon style={{ color: _color, fontSize: '2rem' }} />
                     {/* <img src="./icons/direction-icon.png"></img> */}
-                    <span style={{ fontWeight: 'bold', color: _color, fontSize: "1.5rem" }}>מ{ride.exit} ל{ride.target}</span>
+                    <span style={{ fontWeight: 'bold', color: _color, fontSize: "1.5rem" }}>מ{ride.fromCity} ל{ride.toCity}</span>
                 </div>
                 <div className="detail">
                     {/* <ScheduleIcon style={{ color: _color }} /> */}
@@ -27,12 +27,12 @@ const InfoRideComponent = ({ ride, _color }) => {
                 <div className="detail">
                     <PersonIcon style={{ color: _color, fontSize: '1.5rem' }} />
                     {/* <img src="./icons/date-icon.png"></img> */}
-                    <span>{ride.driver}</span>
+                    <span>{ride.driver? ride.driver: "אתה הנהג"}</span>
                 </div>
                 <div className="detail">
                     <PeopleIcon style={{ color: _color, fontSize: '1.5rem' }} />
                     {/* <img src="./icons/date-icon.png"></img> */}
-                    <span>{ride.registerNum} רשומים</span>
+                    <span>{ride.Registers.length} רשומים</span>
                 </div>
                 <div className="detail">
                     <CalendarMonthIcon style={{ color: _color, fontSize: '1.5rem' }} />
