@@ -11,7 +11,7 @@
     z-index: 1000;
 }
 
-.popup-message-container {
+.popup-message-container, .add-station-popup {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -41,14 +41,15 @@
     color: darkred; /* Darken the red color on hover */
 }
 
-.popup-message-buttons {
+.popup-message-buttons, .popup-add-sat-buttons {
     background-color: #50bb82;
     border-radius: 50px;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
     cursor: pointer;
+    padding: 5px 10px;
 }
 
-.popup-message-buttons:hover {
+.popup-message-buttons:hover, .popup-add-sat-buttons:hover {
     background-color: #3f9e6d;
 }
 

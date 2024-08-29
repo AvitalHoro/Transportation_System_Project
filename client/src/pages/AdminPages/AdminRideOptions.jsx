@@ -3,6 +3,7 @@ import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import ClearIcon from '@mui/icons-material/Clear';
 import SyncIcon from '@mui/icons-material/Sync';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import ReplayIcon from '@mui/icons-material/Replay';
 
 const AdminOptions = ({ setEditOrGallery, setRide, ride }) => {
     return (

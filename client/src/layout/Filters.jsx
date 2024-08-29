@@ -11,7 +11,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useMediaQuery } from '@mui/material';
 
 
-const ResponsiveDatePickers = ({ setFilterDate }) => {
+const ResponsiveDatePickers = ({ setFilterDate, dateValue }) => {
 
     const handleChangeDate = (date) => {
         const thisDate = new Date(date);
@@ -36,6 +36,7 @@ const ResponsiveDatePickers = ({ setFilterDate }) => {
 
                 <DemoItem>
                     <DatePicker
+                    value={dateValue}
                         onChange={(date) => handleChangeDate(date)}
                         id="date-picker-inline"
                         format="DD/MM/YYYY"

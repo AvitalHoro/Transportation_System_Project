@@ -6,39 +6,91 @@ const RideGalleryPage = ({setEditOrGallery, setRide}) => {
 
 
     const getAllRides = () => {
-        return [
-            {
-                exit: "תל אביב",
-                target: "ירושלים",
-                date: "2021-06-01",
-                time: "08:00",
-                seats: 30,
-                price: 30,
-                driver: "דוד כהן",
-                registerNum: "12",
+       //wait for server
+       return [
+        {
+            rideId: 123,
+            time: "08:00",
+            date: "2021-06-01",
+            fromCity: "ירושלים",
+            toCity: "תל אביב",
+            status: "active",
+            driverName: "אבי רבינוביץ'",
+            RideStations: [{
+                name: "תחנה מרכזית ירושלים",
+                id: 1,
+                type: "Starting"
             },
             {
-                exit: "חיפה",
-                target: "קצרין",
-                date: "2024-06-01",
-                time: "16:30",
-                seats: 30,
-                price: 30,
-                driver: "דוד כהן",
-                registerNum: "124",
+                name: "תחנה מרכזית תל אביב",
+                id: 2,
+                type: "Destination"
             },
             {
-                exit: "תל אביב",
-                target: "חיפה",
-                date: "2021-06-01",
-                time: "08:00",
-                seats: 30,
-                price: 30,
-                driver: "דוד כהן",
-                registerNum: "8",
-            },
-        ];
-    }
+                name: "מחלף חמד",
+                id: 3,
+                type: "Intermediate"
+            }
+            ],
+            Registers: [
+                {
+                    name: "אבי רבינוביץ'",
+                    fromStation: "תחנה מרכזית חיפה",
+                    toStation: "צומת מסובים",
+                },
+                {
+                    name: "יסכה גדות",
+                    fromStation: "תחנה מרכזית חיפה",
+                    toStation: "צומת מסובים",
+                },
+                {
+                    name: "אבי רבינוביץ'",
+                    fromStation: "תחנה מרכזית קצרין",
+                    toStation: "מחלף חמד",
+                }
+
+            ]
+        },
+        {
+            id: 124,
+            time: "08:00",
+            date: "2021-06-01",
+            fromCity: "חיפה",
+            toCity: "תל אביב",
+            status: "active",
+            driverName: "אבי רון",
+            RideStations: [
+                {
+                    name: "תחנה מרכזית תל אביב",
+                    id: 1,
+                    type: "Destination"
+                },
+                {
+                    name: "תחנה מרכזית חיפה",
+                    id: 2,
+                    type: "Starting"
+                },
+                {
+                    name: "צומת מסובים",
+                    id: 3,
+                    type: "Intermediate"
+                }
+            ],
+            Registers: [
+                {
+                    name: "אבי רבינוביץ'",
+                    fromStation: "תחנה מרכזית חיפה",
+                    toStation: "צומת מסובים",
+                },
+                {
+                    name: "יסכה גדות",
+                    fromStation: "תחנה מרכזית חיפה",
+                    toStation: "צומת מסובים",
+                },
+            ],
+        }
+    ]
+}
 
     const allRideList = getAllRides();
 

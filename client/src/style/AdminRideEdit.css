@@ -314,13 +314,28 @@
     margin-top: 10px;
 }
 
-.add-stop-button:hover {
+.add-stop-button:hover, .add-ride-button:hover {
     filter: drop-shadow(0 0 0.5em #00bf63);
     border: none;
     opacity: 0.8;
 }
 
-.add-stop-button:focus, .add-stop-button:focus-visible {
+.add-stop-button:focus, .add-stop-button:focus-visible, .add-ride-button:focus, .add-ride-button:focus-visible {
 
     outline: none;
+}
+
+.add-ride-button {
+    background-color: #00bf63;
+    color: white;
+    font-weight: 700;
+    font-size: 1.3em;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px 10px 20px;
+    gap: 10px;
+    margin-top: 10px;
+    text-align: center;
 }

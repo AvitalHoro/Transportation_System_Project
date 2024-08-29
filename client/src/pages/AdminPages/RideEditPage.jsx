@@ -31,8 +31,8 @@ const RideEditPage = ({ ride, setEditOrGallery }) => {
                 <ReplaceDriver rideId={ride.id} />
                 </div>
                 <div className="bottom-ride-edit-main">
-                <Passengers rideId={ride.id} />
-                <Stops rideId={ride.id} isAdmin={true} />
+                <Passengers registers={ride.Registers} />
+                <Stops stops={ride.RideStations} isAdmin={true} />
                 <SendMessegeToPassengers rideId={ride.id} isAdmin={true} />
                 </div>
             </div>
