@@ -1,7 +1,22 @@
 import React from "react";
 import "../../style/popUp.css";
+import { logout } from "../../requests";
 
 const ProfilePopUp = ({ user }) => {
+    const handleLogout =  async () => {
+        {     
+          console.log('logout');
+          const result = await logout();
+    
+          if (result) {
+            console.log('Logout in successfully:', result);
+            window.location.replace('/login');
+          } else {
+            console.error('Logout failed');
+            alert('לא הצלחנו להתנתק מהחשבון. נסה שנית או פנה לתמיכה');
+          }
+        }
+      }
     
         return (
             <div className="profile-pop-up">
@@ -18,7 +33,7 @@ const ProfilePopUp = ({ user }) => {
                         <span>{user.email}</span>
                     </div>
                 </div>
-                <button className="log-out-button">התנתק מהחשבון</button>
+                <button className="log-out-button" onClick={handleLogout}>התנתק מהחשבון</button>
             </div>
         )
     }

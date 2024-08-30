@@ -58,7 +58,6 @@ export const login = async (email, password) => {
     }
 };
 
-
 export const register = async (username, password, phone, permission, email) => {
     try {
         const response = await fetch(`${api}/users/register`, {
@@ -88,3 +87,56 @@ export const register = async (username, password, phone, permission, email) => 
         return null;
     }
 };
+
+export const logout = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${api}/users/logout`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response.ok) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('transportations');
+            console.log('Logout successful and local storage cleared');
+            return "logout successful"
+        } else {
+            console.error('Logout failed:', await response.json());
+        }
+    } catch (error) {
+        console.error('Error during logout:', error);
+        return null
+    }
+};
+
+
+export const addMessegeToPassengers = async (messageContent, sendTime, rideId) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${api}/messages/add/${rideId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ messageContent, sendTime }),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;           
+        } else {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+    } catch (error) {
+        console.error('Error during add message:', error);
+        return null
+    }
+}; 
+
+
+

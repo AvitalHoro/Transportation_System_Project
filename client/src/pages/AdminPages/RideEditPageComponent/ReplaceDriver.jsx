@@ -1,34 +1,66 @@
 import React from "react";
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+const api = 'http://localhost:5000/api';
+const token = localStorage.getItem('token');
 
 const ReplaceDriver = ({ driverName, rideId, isInPopUp }) => {
 
-    const getAllDrivers = () => {
+    const getAllDrivers = async () => {
+        try {
+            const response = await fetch(`${api}/users/getUsers/Driver`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const data = await response.json();
+    
+            if (data.users) {
+                console.log('The drivers:', data.users);
+                //return all user with driver permission
+                return data.users; 
+            } else {
+                console.error('Request failed:', data.message);
+                return null; 
+            }
+    
+        } catch (error) {
+            console.error('Error during request drivers:', error);
+            return null;
+        }
+
+
         //wait for server
         //return all user with driver permission
-        return [
-            {
-                name: "אבי רבינוביץ'",
-                id: 78,
-            },
-            {
-                name: "שמחה מוצים",
-                id: 79,
-            },
-            {
-                name: "אבי רון",
-                id: 80,
-            },
-            {
-                name: "עמית נקש",
-                id: 81,
-            }
+        // return [
+        //     {
+        //         name: "אבי רבינוביץ'",
+        //         id: 78,
+        //     },
+        //     {
+        //         name: "שמחה מוצים",
+        //         id: 79,
+        //     },
+        //     {
+        //         name: "אבי רון",
+        //         id: 80,
+        //     },
+        //     {
+        //         name: "עמית נקש",
+        //         id: 81,
+        //     }
 
-        ]
+        // ]
     }
 
-    const handleReplaceDriver = (driverName) => {
+    const handleReplaceDriver = async (driverName) => {
 
         const driverId = driversListWithId.find(d => d.name === driverName).id;
 
@@ -39,9 +71,35 @@ const ReplaceDriver = ({ driverName, rideId, isInPopUp }) => {
 
         //wait for server
         //send rideId and driverId
+        try {
+            const response = await fetch(`${api}/transportations/replaceDriver/${rideId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ driverId}),
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const data = await response.json();
 
-        console.log("Replace driver: ", rideId, driverId);
-        alert("הנהג הוחלף בהצלחה");
+            if (data.message === 'Driver replaced successfully') {
+                console.log("Replace driver: ", rideId, driverId);
+                alert("הנהג הוחלף בהצלחה");
+                return data.message; 
+            } else {
+                console.error('Request failed:', data.message);
+                return null; 
+            }
+    
+        } catch (error) {
+            console.error('Error during request:', error);
+            return null;
+        }
     }
 
     const driversListWithId = getAllDrivers()
