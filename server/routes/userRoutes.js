@@ -1,5 +1,5 @@
 const express = require('express');
-const { login, registerUser, logout } = require('../controllers/userController');
+const { login, registerUser, logout, getUsers } = require('../controllers/userController');
 
 const router = express.Router();
 
@@ -9,5 +9,7 @@ router.post('/login', login);
 router.post('/register', registerUser); 
 // Route for logout
 router.post('/logout', logout); 
+// Route for get user of specific type
+router.get('/users', getUsers); 
 
 module.exports = router;
