@@ -4,11 +4,17 @@ import '../../../style/popUp.css';
 import { Autocomplete } from "@mui/material";
 import { TextField } from "@mui/material";
 
-const AddStationPopUp = ({ setOpenPopUpStation, stationsList, setStopsList }) => {
+const AddStationPopUp = ({ setOpenPopUpStation, stationsList, setStopsList, isEditPage, handleAddStation }) => {
 
     const handleAddStationsToList = () => {
         if (!newValue) {
             alert("אנא בחר תחנה");
+            return;
+        }
+        if (isEditPage) {
+            handleAddStation(newValue);
+            setStopsList(prevStopsList => [...prevStopsList, newValue]);
+            setOpenPopUpStation(false);
             return;
         }
         setStopsList(prevStopsList => [...prevStopsList, newValue]);

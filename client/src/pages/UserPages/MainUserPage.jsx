@@ -8,9 +8,10 @@ import InfoPage from "./InfoPage";
 import ContactPage from "./ContactPage";
 import MyMessagePage from "./MyMessagePage";
 import { register } from "../../requests";
+import ProfilePopUp from "./ProfilePopUp";
 
 
-const MainUserPage = ({user}) => {
+const MainUserPage = ({user, openProfilePopUp}) => {
 
     const getMyRides = () => {
         //wait for server
@@ -83,6 +84,7 @@ const MainUserPage = ({user}) => {
     return (
         <div>
             <NavBar navigateNum={navigateNum} setNavigateNum={setNavigateNum} />
+            {openProfilePopUp? <ProfilePopUp user={user}/> : null}
             <div className="user-page-container">
                 <Routes>
                     <Route path="/" element={<NavigateHandler navigateNum={navigateNum} />} />

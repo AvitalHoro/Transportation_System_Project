@@ -1,7 +1,7 @@
 import React from "react";
 import '../style/Layout.css';
 
-const Header = ( { userType, name } ) => {
+const Header = ( { userType, name, setOpenProfilePopUp } ) => {
     
         return (
             <>
@@ -10,7 +10,7 @@ const Header = ( { userType, name } ) => {
                     <div className="spacer"></div>
                     <span className="hello_user">שלום {name? name: ""}</span>
                     {userType=='user' &&
-                    <img  className="profile_button"  src="../../profile.png" alt="פרופיל" />}
+                    <img  className="profile_button"  src="../../profile.png" alt="פרופיל" onClick={()=>setOpenProfilePopUp(prevOpenProfilePopUp => !prevOpenProfilePopUp)}/>}
                 </header>
             </>
         )

@@ -3,7 +3,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 
-const Stops = ({ stops, isAdmin }) => {
+const Stops = ({ stops, isAdmin, dynamicStopsList, setDynamicStopsList }) => {
 
     const handleAddStop = () => {
 
@@ -11,21 +11,24 @@ const Stops = ({ stops, isAdmin }) => {
         console.log("Add stop");
     }
 
-    const handleCancelStop = () => {
+    const handleCancelStop = (stopId) => {
+        //wait for server
+        //change the station with id===stopId status to cancel
+
+        setDynamicStopsList(prevDynamicStopsList => prevDynamicStopsList.filter(stop => stop.id !== stopId));
         console.log("Cancel stop");
     }
 
-    const [dynamicListStops, setDynamicListStops] = React.useState(stops);
 
 
     return (
         <div className="stops-father-con">
             <span style={{ fontSize: "22px", fontWeight: '700', color: "#FF914D" }}>תחנות</span>
             <div className="stops-container" style={{ marginTop: "10px" }}>
-                {stops.map(stop => <div className="stop">
+                {dynamicStopsList.map(stop => <div className="stop">
                     {stop.name}
                     {isAdmin? <CancelIcon 
-                    onClick={handleCancelStop}
+                    onClick={()=>handleCancelStop(stop.id)}
                     sx={{
                         color: "red",
                         fontSize: "180%",
