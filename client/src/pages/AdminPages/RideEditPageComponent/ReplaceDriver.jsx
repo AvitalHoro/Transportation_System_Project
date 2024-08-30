@@ -1,6 +1,8 @@
 import React from "react";
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+const api = 'http://localhost:5000/api';
+const token = localStorage.getItem('token');
 
 const ReplaceDriver = ({ driverName, rideId, isInPopUp }) => {
 
@@ -10,7 +12,7 @@ const ReplaceDriver = ({ driverName, rideId, isInPopUp }) => {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${TOKEN}`
+                    'Authorization': `Bearer ${token}`
                 }
             });
     
@@ -58,7 +60,7 @@ const ReplaceDriver = ({ driverName, rideId, isInPopUp }) => {
         // ]
     }
 
-    const handleReplaceDriver = (driverName) => {
+    const handleReplaceDriver = async (driverName) => {
 
         const driverId = driversListWithId.find(d => d.name === driverName).id;
 
@@ -69,9 +71,35 @@ const ReplaceDriver = ({ driverName, rideId, isInPopUp }) => {
 
         //wait for server
         //send rideId and driverId
+        try {
+            const response = await fetch(`${api}/transportations/replaceDriver/${rideId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ driverId}),
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const data = await response.json();
 
-        console.log("Replace driver: ", rideId, driverId);
-        alert("הנהג הוחלף בהצלחה");
+            if (data.message === 'Driver replaced successfully') {
+                console.log("Replace driver: ", rideId, driverId);
+                alert("הנהג הוחלף בהצלחה");
+                return data.message; 
+            } else {
+                console.error('Request failed:', data.message);
+                return null; 
+            }
+    
+        } catch (error) {
+            console.error('Error during request:', error);
+            return null;
+        }
     }
 
     const driversListWithId = getAllDrivers()

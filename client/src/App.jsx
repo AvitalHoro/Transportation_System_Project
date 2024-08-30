@@ -15,7 +15,7 @@ function App() {
   
   user = {
     name: "אביטל",
-    type: "user"
+    type: "admin"
   }
 
   const [openProfilePopUp, setOpenProfilePopUp] = useState(false);

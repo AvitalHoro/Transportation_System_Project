@@ -17,7 +17,7 @@ router.get('/passenger/registration',authenticateJWT, getTransportationsPassenge
 // Route for getting transportations that the user can to register them
 router.get('/passenger',authenticateJWT, getTransportationsForUser);
 // Route for replacing driver
-router.put('/replace-driver/:transportationId', authenticateJWT, replaceDriver);
+router.put('/replaceDriver/:transportationId', authenticateJWT, replaceDriver);
 // Route for getting details transportation
 router.get('/:transportationId', authenticateJWT, getDetailsTransportation);
 

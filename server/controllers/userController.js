@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const addToBlacklist = require('../middleware/authUtils');
+const { addToBlacklist } = require('../middleware/authUtils');
 const { getAllTransportations, getTransportationsOfDriver, getTransportationsOfPassenger } = require('./transportationController');
 
 const login = async (req, res) => {
@@ -86,7 +86,6 @@ const logout = async (req, res) => {
             return res.status(400).json({ message: 'No token provided' });
         }
 
-        // Assuming addToBlacklist is an asynchronous function
         await addToBlacklist(token);
 
         res.status(200).json({ message: 'Logout successful' });

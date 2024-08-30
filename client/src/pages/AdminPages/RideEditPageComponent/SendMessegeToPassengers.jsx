@@ -2,6 +2,7 @@ import React from "react";
 import SendIcon from '@mui/icons-material/Send';
 import '../../../style/AdminRideEdit.css'
 import Cancel from "@mui/icons-material/Cancel";
+import { addMessegeToPassengers } from '../../../requests'
 
 const CancelButton = () => {
     return (
@@ -20,19 +21,43 @@ const CancelButton = () => {
     )
 }
 
-const SendMessegeToPassengers = ({ isAdmin }) => {
+const SendMessegeToPassengers = ({ rideId, isAdmin }) => {
+    const getCurrentDateTime = () => {
+        const now = new Date();
+    
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+    
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+    
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    };
 
-    const handleSendMessage = () => {
+    const handleSendMessage = async () => {
         if(messageContent === "") {
             alert("אנא הקלד הודעה לשליחה");
             return;
         }
 
-        //wait for server
+        const sendTime = getCurrentDateTime();
 
-        console.log("Send message to passengers: ", messageContent);
-        setMessageContent("");
-        alert("ההודעה נשלחה בהצלחה");
+        //wait for server
+        try {
+            const response = await addMessegeToPassengers(messageContent, sendTime, rideId);
+            if (response) {                  
+                console.log("Send message to passengers: ", messageContent);
+                const messageId = response.messageId;
+                const registeredUsers = response.registeredUsers;
+                setMessageContent("");
+                alert("ההודעה נשלחה בהצלחה");
+            }
+
+        } catch {
+            alert("תקלה בשליחת ההודעה")
+        }
     }
 
     const [messageContent, setMessageContent] = React.useState("");

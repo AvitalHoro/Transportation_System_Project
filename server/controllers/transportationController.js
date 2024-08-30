@@ -360,7 +360,7 @@ const replaceDriver = (req, res) => {
         }
 
         // Update the driver for the specific transportation
-        const updateDriverQuery = 'UPDATE Transportation SET Driver = ? WHERE TransportationID = ?';
+        const updateDriverQuery = 'UPDATE Transportation SET DriverID = ? WHERE TransportationID = ?';
         db.query(updateDriverQuery, [newDriver, transportationId], (err, updateResults) => {
             if (err) {
                 return res.status(500).json({ message: 'Error updating the driver', error: err });
