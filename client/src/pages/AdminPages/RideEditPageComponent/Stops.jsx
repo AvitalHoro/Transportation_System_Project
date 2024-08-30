@@ -6,12 +6,16 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 const Stops = ({ stops, isAdmin }) => {
 
     const handleAddStop = () => {
+
+
         console.log("Add stop");
     }
 
     const handleCancelStop = () => {
         console.log("Cancel stop");
     }
+
+    const [dynamicListStops, setDynamicListStops] = React.useState(stops);
 
 
     return (
