@@ -1,11 +1,12 @@
-CREATE DATABASE Transportation_System;
-USE Transportation_System;
+CREATE DATABASE IF NOT EXISTS checking;
+USE checking;
 
 CREATE TABLE Station (
     StationID INT AUTO_INCREMENT PRIMARY KEY,
     Address VARCHAR(50),
     City VARCHAR(20)
 );
+
 CREATE TABLE Transportation (
     TransportationID INT AUTO_INCREMENT PRIMARY KEY,
     Transportation_Date DATETIME,
@@ -31,7 +32,6 @@ CREATE TABLE Users (
     UserPermission ENUM('Driver', 'Manager', 'Passenger'),
     UserEmail VARCHAR(25)
 );
-
 CREATE TABLE Registrations_To_Transportation (
     UserID INT,
     TransportationID INT,
@@ -45,7 +45,6 @@ CREATE TABLE Registrations_To_Transportation (
     FOREIGN KEY (PickupStationID) REFERENCES Station(StationID),
     FOREIGN KEY (DropoffStationID) REFERENCES Station(StationID)
 );
-
 CREATE TABLE Message (
 	MessageID INT AUTO_INCREMENT PRIMARY KEY,
     SenderID INT,
@@ -76,6 +75,14 @@ ADD COLUMN DriverID INT,
 ADD CONSTRAINT FK_Driver
 FOREIGN KEY (DriverID) REFERENCES Users(UserID);
 
+ALTER TABLE Users
+ADD COLUMN Uname varchar(30);
+
+ALTER TABLE Users
+MODIFY UserEmail VARCHAR(35);
+
+ALTER TABLE Users
+MODIFY UserEmail VARCHAR(35);
 
 ALTER TABLE Message
 CHANGE COLUMN GeneralMessage_Status Message_Status ENUM('Sent', 'Delivered', 'Pending', 'Failed', 'Archived', 'Not Delivered', 'Deleted');
@@ -83,26 +90,13 @@ CHANGE COLUMN GeneralMessage_Status Message_Status ENUM('Sent', 'Delivered', 'Pe
 ALTER TABLE Registrations_To_Transportation
 CHANGE COLUMN Registrations_Status Registration_Status ENUM('Pending', 'Confirmed', 'Cancelled', 'Completed', 'Waiting List', 'In Transit');
 
+ALTER TABLE Transportation
+MODIFY COLUMN Transportation_Date DATE;
 
--- ALTER TABLE Message_To_Transportation
--- ADD CONSTRAINT Check_Sender_Permission_Message
--- CHECK (SenderID IN (
---     SELECT UserID
---     FROM Users
---     WHERE UserPermission IN ('Driver', 'Manager')
--- ));
-
--- ALTER TABLE General_Message
--- ADD CONSTRAINT Check_Sender_Permission_General
--- CHECK (SenderID IN (
---     SELECT UserID
---     FROM Users
---     WHERE UserPermission = 'Manager'
--- ));
-
-
-
-
+SET SQL_SAFE_UPDATES = 0;
+UPDATE Transportation
+SET Transportation_Date = DATE(Transportation_Date);
+SET SQL_SAFE_UPDATES = 1;
 
 
 
