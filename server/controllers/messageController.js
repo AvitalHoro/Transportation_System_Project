@@ -20,6 +20,14 @@ const insertMessage = async (db, userId, messageText, sendTime) => {
     return results.insertId;
 };
 
+//update status message to "Delivered"
+const updateStatusMessage = async (db, messageId) => {
+    const updateMessageStatusQuery = 'UPDATE Message SET Message_Status = ? WHERE MessageID = ?';
+    
+    const [results] = await db.query(updateMessageStatusQuery, ['Delivered', messageId]);
+    return results;
+};
+
 const getRegisteredUsers = async (db, transportationId) => {
     const getRegisteredUsersQuery = `
         SELECT u.UserID
@@ -63,10 +71,17 @@ const addMessageForEveryOne = async (req, res) => {
         const insertGeneralMessageQuery = 'INSERT INTO General_Message (AttachedFiles, MessageID) VALUES (?, ?)';
         await db.query(insertGeneralMessageQuery, [attachedFiles, messageId]);
 
-        res.status(201).json({ message: 'General Message added successfully', messageId });
+        const changeStatus = await updateStatusMessage(db, messageId);
+
+        if (changeStatus.affectedRows === 1) {
+            res.status(201).json({ message: 'General Message added successfully', messageId });
+        }
+        else {
+            res.status(500).json({ message: 'Error send message', messageId });
+        }
 
     } catch (err) {
-        res.status(500).json({ message: 'Error inserting message', error: err });
+        res.status(500).json({ message: 'Error send message', error: err });
     }
 };
 
@@ -102,39 +117,46 @@ const addTransportationMessage = async (req, res) => {
         const insertTransportationMessageQuery = 'INSERT INTO Message_To_Transportation (TransportationID, MessageID) VALUES (?, ?)';
         await db.query(insertTransportationMessageQuery, [transportationId, messageId]);
 
-        // Get registered users
-        const registeredUsers = await getRegisteredUsers(db, transportationId);
+        const changeStatus = await updateStatusMessage(db, messageId);
 
-        // Return response with messageId and registered user IDs
-        res.status(201).json({ 
-            message: 'Transportation Message added successfully', 
-            messageId, 
-            registeredUsers: registeredUsers.map(user => user.UserID)
-        });
+        if (!changeStatus.affectedRows) {
+            res.status(500).json({ message: 'Error send message', messageId });
+        }
+        else {
+            // Get registered users
+            const registeredUsers = await getRegisteredUsers(db, transportationId);
+
+            // Return response with messageId and registered user IDs
+            res.status(201).json({ 
+                message: 'Transportation Message added successfully', 
+                messageId, 
+                registeredUsers: registeredUsers.map(user => user.UserID)
+            });        
+        }
 
     } catch (err) {
-        res.status(500).json({ message: 'Error inserting message', error: err });
+        res.status(500).json({ message: 'Error send message', error: err });
     }
 };
 
-const confirmMessageDelivery = async (req, res) => {
-    const db = req.db;
-    const { messageId } = req.params;
-    const { deliveryConfirmation } = req.body;
+// const confirmMessageDelivery = async (req, res) => {
+//     const db = req.db;
+//     const { messageId } = req.params;
+//     const { deliveryConfirmation } = req.body;
 
-    if (deliveryConfirmation !== 'OK') {
-        return res.status(400).json({ message: 'Invalid confirmation status' });
-    }
+//     if (deliveryConfirmation !== 'OK') {
+//         return res.status(400).json({ message: 'Invalid confirmation status' });
+//     }
 
-    try {
-        const updateMessageStatusQuery = 'UPDATE Message SET Message_Status = ? WHERE MessageID = ?';
-        await db.query(updateMessageStatusQuery, ['Delivered', messageId]);
-        res.status(200).json({ message: 'Message status updated to Delivered' });
+//     try {
+//         const updateMessageStatusQuery = 'UPDATE Message SET Message_Status = ? WHERE MessageID = ?';
+//         await db.query(updateMessageStatusQuery, ['Delivered', messageId]);
+//         res.status(200).json({ message: 'Message status updated to Delivered' });
 
-    } catch (err) {
-        res.status(500).json({ message: 'Error updating message status', error: err });
-    }
-};
+//     } catch (err) {
+//         res.status(500).json({ message: 'Error updating message status', error: err });
+//     }
+// };
 
 const getGeneralMessages = async (req, res) => {
     const db = req.db;
@@ -162,42 +184,88 @@ const getGeneralMessages = async (req, res) => {
     }
 };
 
-const getMessagesForUser = async (req, res) => {
+// const getMessagesForUser = async (req, res) => {
+//     const db = req.db;
+//     const userId = req.userId;
+
+//     try {
+//         // Get the transportation IDs the user is registered for
+//         const transportations = await getTransportationsOfPassenger(userId);
+        
+//         if (transportations.length === 0) {
+//             return res.status(404).json({ message: 'No trips found for this user' });
+//         }
+//         // Extract transportation IDs
+//         const transportationIds = transportations.map(t => t.TransportationID);
+
+//         const getMessagesQuery = `
+//             SELECT 
+//                 m.MessageID,
+//                 m.SenderID,
+//                 m.MessageText,
+//                 m.Message_Status,
+//                 m.SendTime,
+//                 mto.TransportationID
+//             FROM 
+//                 Message m
+//             JOIN 
+//                 Message_To_Transportation mto ON m.MessageID = mto.MessageID
+//             WHERE 
+//                 mto.TransportationID IN (?)
+//         `;
+        
+//         const [messagesResults] = await db.query(getMessagesQuery, [transportationIds]);
+
+//         res.status(200).json({ messages: messagesResults });
+//     } catch (err) {
+//         res.status(500).json({ message: 'Error retrieving messages', error: err });
+//     }
+// };
+
+const getMessagesOfTransportation = async (req, res) => {
+    const { transportationId } = req.params; 
+    const userId = req.userId; 
     const db = req.db;
-    const userId = req.userId;
-
+    
     try {
-        // Get the transportation IDs the user is registered for
-        const transportations = await getTransportationsOfPassenger(userId);
-        
-        if (transportations.length === 0) {
-            return res.status(404).json({ message: 'No trips found for this user' });
+        // Check user permissions
+        const checkPermissionQuery = 'SELECT UserPermission FROM Users WHERE UserID = ?';
+        const [permissionResults] = await db.query(checkPermissionQuery, [userId]);
+
+        if (permissionResults.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
         }
-        // Extract transportation IDs
-        const transportationIds = transportations.map(t => t.TransportationID);
 
-        const getMessagesQuery = `
-            SELECT 
-                m.MessageID,
-                m.SenderID,
-                m.MessageText,
-                m.Message_Status,
-                m.SendTime,
-                mto.TransportationID
-            FROM 
-                Message m
-            JOIN 
-                Message_To_Transportation mto ON m.MessageID = mto.MessageID
-            WHERE 
-                mto.TransportationID IN (?)
-        `;
+        const userPermission = permissionResults[0].UserPermission;
+
+        if (userPermission !== 'Manager' && userPermission !== 'Driver') {
+            return res.status(403).json({ message: 'Unauthorized' });
+        }
+
+        // return the messges of this transportationId
         
-        const [messagesResults] = await db.query(getMessagesQuery, [transportationIds]);
+        const message_of_transportation_query = `SELECT 
+                                                    m.MessageID, m.SenderID, u.UserPermission, m.MessageText, m.Message_Status, m.SendTime
+                                                FROM 
+                                                    Message_To_Transportation mt
+                                                JOIN 
+                                                    Message m ON mt.MessageID = m.MessageID
+                                                JOIN 
+                                                    Users u ON m.SenderID = u.UserID
+                                                WHERE 
+                                                    mt.TransportationID = ?;
+                                                    `;
+        await db.query(message_of_transportation_query, [transportationId]);
 
-        res.status(200).json({ messages: messagesResults });
+        // Get registered users
+        const messagesOfTransportation = await getRegisteredUsers(db, transportationId);
+
+        // Return ok response with the messages
+        res.status(200).json({ messages: messagesOfTransportation });
+
     } catch (err) {
-        res.status(500).json({ message: 'Error retrieving messages', error: err });
+        res.status(500).json({ message: 'Error inserting message', error: err });
     }
 };
 
-module.exports = { addMessageForEveryOne, addTransportationMessage, confirmMessageDelivery, getGeneralMessages, getMessagesForUser};
+module.exports = { addMessageForEveryOne, addTransportationMessage, getGeneralMessages, getMessagesOfTransportation};

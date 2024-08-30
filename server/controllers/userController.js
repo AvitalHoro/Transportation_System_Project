@@ -85,5 +85,23 @@ const logout = (req, res) => {
     }
 };
 
+const getUsers = async (req, res) => {
+    const userId = req.userId;
+    const typeUser = req.body;
+    // Check if the current user has the correct permissions
+    try {
+        const [userResults] = await db.query('SELECT UserPermission FROM Users WHERE UserID = ?', [userId]);
+        if (userResults.length === 0 || (userResults[0].UserPermission !== 'Manager')) {
+            return res.status(403).json({ message: 'You do not have permission to perform this action' });
+        }
+        const [users] = await db.query(`SELECT userID, Username
+                                          FROM Users
+                                          WHERE UserPermission = ?`, [typeUser]);
+        res.status(200).json({ users: users });
+    } catch (err) {
+        res.status(500).json({ message: 'Error querying drivers data', error: err });
+    }      
+};
 
-module.exports = { login, registerUser, logout };
+
+module.exports = { login, registerUser, logout, getUsers };

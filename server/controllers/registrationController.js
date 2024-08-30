@@ -119,4 +119,44 @@ const updateStation = async (req, res) => {
     }
 };
 
-module.exports = { registerForTransportation, deleteRegistration, updateStation, getPassengersOfTransportation };
+const updateStatus = async (req, res) => {
+    const db = req.db;
+    const { passengerId, transportationId } = req.params;
+    const { statusTransportation } = req.body;
+    const userId = req.userId;  
+
+    try {
+        // Validate input
+        if (!statusTransportation) {
+            return res.status(400).json({ message: 'passengerId is required' });
+        }
+         // Check user permissions
+         const checkPermissionQuery = 'SELECT UserPermission FROM Users WHERE UserID = ?';
+         const [permissionResults] = await db.query(checkPermissionQuery, [userId]);
+ 
+         if (permissionResults.length === 0) {
+             return res.status(404).json({ message: 'User not found' });
+         }
+ 
+         const userPermission = permissionResults[0].UserPermission;
+ 
+         if (userPermission !== 'Manager') {
+             return res.status(403).json({ message: 'Unauthorized' });
+         }
+
+        // Update status registratin
+        const updateStatusQuery = 'UPDATE Registrations_To_Transportation SET Registrations_Status = ? WHERE UserID = ? AND TransportationID = ?';
+        const [updateResults] = await db.query(updateStatusQuery, [statusTransportation, passengerId, transportationId]);
+
+        if (updateResults.affectedRows === 0) {
+            return res.status(404).json({ message: 'Registrations_To_Transportation not found' });
+        }
+
+        res.status(200).json({ message: 'The status of registration updated successfully' });
+
+    } catch (err) {
+        return res.status(500).json({ message: 'Error updating status of registrations', error: err });
+    }
+};
+
+module.exports = { registerForTransportation, deleteRegistration, updateStation, getPassengersOfTransportation, updateStatus };
