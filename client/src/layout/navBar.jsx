@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import '../style/Layout.css';
+import { Link } from "react-router-dom";
+import { useMediaQuery } from '@mui/material';
 
-const NavBar = () => {
+const NavBar = ({navigateNum, setNavigateNum}) => {
 
-    const [sizeScreen, setSizeScreen] = useState(window.innerWidth > 768 ? 2 : 1);
     const [isHovered, setIsHovered] = useState(false);
+    const isComputerScreen = useMediaQuery('(min-width:600px)');
 
 
 
@@ -23,38 +25,48 @@ const NavBar = () => {
         },
         {
             name: "מידע על נסיעות",
-            link: "/rides-info",
+            link: "/info",
             img: "rides-info.png",
             press_img: "rides-info-press.png",
         },
         {
             name: "צור קשר",
-            link: "/contact-us",
+            link: "/contact",
             img: "contact-us.png",
             press_img: "contact-us-press.png",
         }
     ]
+
+    if (!isComputerScreen) {
+        options.push({
+            name: "הודעות",
+            link: "/messages",
+            img: "messages.png",
+            press_img: "messages-press.png",
+    }
+    )
+    }
         
         
     return (
         <>
-            <nav dir="rtl" className={sizeScreen>1? "sidebar": "bottombar"}>
+            <nav dir="rtl" className={isComputerScreen? "sidebar": "bottombar"}>
                 <ul style={{margin: '0', padding: '0'}}>
                     {options.map((option, index) => {
                         return (
                             <li key={index} className="option"
                             onMouseEnter={() => setIsHovered(index)}
                             onMouseLeave={() => setIsHovered(-1)}>
-                                <a href={option.link}>
-                                    <div className="option-img-container" style={{backgroundColor: isHovered===index? 'white': 'transparent' }}>
+                                <Link to={`/home/user${option.link}`} onClick={()=>setNavigateNum(index)}>
+                                    <div className="option-img-container" style={{backgroundColor: isHovered===index  || navigateNum===index? 'white': 'transparent' }}>
                                     <img
-                                        src={`./icons/${isHovered===index ? option.img : option.press_img}`}
+                                        src={`../../icons/${isHovered===index || navigateNum===index ? option.img : option.press_img}`}
                                         alt={option.name} 
 
                                         />
                                     </div>
                                     <span className="option-title">{option.name}</span>
-                                </a>
+                                </Link>
 
                             </li>
                         )

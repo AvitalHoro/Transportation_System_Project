@@ -1,0 +1,117 @@
+.icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #FF914D;
+    border-radius: 100%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+.icon-container:hover {
+    transform: scale(1.1);
+}
+
+.admin-op-title {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.4);
+}
+
+.admin-main-option-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+}
+
+.option-a-m-co {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap: 10px;
+    width: 220px;
+    background-color: white;
+    padding: 10px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.option-a-m-co:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.option-a-m-co span {
+    font-size: 1em;
+    font-weight: 500;
+}
+
+.admin-main-op {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    bottom: 0;
+    top: 70px;
+}
+
+.ride-gallery-content {
+    display: flex;
+    flex-wrap: wrap; /* Allows items to wrap onto the next line */
+    gap: 10px;
+}
+
+.ride-gallery-content .ride-item-container {
+    flex: 1 1 31%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1270px) {
+    .ride-gallery-content .ride-item-container {
+      flex: 1 1 48%; /* Each item takes full width of the container */
+    }
+  }
+
+@media (max-width: 800px) {
+    .ride-gallery-content .ride-item-container {
+      flex: 1 1 100%; /* Each item takes full width of the container */
+    }
+  }
+
+  .menu-button {
+    position: fixed;
+    top: 80px;
+    right: 10px;
+    padding: 13px 10px 5px 10px;
+    width: 40px;
+    height: 40px;
+    background-color: #FF914D;
+    color: white;
+    border: none;
+    border-radius: 100%;
+    cursor: pointer;
+    z-index: 1000;
+  }
+
+  .add-ride-container, .add-driver-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 30px;
+    background-color: white;
+    border-radius: 25px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  }
+
+  .page-add-driver-container, .send-messege-for-all-page {
+    padding: 6%;
+  }
+
