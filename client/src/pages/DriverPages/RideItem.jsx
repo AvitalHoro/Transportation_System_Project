@@ -9,16 +9,7 @@ import PersonIcon from '@mui/icons-material/Person';
 
 const RideItem = ({ride, setRide, setViewOrGallery}) => {
 
-    // const ride = {
-    //     exit: "תל אביב",
-    //     target: "ירושלים",
-    //     date: "2021-06-01",
-    //     time: "08:00",
-    //     seats: 30,
-    //     price: 30,
-    //     driver: "דוד כהן",
-    //     registerNum: "12",
-    // }
+
     return (
         <div className="ride-item-container" style={{cursor: 'pointer'}}
         onClick={()=>{setRide(ride); setViewOrGallery(1);}}>

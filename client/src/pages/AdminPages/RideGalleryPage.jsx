@@ -2,14 +2,14 @@ import React from "react";
 import Filters from "../../layout/Filters";
 import RideItem from "./RideItem";
 
-const RideGalleryPage = ({setEditOrGallery, setRide}) => {
+const RideGalleryPage = ({setEditOrGallery, setRide, user }) => {
 
 
     const getAllRides = () => {
        //wait for server
        return [
         {
-            rideId: 123,
+            id: 123,
             time: "08:00",
             date: "2021-06-01",
             fromCity: "ירושלים",
@@ -92,14 +92,31 @@ const RideGalleryPage = ({setEditOrGallery, setRide}) => {
     ]
 }
 
-    const allRideList = getAllRides();
+
+
+
+const [filterDate, setFilterDate] = React.useState("");
+const [filterToStation, setFilterToStation] = React.useState("");
+const [filterFromStation, setFilterFromStation] = React.useState("");
+
+const allRideList = getAllRides().filter(ride => {
+    return (
+        (ride.date === filterDate || filterDate === "") &&
+        (filterToStation === "" || ride.RideStations.find(station => station.name === filterToStation && station.type !== "Starting")) &&
+        (filterFromStation === "" || ride.RideStations.find(station => station.name === filterFromStation && station.type !== "Destination"))
+    );
+});
+
 
     return (
 <div className="page-container register-page">
             <div className="register-page-title">
                 <span>בחר את הנסיעה אותה ברצונך לערוך</span>
             </div>
-            <Filters _color={"#FF914D"} />
+            <Filters _color={"#FF914D"} 
+            setFilterDate={setFilterDate}
+            setFilterToStation={setFilterToStation}
+            setFilterFromStation={setFilterFromStation}/>
             <div className="ride-gallery-content">
                 {
                     allRideList.map((ride) =>

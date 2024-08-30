@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import "../../style/RideRegister.css";
 import "../../style/RideItem.css";
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
@@ -8,21 +8,13 @@ import PeopleIcon from '@mui/icons-material/People';
 import PersonIcon from '@mui/icons-material/Person';
 import AdminOptions from "./AdminRideOptions";
 
-const RideItem = ({ride, setRide, setEditOrGallery}) => {
+const RideItem = ({ride, setRide, setEditOrGallery, userId}) => {
 
-    // const ride = {
-    //     exit: "תל אביב",
-    //     target: "ירושלים",
-    //     date: "2021-06-01",
-    //     time: "08:00",
-    //     seats: 30,
-    //     price: 30,
-    //     driver: "דוד כהן",
-    //     registerNum: "12",
-    // }
+    const [rideStatus, setRideStatus] = useState(ride.status);
+
     return (
         <div className="ride-item-container" style={{
-            border: ride.status==="active"? "" : "rgb(237, 29, 43) 4px solid" }}>
+            border: rideStatus==="active"? "" : "rgb(237, 29, 43) 4px solid" }}>
                 <div className="details-container">
                     <div className="detail">
                         <ArrowCircleLeftIcon style={{ color: "#FF914D" }} />
@@ -55,7 +47,10 @@ const RideItem = ({ride, setRide, setEditOrGallery}) => {
             <AdminOptions 
             setEditOrGallery={setEditOrGallery} 
             setRide={setRide} 
-            ride={ride} />
+            ride={ride}
+            rideStatus={rideStatus}
+            setRideStatus={setRideStatus} 
+            userId={userId}/>
 
         </div>
 
