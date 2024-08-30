@@ -21,23 +21,11 @@ const MenuButton = ({setNavigate}) => {
     )
 }
 
-const MainAdminPage = () => {
+const MainAdminPage = ( {userId} ) => {
 
     const [navigate, setNavigate] = useState(0);
     const [editOrGallery, setEditOrGallery] = useState(0);
     const [ride, setRide] = useState({});
-
-    // setRide({
-    //     id: 125,
-    //     exit: "תל אביב",
-    //     target: "ירושלים",
-    //     date: "2021-06-01",
-    //     time: "08:00",
-    //     seats: 30,
-    //     price: 30,
-    //     driver: "דוד כהן",
-    //     registerNum: "12",
-    // });
 
 
     switch (navigate) {
@@ -56,7 +44,9 @@ const MainAdminPage = () => {
         case 3:
             return <div>
                 
-                {editOrGallery? <RideEditPage ride={ride} setEditOrGallery={setEditOrGallery}/>: <><MenuButton setNavigate={setNavigate}/><RideGalleryPage setRide={setRide} setEditOrGallery={setEditOrGallery}/></>}
+                {editOrGallery? <RideEditPage ride={ride} setEditOrGallery={setEditOrGallery}/>: 
+                <><MenuButton setNavigate={setNavigate}/>
+                <RideGalleryPage ride={ride} setRide={setRide} setEditOrGallery={setEditOrGallery} userId={userId}/></>}
                 </div>;
         case 4:
             return <div>

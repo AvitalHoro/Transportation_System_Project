@@ -28,7 +28,7 @@ const RideEditPage = ({ ride, setEditOrGallery }) => {
             <div className="ride-edit-main">
                 <div className="top-ride-edit-main">
                 <InfoRideComponent ride={ride} _color={"#FF914D"}/>
-                <ReplaceDriver rideId={ride.id} />
+                <ReplaceDriver driverName={ride.driverName} rideId={ride.id} />
                 </div>
                 <div className="bottom-ride-edit-main">
                 <Passengers registers={ride.Registers} />

@@ -148,16 +148,23 @@ const AddRide = () => {
             return;
         }
 
-        const selectedStationIds = stopsList.map(selectedName => {
-            const station = stationsListWithId.find(station => station.name === selectedName);
-            return station ? station.id : null;
-        }).filter(id => id !== null); 
+        const driverId = driversListWithId.find(d => d.name === driver).id;
+
+        if(driverId === undefined){
+            alert("נהג לא קיים");
+            return;
+        }
 
         //wait for server
         //add the ride to the database - don't forget new id
 
+        const selectedStationIds = stopsList.map(selectedName => {
+            const station = stationsListWithId.find(station => station.name === selectedName);
+            return station ? station.id : null;
+        }).filter(id => id !== null); 
         //wait for server
         selectedStationIds.forEach(id => {/* Add the stations to the ride with "intermidate" type*/});
+
         const fromStationId = stationsListWithId.find(station => station.name === fromStation).id;
         const toStationId = stationsListWithId.find(station => station.name === toStation).id;
         //wait for server
@@ -168,7 +175,8 @@ const AddRide = () => {
 
     const stationsListWithId = getStationsList();
     const stationsList = stationsListWithId.map(sat => sat.name);
-    const driversList = getAllDrivers().map(d => d.name);
+    const driversListWithId = getAllDrivers()
+    const driversList = driversListWithId.map(d => d.name);
 
     const [stopsList, setStopsList] = React.useState([]);
 

@@ -1,8 +1,33 @@
-import React from "react";
+import React, {useState} from "react";
 import Filters from "../../layout/Filters";
 import RideItem from "./RideItem";
+import MessegesPopUp from "../MessegesPopUp";
+import ReplaceDriver from "./RideEditPageComponent/ReplaceDriver";
+import { Cancel } from "@mui/icons-material";
+import '../../style/popUp.css';
 
-const RideGalleryPage = ({setEditOrGallery, setRide, user }) => {
+const ReplaceDriverPopUp = ({setReplaceDriverIsClicked, rideId, driverName}) => {
+
+    // const handleReplceDriver = () => {
+    //     alert("הנהג הוחלף בהצלחה");
+    //     setReplaceDriverIsClicked(false);
+    // }
+
+    return (
+        <div className="popup">
+            <div className="popup-message-container">
+                <Cancel className="close-button" onClick={()=>setReplaceDriverIsClicked(false)}/>
+                    <ReplaceDriver rideId={rideId} isInPopUp={true} driverName={driverName}/>
+                    {/* <div className="popup-add-sat-buttons"
+                onClick={handleReplceDriver}>
+                    אישור
+                </div> */}
+            </div>
+        </div>
+    )
+}
+
+const RideGalleryPage = ({setEditOrGallery, ride, setRide, userId }) => {
 
 
     const getAllRides = () => {
@@ -107,9 +132,15 @@ const allRideList = getAllRides().filter(ride => {
     );
 });
 
+const [messegesIsClicked, setMessegesIsClicked] = useState(false);
+const [replaceDriverIsClicked, setReplaceDriverIsClicked] = useState(false);
+
+
 
     return (
 <div className="page-container register-page">
+{messegesIsClicked ? <MessegesPopUp setMessegesIsClicked={setMessegesIsClicked} userId={userId} rideId={ride.id} /> : null}
+{replaceDriverIsClicked ? <ReplaceDriverPopUp setReplaceDriverIsClicked={setReplaceDriverIsClicked} rideId={ride.id} driverName={ride.driverName} /> : null}
             <div className="register-page-title">
                 <span>בחר את הנסיעה אותה ברצונך לערוך</span>
             </div>
@@ -124,6 +155,9 @@ const allRideList = getAllRides().filter(ride => {
                     setEditOrGallery={setEditOrGallery}
                     setRide={setRide}
                            ride={ride}
+                           userId={userId}
+                           setMessegesIsClicked={setMessegesIsClicked}
+                           setReplaceDriverIsClicked={setReplaceDriverIsClicked}
                         />
                     )
                 }

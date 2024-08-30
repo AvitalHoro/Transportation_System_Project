@@ -12,7 +12,7 @@ const Home = ({ user }) => {
         <Routes>
             <Route path="/" element={<NavigateHandler userType={user.type} />} />
           <Route path="user/*" element={<MainUserPage user={user}/>} />
-          <Route path="admin/*" element={<MainAdminPage />} />
+          <Route path="admin/*" element={<MainAdminPage userId={user.id} />} />
           <Route path="driver/*" element={<MainDriverPage user={user}/>} />
         </Routes>
         </>
