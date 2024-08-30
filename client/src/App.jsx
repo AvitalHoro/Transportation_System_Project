@@ -18,16 +18,18 @@ function App() {
     type: "user"
   }
 
+  const [openProfilePopUp, setOpenProfilePopUp] = useState(false);
+
   return (
     <Router>
 
-      {user? <Header userType={user.type} name={user.name}></Header> : <Header></Header>}
+      {user? <Header userType={user.type} name={user.name} setOpenProfilePopUp={setOpenProfilePopUp}></Header> : <Header name={user.name}></Header>}
       <div className="app-container" dir='rtl'>
         <Routes>
           <Route path="/" element={<NavigateHandler user={user} />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/home/*" element={<Home user={user} />} />
+          <Route path="/home/*" element={<Home user={user} openProfilePopUp={openProfilePopUp}/>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
