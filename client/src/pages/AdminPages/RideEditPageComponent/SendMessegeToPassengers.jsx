@@ -54,8 +54,6 @@ const CancelButton = ({setRideStatus, rideStatus, rideId}) => {
             </button>
 
             )}
-
-
         </div>
     )
 }
