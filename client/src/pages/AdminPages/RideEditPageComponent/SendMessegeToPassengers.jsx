@@ -2,11 +2,38 @@ import React from "react";
 import SendIcon from '@mui/icons-material/Send';
 import '../../../style/AdminRideEdit.css'
 import Cancel from "@mui/icons-material/Cancel";
+import Replay from "@mui/icons-material/Replay";
 
-const CancelButton = () => {
+const CancelButton = ({setRideStatus, rideStatus, rideId}) => {
+
+    const handleCancelRide = () => {
+        //wait for server 
+
+        //send rideId
+        console.log("Cancel register ", rideId);
+        setRideStatus("cancel");
+
+        //wait for server
+        //send message to passengers in this ride "הנסיעה שנרשמתם אליה בוטלה"
+    }
+
+    const handleReturnedRide = () => {
+        //wait for server 
+
+        //send rideId
+        console.log("Returned register ", rideId);
+        setRideStatus("active");
+
+        //wait for server
+        //send message to passengers in this ride "הנסיעה שנרשמתם אליה שוחזרה"
+    }
+
+    console.log("RideStatus: ", rideStatus);
+
     return (
         <div className="cancel-button-container">
-            <button className="cancel-button"
+            {rideStatus==="active"? (<button className="cancel-button"
+            onClick={handleCancelRide}
                 style={{
                 }}>
                 לחץ כאן כדי לבטל את הנסיעה
@@ -14,13 +41,25 @@ const CancelButton = () => {
                     color: 'red',
                     fontSize: '1.5em',
                 }} />
+            </button>) : (<button className="return-button"
+            onClick={handleReturnedRide}
+                style={{
+                }}>
+                לחץ כאן כדי לשחזר את הנסיעה
+                <Replay sx={{
+                    color: 'green',
+                    fontSize: '1.5em',
+                }} />
             </button>
+
+            )}
+
 
         </div>
     )
 }
 
-const SendMessegeToPassengers = ({ isAdmin }) => {
+const SendMessegeToPassengers = ({ isAdmin, rideId, setRideStatus, rideStatus }) => {
 
     const handleSendMessage = () => {
         if(messageContent === "") {
@@ -29,6 +68,7 @@ const SendMessegeToPassengers = ({ isAdmin }) => {
         }
 
         //wait for server
+        //send message to passengers in this rideid
 
         console.log("Send message to passengers: ", messageContent);
         setMessageContent("");
@@ -59,7 +99,7 @@ const SendMessegeToPassengers = ({ isAdmin }) => {
                     onClick={handleSendMessage} />
                 </div>
             </div>
-            {isAdmin ? <CancelButton /> : null}
+            {isAdmin ? <CancelButton rideStatus={rideStatus} setRideStatus={setRideStatus} rideId={rideId}/> : null}
         </div>
     )
 }
