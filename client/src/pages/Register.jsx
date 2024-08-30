@@ -19,7 +19,7 @@ const Register = () => {
             return;
         }
         console.log('Registering with:', username, password, verifyPassword, phone, email);
-        const result = await register(username, password, phone, 'user' ,email);
+        const result = await register(username, password, phone, 'Passenger' ,email);
 
         if (result) {
             console.log('User registered successfully:', result);

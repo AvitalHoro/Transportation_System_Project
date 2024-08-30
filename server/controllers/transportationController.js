@@ -67,6 +67,7 @@ const get_passengers_registered_transportation = async (transportationId) => {
                 SELECT 
                     U.UserID, 
                     U.Username, 
+                    U.Uname,
                     U.UserPhone, 
                     U.UserEmail, 
                     R.PickupStationID, 

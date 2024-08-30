@@ -15,7 +15,7 @@ function App() {
   
   user = {
     name: "אביטל",
-    type: "driver"
+    type: "user"
   }
 
   return (

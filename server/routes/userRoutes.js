@@ -10,6 +10,6 @@ router.post('/register', registerUser);
 // Route for logout
 router.post('/logout', logout); 
 // Route for get user of specific type
-router.get('/users', getUsers); 
+router.get('/getUsers/:typeUser', getUsers); 
 
 module.exports = router;

@@ -4,28 +4,58 @@ import Autocomplete from '@mui/material/Autocomplete';
 
 const ReplaceDriver = ({ driverName, rideId, isInPopUp }) => {
 
-    const getAllDrivers = () => {
+    const getAllDrivers = async () => {
+        try {
+            const response = await fetch(`${api}/users/getUsers/Driver`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${TOKEN}`
+                }
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const data = await response.json();
+    
+            if (data.users) {
+                console.log('The drivers:', data.users);
+                //return all user with driver permission
+                return data.users; 
+            } else {
+                console.error('Request failed:', data.message);
+                return null; 
+            }
+    
+        } catch (error) {
+            console.error('Error during request drivers:', error);
+            return null;
+        }
+
+
         //wait for server
         //return all user with driver permission
-        return [
-            {
-                name: "אבי רבינוביץ'",
-                id: 78,
-            },
-            {
-                name: "שמחה מוצים",
-                id: 79,
-            },
-            {
-                name: "אבי רון",
-                id: 80,
-            },
-            {
-                name: "עמית נקש",
-                id: 81,
-            }
+        // return [
+        //     {
+        //         name: "אבי רבינוביץ'",
+        //         id: 78,
+        //     },
+        //     {
+        //         name: "שמחה מוצים",
+        //         id: 79,
+        //     },
+        //     {
+        //         name: "אבי רון",
+        //         id: 80,
+        //     },
+        //     {
+        //         name: "עמית נקש",
+        //         id: 81,
+        //     }
 
-        ]
+        // ]
     }
 
     const handleReplaceDriver = (driverName) => {
