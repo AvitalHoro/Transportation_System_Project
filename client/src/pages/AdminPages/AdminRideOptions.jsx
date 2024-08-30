@@ -4,9 +4,8 @@ import ClearIcon from '@mui/icons-material/Clear';
 import SyncIcon from '@mui/icons-material/Sync';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import ReplayIcon from '@mui/icons-material/Replay';
-import MessegesPopUp from "../MessegesPopUp";
 
-const AdminOptions = ({ setEditOrGallery, setRide, ride, rideStatus, setRideStatus, userId }) => {
+const AdminOptions = ({ setEditOrGallery, setRide, ride, rideStatus, setRideStatus, setMessegesIsClicked, setReplaceDriverIsClicked }) => {
 
     const handleCancelRide = () => {
         //wait for server 
@@ -24,15 +23,13 @@ const AdminOptions = ({ setEditOrGallery, setRide, ride, rideStatus, setRideStat
         setRideStatus("active");
     }
 
-    const [messegesIsClicked, setMessegesIsClicked] = useState(false);
 
     return (
         <div>
-            {messegesIsClicked ? <MessegesPopUp setMessegesIsClicked={setMessegesIsClicked} userId={user.id} rideId={ride.id} /> : null}
             <div className="row-option-ride">
                 <div className="option-ride-item">
                     <div className="option-container"
-                    onClick={()=>setMessegesIsClicked(true)}>
+                    onClick={()=>{setMessegesIsClicked(true); setRide(ride);}}>
                         <ChatBubbleIcon sx={{
                             color: "white",
                             fontSize: "180%",
@@ -83,7 +80,8 @@ const AdminOptions = ({ setEditOrGallery, setRide, ride, rideStatus, setRideStat
 
             <div className="row-option-ride">
                 <div className="option-ride-item">
-                    <div className="option-container" style={{ backgroundColor: "#CB6CE6" }}>
+                    <div className="option-container" style={{ backgroundColor: "#CB6CE6" }}
+                    onClick={()=>{setReplaceDriverIsClicked(true); setRide(ride);}} >
                         <SyncIcon sx={{
                             color: "white",
                             fontSize: "180%",

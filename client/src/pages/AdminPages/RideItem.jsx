@@ -8,7 +8,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import PersonIcon from '@mui/icons-material/Person';
 import AdminOptions from "./AdminRideOptions";
 
-const RideItem = ({ride, setRide, setEditOrGallery, userId}) => {
+const RideItem = ({ride, setRide, setEditOrGallery, setMessegesIsClicked, setReplaceDriverIsClicked}) => {
 
     const [rideStatus, setRideStatus] = useState(ride.status);
 
@@ -50,7 +50,8 @@ const RideItem = ({ride, setRide, setEditOrGallery, userId}) => {
             ride={ride}
             rideStatus={rideStatus}
             setRideStatus={setRideStatus} 
-            userId={userId}/>
+            setMessegesIsClicked={setMessegesIsClicked}
+            setReplaceDriverIsClicked={setReplaceDriverIsClicked}/>
 
         </div>
 

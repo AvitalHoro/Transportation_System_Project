@@ -5,6 +5,14 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 const Stops = ({ stops, isAdmin }) => {
 
+    const handleAddStop = () => {
+        console.log("Add stop");
+    }
+
+    const handleCancelStop = () => {
+        console.log("Cancel stop");
+    }
+
 
     return (
         <div className="stops-father-con">
@@ -12,7 +20,9 @@ const Stops = ({ stops, isAdmin }) => {
             <div className="stops-container" style={{ marginTop: "10px" }}>
                 {stops.map(stop => <div className="stop">
                     {stop.name}
-                    {isAdmin? <CancelIcon sx={{
+                    {isAdmin? <CancelIcon 
+                    onClick={handleCancelStop}
+                    sx={{
                         color: "red",
                         fontSize: "180%",
                         cursor: "pointer",
@@ -28,7 +38,9 @@ const Stops = ({ stops, isAdmin }) => {
                         style={{
                         }}>
                         הוסף תחנה
-                        <AddCircleIcon sx={{
+                        <AddCircleIcon 
+                        onClick={handleAddStop}
+                        sx={{
                             color: '#00bf63',
                             fontSize: '1.5em',
                         }} />
