@@ -101,7 +101,7 @@ INSERT INTO Users (UserId, Username, UserPassword, UserPhone, UserPermission, Us
 (39,'אביטל', '6535684', '058-6535684', 'admin', 'avitlkahana@gmail.com'),
 (40,'אהובה ראשית', '123456', '058-6535684', 'admin', 'ahuva@gmail.com');
 
-INSERT INTO Transportation (Transportation_ID, Transportation_Date, Transportation_Time, Transportation_Status, DriverID, MaxPassengers) VALUES 
+INSERT INTO Transportation (TransportationID, Transportation_Date, Transportation_Time, Transportation_Status, DriverID, MaxPassengers) VALUES 
 (1,'2024-09-03', '14:45:00', 'active', 21, 35),
 (2,'2024-09-04', '08:30:00', 'active', 25, 30),
 (3,'2024-09-05', '09:45:00', 'active', 25, 26),
@@ -119,19 +119,21 @@ INSERT INTO Transportation (Transportation_ID, Transportation_Date, Transportati
 (15,'2024-09-17', '12:15:00', 'active', 28, 24);
 
 INSERT INTO Station_In_Transportation (TransportationID, StationID, Station_Status, Station_Type) VALUES 
-(1, 60, 'active', 'Starting')
+(1, 60, 'active', 'Starting'),
 (1, 2, 'active', 'Intermediate'),
 (1, 3, 'active', 'Intermediate'),
 (1, 4, 'active', 'Intermediate'),
 (1, 5, 'cancel', 'Intermediate'),
-(1, 6, 'active', 'Destination'),
+(1, 6, 'active', 'Destination');
+INSERT INTO Station_In_Transportation (TransportationID, StationID, Station_Status, Station_Type) VALUES 
 (2, 7, 'active', 'Starting'),
 (2, 8, 'active', 'Intermediate'),
 (2, 9, 'active', 'Destination'),
 (3, 10, 'active', 'Starting'),
 (3, 11, 'active', 'Intermediate'),
 (3, 12, 'active', 'Destination'),
-(4, 13, 'active', 'Starting'),
+(4, 13, 'active', 'Starting');
+INSERT INTO Station_In_Transportation (TransportationID, StationID, Station_Status, Station_Type) VALUES 
 (4, 14, 'active', 'Intermediate'),
 (4, 15, 'active', 'Destination'),
 (5, 16, 'active', 'Starting'),
@@ -164,22 +166,30 @@ INSERT INTO Station_In_Transportation (TransportationID, StationID, Station_Stat
 (9, 43, 'active', 'Intermediate'),
 (9, 44, 'active', 'Intermediate'),
 (9, 45, 'active', 'Intermediate'),
-(10, 46, 'active', 'Starting'),
-(10, 47, 'active', 'Destination'),
-(10, 48, 'active', 'Intermediate'),
-(10, 49, 'active', 'Intermediate'),
-(10, 2, 'active', 'Intermediate'),
+(10, 48, 'active', 'Starting'),
+(10, 41, 'active', 'Destination'),
+(10, 42, 'active', 'Intermediate'),
 (10, 1, 'active', 'Intermediate'),
-(11, 45, 'active', 'Starting'),
-(11, 46, 'active', 'Destination'),
+(10, 2, 'active', 'Intermediate'),
+(10, 10, 'active', 'Intermediate'),
+(11, 41, 'active', 'Starting'),
+(11, 49, 'active', 'Destination'),
 (12, 42, 'active', 'Starting'),
-(12, 47, 'active', 'Destination'),
+(12, 48, 'active', 'Destination'),
 (13, 61, 'active', 'Starting'),
 (13, 23, 'active', 'Destination'),
 (14, 45, 'active', 'Starting'),
-(14, 46, 'active', 'Destination'),
+(14, 48, 'active', 'Destination'),
 (15, 42, 'active', 'Starting'),
-(15, 47, 'active', 'Destination');
+(15, 48, 'active', 'Destination');
+
+select * from Station_In_Transportation
+
+
+
+select * from transportation
+select * from station
+
 
 INSERT INTO Registrations_To_Transportation (TransportationID, UserID, PickupStationID, DropoffStationID, ExecutionDate, Registration_Status) VALUES 
 (1, 1, 60, 6, '2024-08-01 09:30:00', 'active'),
@@ -215,7 +225,7 @@ INSERT INTO Registrations_To_Transportation (TransportationID, UserID, PickupSta
 (7, 14, 26, 27, '2024-08-30 09:30:00', 'active'),
 (7, 15, 28, 31, '2024-08-01 10:15:00', 'cancel'),
 (7, 16, 28, 30, '2024-08-02 12:00:00', 'active'),
-(7, 17, 26, 31, '2024-08-03 14:45:00', 'active'),
+(7, 17, 26, 31, '2024-08-03 14:45:00', 'active');
 
 INSERT INTO Message (MessageID, SenderID, MessageText, Message_Status, SendTime) VALUES 
 (1, 40, 'The bus will arrive late.', 'active', '2024-08-01 07:45:00'),
@@ -230,7 +240,7 @@ INSERT INTO Message (MessageID, SenderID, MessageText, Message_Status, SendTime)
 (10, 40, 'Transport active successfully.', 'active', '2024-08-09 15:30:00'),
 (11, 40, 'Reminder: Transport schedule update.', 'active', '2024-08-10 16:15:00'),
 (12, 40, 'New route information available.', 'active', '2024-08-11 17:00:00'),
-(13, 40, 'Transport has been cancel.', 'active', '2024-08-12 17:45:00'),
+(13, 40, 'Transport has been cancel.', 'active', '2024-08-12 17:45:00');
 
 
 INSERT INTO Message_To_Transportation (MessageID, TransportationID) VALUES 
@@ -249,5 +259,3 @@ INSERT INTO General_Message (MessageID, AttachedFiles) VALUES
 (11, 'file2.pdf'),
 (12, 'file3.pdf'),
 (13, 'file4.docx');
-
-
