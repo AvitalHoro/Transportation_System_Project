@@ -31,7 +31,7 @@ CREATE TABLE Station_In_Transportation (
     TransportationID INT,
     StationID INT,
     Station_Status ENUM('active', 'cancel'),
-    Station_Type ENUM('starting', 'destination', 'intermediate'), 
+    Station_Type ENUM('Starting', 'Destination', 'Intermediate'), 
     PRIMARY KEY (TransportationID, StationID),
     FOREIGN KEY (TransportationID) REFERENCES Transportation(TransportationID),
     FOREIGN KEY (StationID) REFERENCES Station(StationID)
