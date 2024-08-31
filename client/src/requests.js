@@ -1,12 +1,14 @@
 const api = 'http://localhost:5000/api';
 
-export const getRequest = async (url, token) => {
+export const request = async (method, url, token, body = null) => {
     try {
         const response = await fetch(`${api}${url}`, {
-            method: 'GET',
-            // headers: {
-            //     'Authorization': `Bearer ${token}`,
-            // },
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: body ? JSON.stringify(body) : null
         });
 
         if (!response.ok) {
@@ -23,21 +25,10 @@ export const getRequest = async (url, token) => {
     }
 };
 
+
 export const login = async (email, password) => {
     try {
-        const response = await fetch(`${api}/users/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = await request('POST', '/users/login', '', { email, password });
 
         if (data.token) {
             console.log('Login successful:', data);
@@ -60,19 +51,7 @@ export const login = async (email, password) => {
 
 export const register = async (username, password, phone, permission, email) => {
     try {
-        const response = await fetch(`${api}/users/register`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ username, password, phone, permission, email }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = await request('POST', '/users/register', '', { username, password, phone, permission, email });
 
         if (data.userId) {
             console.log('User registered successfully:', data);
@@ -91,29 +70,25 @@ export const register = async (username, password, phone, permission, email) => 
 export const logout = async () => {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${api}/users/logout`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        });
 
-        if (response.ok) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            localStorage.removeItem('transportations');
-            console.log('Logout successful and local storage cleared');
-            return "logout successful"
-        } else {
-            console.error('Logout failed:', await response.json());
+        const result = await request('POST', '/users/logout', token);
+
+        if (result.error) {
+            console.error('Logout failed:', result.error);
+            return null;
         }
+
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('transportations');
+        console.log('Logout successful and local storage cleared');
+        return "logout successful";
+
     } catch (error) {
         console.error('Error during logout:', error);
-        return null
+        return null;
     }
 };
-
 
 export const addMessegeToPassengers = async (messageContent, sendTime, rideId) => {
     try {

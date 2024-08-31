@@ -289,7 +289,7 @@ const addTransportation = (req, res) => {
             return res.status(500).json({ message: 'Error querying the database', error: err });
         }
 
-        if (results.length === 0 || results[0].UserPermission !== 'Manager') {
+        if (results.length === 0 || results[0].UserPermission !== 'admin') {
             return res.status(403).json({ message: 'You do not have permission to add a transportation' });
         }
 
@@ -321,7 +321,7 @@ const deleteTransportation = (req, res) => {
             return res.status(500).json({ message: 'Error querying the database', error: err });
         }
 
-        if (results.length === 0 || results[0].UserPermission !== 'Manager') {
+        if (results.length === 0 || results[0].UserPermission !== 'admin') {
             return res.status(403).json({ message: 'You do not have permission to delete transportation' });
         }
 
@@ -355,7 +355,7 @@ const replaceDriver = (req, res) => {
             return res.status(500).json({ message: 'Error querying the database', error: err });
         }
 
-        if (userResults.length === 0 || userResults[0].UserPermission !== 'Manager') {
+        if (userResults.length === 0 || userResults[0].UserPermission !== 'admin') {
             return res.status(403).json({ message: 'You do not have permission to perform this action' });
         }
 
@@ -388,7 +388,7 @@ const getDetailsTransportation = async (req, res) => {
         // Check if the current user has the correct permissions
         const [userResults] = await db.query('SELECT UserPermission FROM Users WHERE UserID = ?', [userId]);
 
-        if (userResults.length === 0 || (userResults[0].UserPermission !== 'Manager' && userResults[0].UserPermission !== 'Driver')) {
+        if (userResults.length === 0 || (userResults[0].UserPermission !== 'admin' && userResults[0].UserPermission !== 'driver')) {
             return res.status(403).json({ message: 'You do not have permission to perform this action' });
         }
 

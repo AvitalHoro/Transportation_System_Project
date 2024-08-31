@@ -62,7 +62,7 @@ const addMessageForEveryOne = async (req, res) => {
 
         const userPermission = permissionResults[0].UserPermission;
 
-        if (userPermission !== 'Manager') {
+        if (userPermission !== 'admin') {
             return res.status(403).json({ message: 'Unauthorized' });
         }
 
@@ -108,7 +108,7 @@ const addTransportationMessage = async (req, res) => {
 
         const userPermission = permissionResults[0].UserPermission;
 
-        if (userPermission !== 'Manager' && userPermission !== 'Driver') {
+        if (userPermission !== 'admin' && userPermission !== 'driver') {
             return res.status(403).json({ message: 'Unauthorized' });
         }
 
@@ -239,7 +239,7 @@ const getMessagesOfTransportation = async (req, res) => {
 
         const userPermission = permissionResults[0].UserPermission;
 
-        if (userPermission !== 'Manager' && userPermission !== 'Driver') {
+        if (userPermission !== 'admin' && userPermission !== 'driver') {
             return res.status(403).json({ message: 'Unauthorized' });
         }
 

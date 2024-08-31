@@ -1,5 +1,6 @@
 const express = require('express');
 const { login, registerUser, logout, getUsers } = require('../controllers/userController');
+const authenticateJWT = require('../middleware/authenticateJWT'); 
 
 const router = express.Router();
 
@@ -10,6 +11,6 @@ router.post('/register', registerUser);
 // Route for logout
 router.post('/logout', logout); 
 // Route for get user of specific type
-router.get('/getUsers/:typeUser', getUsers); 
+router.get('/getUsers/:typeUser', authenticateJWT, getUsers); 
 
 module.exports = router;

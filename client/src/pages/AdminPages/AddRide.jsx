@@ -10,6 +10,7 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AddStationPopUp from "./RideEditPageComponent/AddStationPopUp";
+import { request } from "../../requests";
 
 
 const ResponsiveTimePickers = ({timeValue, setTimeValue}) => {
@@ -91,53 +92,96 @@ const ResponsiveDatePickers = ({dateValue, setDateValue}) => {
     );
 }
 
+const AddRide = async () => {
+    const token = localStorage.getItem('token');
+    // const getStationsList = () => {
+    //     //wait for server
+    //     //return all stations table 
+    //     return [
+    //         {
+    //             name: "תחנה מרכזית ירושלים",
+    //             id: 1,
+    //         },
+    //         {
+    //             name: "תחנה מרכזית תל אביב",
+    //             id: 2,
+    //         },
+    //         {
+    //             name: "מחלף חמד",
+    //             id: 3,
+    //         }
+    //     ]
+    // }
 
-const AddRide = () => {
+    // const getAllDrivers = () => {
+    //     //wait for server
+    //     //return all user with driver permission
+    //     return [
+    //         {
+    //             name: "אבי רבינוביץ'",
+    //             id: 78,
+    //         },
+    //         {
+    //             name: "שמחה מוצים",
+    //             id: 79,
+    //         },
+    //         {
+    //             name: "אבי רון",
+    //             id: 80,
+    //         },
+    //         {
+    //             name: "עמית נקש",
+    //             id: 81,
+    //         }
 
-    const getStationsList = () => {
-        //wait for server
-        //return all stations table 
-        return [
-            {
-                name: "תחנה מרכזית ירושלים",
-                id: 1,
-            },
-            {
-                name: "תחנה מרכזית תל אביב",
-                id: 2,
-            },
-            {
-                name: "מחלף חמד",
-                id: 3,
+    //     ]
+    // }
+
+    const getStationsList = async () => {
+        try {
+            const stationsData = await request('GET', '/stations/all', token);
+        
+            if (stationsData.error) {
+                throw new Error(stationsData.error);
             }
-        ]
+    
+            // Map the stations to the desired format
+            const formattedStations = stationsData.stations.map(station => ({
+                name: `${station.Address}, ${station.City}`,
+                id: station.StationID
+            }));
+        
+            return formattedStations;
+        
+        } catch (error) {
+            console.error('Error fetching stations:', error);
+            return [];
+        }
     }
 
-    const getAllDrivers = () => {
-        //wait for server
-        //return all user with driver permission
-        return [
-            {
-                name: "אבי רבינוביץ'",
-                id: 78,
-            },
-            {
-                name: "שמחה מוצים",
-                id: 79,
-            },
-            {
-                name: "אבי רון",
-                id: 80,
-            },
-            {
-                name: "עמית נקש",
-                id: 81,
+    const getAllDrivers = async () => {
+        try {
+            const driversData = await request('POST', '/users/getUsers/driver', token);
+        
+            if (driversData.error) {
+                throw new Error(stationsData.error);
             }
-
-        ]
+    
+            // Map the stations to the desired format
+            const formattedDrivers = driversData.users.map(driver => ({
+                name: driver.Username,
+                id: driver.userID
+            }));
+        
+            return formattedDrivers;
+        
+        } catch (error) {
+            console.error('Error fetching stations:', error);
+            return [];
+        }
     }
 
-    const handleAddRide = () => {
+    const handleAddRide = async () => {
         if(fromStation === "" || toStation === "" || dateValue === null || timeValue === null || driver === ""){
             alert("אנא מלא את כל השדות");
             return;
@@ -156,6 +200,27 @@ const AddRide = () => {
         }
 
         //wait for server
+        try {
+            const body = { transportationDate: dateValue, 
+                           transportationTime: timeValue, 
+                           transportationStatus: 'active', 
+                           driver: driverId, 
+                           maxPassengers: 50 
+                        }
+
+            const insertTransportation = await postRequest('/transportations/add', token, body);
+        
+            if (insertTransportation.error) {
+                throw new Error(stationsData.error);
+            }
+    
+            const newTransportationId = insertTransportation.transportationId;
+                
+        } catch (error) {
+            console.error('Error add insertTransportation:', error);
+            return null;
+        }
+
         //add the ride to the database - don't forget new id
 
         const selectedStationIds = stopsList.map(selectedName => {
@@ -173,10 +238,13 @@ const AddRide = () => {
         console.log("added ride");
     }
 
-    const stationsListWithId = getStationsList();
+    const stationsListWithId = await getStationsList();
+    console.log(stationsListWithId)
     const stationsList = stationsListWithId.map(sat => sat.name);
-    const driversListWithId = getAllDrivers()
+    const driversListWithId = await getAllDrivers()
+    console.log(driversListWithId)
     const driversList = driversListWithId.map(d => d.name);
+    console.log(driversList)
 
     const [stopsList, setStopsList] = React.useState([]);
 

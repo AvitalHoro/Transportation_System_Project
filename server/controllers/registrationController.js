@@ -140,7 +140,7 @@ const updateStatus = async (req, res) => {
  
          const userPermission = permissionResults[0].UserPermission;
  
-         if (userPermission !== 'Manager') {
+         if (userPermission !== 'admin') {
              return res.status(403).json({ message: 'Unauthorized' });
          }
 
