@@ -15,11 +15,11 @@ const login = async (req, res) => {
             const token = jwt.sign({ userId: user.UserID }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
             let transportationResults;
-            if (user.UserPermission === 'Manager') {
+            if (user.UserPermission === 'admin') {
                 transportationResults = await getAllTransportations();
-            } else if (user.UserPermission === 'Driver') {
+            } else if (user.UserPermission === 'driver') {
                 transportationResults = await getTransportationsOfDriver(user.UserID);
-            } else if (user.UserPermission === 'Passenger') {
+            } else if (user.UserPermission === 'user') {
                 transportationResults = await getTransportationsOfPassenger(user.UserID);
             }
             console.log('login successfully')
