@@ -6,7 +6,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Stations from "./Stations";
 
-const RideRegister = ({rideId, exit, target, date, time, stationsList}) => {
+const RideRegister = ({userId, rideId, exit, target, date, time, stationsList}) => {
 
     const [fromStation, setFromStation] = React.useState(null);
     const [toStation, setToStation] = React.useState(null);
@@ -17,7 +17,7 @@ const RideRegister = ({rideId, exit, target, date, time, stationsList}) => {
             return;
         }
         //wait for server
-        //send rideId, fromStation, toStation
+        //send rideId, fromStation, toStation, userId
         console.log("Register to ride ", rideId, fromStation, toStation);
     }
 

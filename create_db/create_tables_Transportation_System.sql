@@ -1,23 +1,24 @@
+
 CREATE DATABASE Transportation_System;
 USE Transportation_System;
 
 CREATE TABLE Users (
-    UserID INT,
+    UserID INT PRIMARY KEY,
     Username VARCHAR(30),
     UserPassword VARCHAR(20),
-    UserPhone VARCHAR(10),
+    UserPhone VARCHAR(11),
     UserPermission ENUM('driver', 'admin', 'user'),
     UserEmail VARCHAR(35)
 );
 
 CREATE TABLE Station (
-    StationID INT,
+    StationID INT PRIMARY KEY,
     Address VARCHAR(50),
     City VARCHAR(20)
 );
 
 CREATE TABLE Transportation (
-    TransportationID INT,
+    TransportationID INT PRIMARY KEY,
     Transportation_Date DATE,
 CREATE DATABASE Transportation_System;
 USE Transportation_System;
@@ -51,7 +52,7 @@ CREATE TABLE Station_In_Transportation (
     TransportationID INT,
     StationID INT,
     Station_Status ENUM('active', 'cancel'),
-    Station_Type ENUM('starting', 'destination', 'intermediate'), 
+    Station_Type ENUM('Starting', 'Destination', 'Intermediate'), 
     PRIMARY KEY (TransportationID, StationID),
     FOREIGN KEY (TransportationID) REFERENCES Transportation(TransportationID),
     FOREIGN KEY (StationID) REFERENCES Station(StationID)

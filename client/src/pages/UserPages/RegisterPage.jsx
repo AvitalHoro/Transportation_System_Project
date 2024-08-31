@@ -2,10 +2,12 @@ import React from "react";
 import Filters from "../../layout/Filters";
 import RideRegister from "./RideRegister";
 
-const RegisterPage = () => {
+const RegisterPage = ({userId, myRidesIds}) => {
 
     const getAllNextRides = () => {
         //wait for server
+        //return only rides that not passed yet
+        //return only ride not in myRidesIds!!!!!!
         return [
             {
                 id: 1234,
@@ -111,6 +113,7 @@ const RegisterPage = () => {
                 {
                     allRideList.map((ride) =>
                         <RideRegister
+                        userId={userId}
                             rideId={ride.id}
                             exit={ride.exit}
                             target={ride.target}

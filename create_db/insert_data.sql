@@ -258,4 +258,8 @@ INSERT INTO General_Message (MessageID, AttachedFiles) VALUES
 (10, 'file1.pdf'),
 (11, 'file2.pdf'),
 (12, 'file3.pdf'),
+<<<<<<< HEAD
 (13, 'file4.docx');
+=======
+(13, 'file4.docx');
+>>>>>>> af21e62ea7f59b75c98a0bddfee9a7bce50a67ae

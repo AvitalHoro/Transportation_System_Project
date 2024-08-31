@@ -3,7 +3,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { login } from "../requests";
 
-const Login = () => {
+const Login = ({setUser}) => {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -22,6 +22,8 @@ const Login = () => {
 
       if (result) {
         console.log('Logged in successfully:', result);
+        //localStorage.setItem('token', result.token); //wait for server
+        //setUser()
         window.location.replace('/home');
       } else {
         console.error('Login failed');
