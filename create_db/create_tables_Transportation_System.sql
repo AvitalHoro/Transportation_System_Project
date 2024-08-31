@@ -23,7 +23,7 @@ CREATE TABLE Transportation (
     Transportation_Status ENUM('active', 'cancel'),
     DriverID INT,
     MaxPassengers INT,
-	FOREIGN KEY (DriverID) REFERENCES Users(UserID)
+    FOREIGN KEY (DriverID) REFERENCES Users(UserID)
 );
 
 CREATE TABLE Station_In_Transportation (
