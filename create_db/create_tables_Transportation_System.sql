@@ -1,29 +1,30 @@
+
 CREATE DATABASE Transportation_System;
 USE Transportation_System;
 
 CREATE TABLE Users (
-    UserID INT,
+    UserID INT PRIMARY KEY,
     Username VARCHAR(30),
     UserPassword VARCHAR(20),
-    UserPhone VARCHAR(10),
+    UserPhone VARCHAR(11),
     UserPermission ENUM('driver', 'admin', 'user'),
     UserEmail VARCHAR(35)
 );
 
 CREATE TABLE Station (
-    StationID INT,
+    StationID INT PRIMARY KEY,
     Address VARCHAR(50),
     City VARCHAR(20)
 );
 
 CREATE TABLE Transportation (
-    TransportationID INT,
+    TransportationID INT PRIMARY KEY,
     Transportation_Date DATE,
     Transportation_Time TIME,
     Transportation_Status ENUM('active', 'cancel'),
-    DriverID VARCHAR(20),
+    DriverID INT,
     MaxPassengers INT,
-	FOREIGN KEY (DriverID) REFERENCES Users(UserID)
+    FOREIGN KEY (DriverID) REFERENCES Users(UserID)
 );
 
 CREATE TABLE Station_In_Transportation (
@@ -50,7 +51,7 @@ CREATE TABLE Registrations_To_Transportation (
     FOREIGN KEY (DropoffStationID) REFERENCES Station(StationID)
 );
 CREATE TABLE Message (
-	MessageID INT,
+	MessageID INT PRIMARY KEY,
     SenderID INT,
     MessageText VARCHAR(300),
     Message_Status ENUM('active', 'cancel'),
