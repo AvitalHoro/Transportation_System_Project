@@ -32,7 +32,7 @@ function App() {
   return (
     <Router>
 
-      {user? <Header userType={user.UserPermission} name={user.name} setOpenProfilePopUp={setOpenProfilePopUp}></Header> : <Header name={user? user.name: null}></Header>}
+      {user? <Header userType={user.UserPermission} name={user.Username} setOpenProfilePopUp={setOpenProfilePopUp}></Header> : <Header name={user? user.Username: null}></Header>}
       <div className="app-container" dir='rtl'>
         <Routes>
           <Route path="/" element={<NavigateHandler user={user} />} />
