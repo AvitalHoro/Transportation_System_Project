@@ -28,16 +28,39 @@ const RideEditPage = ({ ride, setEditOrGallery }) => {
         ]
     }
 
-    const handleAddStation = (stationId, rideId, type) => {
+    const handleAddStation = (stationName) => {
+
+        const stationId = stationsListWithId.find(sat => sat.name === stationName).id;
+
+        if(stationId === undefined){
+            alert("תחנה לא תקינה");
+            return;
+        }
+
+        const rideId = ride.id;
+
+        const maxId = Math.max(...dynamicStopsList.map(sat => sat.id));
+
         //wait for server
+        //add station to ride, type is intermediate new id is maxid+1
+
+        //wait for server
+        //send message to passengers in this ride "התחנה {שם} נוספה לנסיעה"
+
+        setDynamicStopsList([...dynamicStopsList, { id: maxId+1, name: stationName, type: "Intermediate" }]);
+
+        console.log("Add station: ", stationName, maxId+1);
+        console.log(dynamicStopsList);
     }
 
     const stationsListWithId = getStationsList();
     const stationsList = stationsListWithId.map(sat => sat.name);
 
-    const [dynamicStopsList, setDynamicStopsList] = React.useState(stops);
+    const [dynamicStopsList, setDynamicStopsList] = React.useState(ride.RideStations);
 
     const [openStationsPopUp, setOpenStationsPopUp] = React.useState(false);
+
+    const [rideStatus, setRideStatus] = React.useState(ride.status);
 
     //setOpenPopUpStation, stationsList, setStopsList, isEditPage, handleAddStation
     return (
@@ -68,7 +91,7 @@ const RideEditPage = ({ ride, setEditOrGallery }) => {
                     </div>
                 </div>
             </div>
-            <div className="ride-edit-main">
+            <div className="ride-edit-main" style={{border: rideStatus==="active"? "" : "rgb(237, 29, 43) 4px solid" }}>
                 <div className="top-ride-edit-main">
                 <InfoRideComponent ride={ride} _color={"#FF914D"}/>
                 <ReplaceDriver driverName={ride.driverName} rideId={ride.id} />
@@ -82,7 +105,7 @@ const RideEditPage = ({ ride, setEditOrGallery }) => {
                 dynamicStopsList={dynamicStopsList} 
                 setDynamicStopsList={setDynamicStopsList}
                 />
-                <SendMessegeToPassengers rideId={ride.id} isAdmin={true} />
+                <SendMessegeToPassengers rideId={ride.id} isAdmin={true} setRideStatus={setRideStatus} rideStatus={rideStatus} />
                 </div>
             </div>
         </div>

@@ -13,7 +13,6 @@ const AddStationPopUp = ({ setOpenPopUpStation, stationsList, setStopsList, isEd
         }
         if (isEditPage) {
             handleAddStation(newValue);
-            setStopsList(prevStopsList => [...prevStopsList, newValue]);
             setOpenPopUpStation(false);
             return;
         }

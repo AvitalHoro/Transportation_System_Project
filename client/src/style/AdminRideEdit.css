@@ -339,3 +339,27 @@
     margin-top: 10px;
     text-align: center;
 }
+
+.return-button {
+    color: green;
+    font-weight: 700;
+    font-size: 1.3em;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.return-button:hover {
+    filter: drop-shadow(0 0 0.5em green);
+    border: none;
+    opacity: 0.8;
+}
+
+.return-button:focus, .return-button:focus-visible {
+
+    outline: none;
+}
