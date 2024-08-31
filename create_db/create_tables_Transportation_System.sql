@@ -1,44 +1,48 @@
-CREATE DATABASE IF NOT EXISTS checking;
-USE checking;
+CREATE DATABASE Transportation_System;
+USE Transportation_System;
+
+CREATE TABLE Users (
+    UserID INT,
+    Username VARCHAR(30),
+    UserPassword VARCHAR(20),
+    UserPhone VARCHAR(10),
+    UserPermission ENUM('driver', 'admin', 'user'),
+    UserEmail VARCHAR(35)
+);
 
 CREATE TABLE Station (
-    StationID INT AUTO_INCREMENT PRIMARY KEY,
+    StationID INT,
     Address VARCHAR(50),
     City VARCHAR(20)
 );
 
 CREATE TABLE Transportation (
-    TransportationID INT AUTO_INCREMENT PRIMARY KEY,
-    Transportation_Date DATETIME,
+    TransportationID INT,
+    Transportation_Date DATE,
     Transportation_Time TIME,
-    Transportation_Status ENUM('Active', 'Delayed', 'Cancelled', 'In Transit', 'Completed'),
-    Driver VARCHAR(20),
-    MaxPassengers INT
+    Transportation_Status ENUM('active', 'cancel'),
+    DriverID VARCHAR(20),
+    MaxPassengers INT,
+	FOREIGN KEY (DriverID) REFERENCES Users(UserID)
 );
+
 CREATE TABLE Station_In_Transportation (
     TransportationID INT,
     StationID INT,
-    Station_Status ENUM('Active', 'Delayed', 'Cancelled'),
-    Station_Type ENUM('Starting', 'Destination', 'Intermediate'), 
+    Station_Status ENUM('active', 'cancel'),
+    Station_Type ENUM('starting', 'destination', 'intermediate'), 
     PRIMARY KEY (TransportationID, StationID),
     FOREIGN KEY (TransportationID) REFERENCES Transportation(TransportationID),
     FOREIGN KEY (StationID) REFERENCES Station(StationID)
 );
-CREATE TABLE Users (
-    UserID INT AUTO_INCREMENT PRIMARY KEY,
-    Username VARCHAR(20),
-    UserPassword VARCHAR(20),
-    UserPhone VARCHAR(10),
-    UserPermission ENUM('Driver', 'Manager', 'Passenger'),
-    UserEmail VARCHAR(25)
-);
+
 CREATE TABLE Registrations_To_Transportation (
     UserID INT,
     TransportationID INT,
     PickupStationID INT,
     DropoffStationID INT,
     ExecutionDate DATETIME,
-    Registrations_Status ENUM('Pending', 'Confirmed', 'Cancelled', 'Completed', 'Waiting List', 'In Transit'),
+    Registration_Status ENUM('active', 'cancel'),
     PRIMARY KEY (UserID, TransportationID),
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (TransportationID) REFERENCES Transportation(TransportationID),
@@ -46,10 +50,10 @@ CREATE TABLE Registrations_To_Transportation (
     FOREIGN KEY (DropoffStationID) REFERENCES Station(StationID)
 );
 CREATE TABLE Message (
-	MessageID INT AUTO_INCREMENT PRIMARY KEY,
+	MessageID INT,
     SenderID INT,
     MessageText VARCHAR(300),
-    GeneralMessage_Status ENUM('Sent', 'Delivered', 'Pending', 'Failed', 'Archived', 'Not Delivered', 'Deleted'),
+    Message_Status ENUM('active', 'cancel'),
     SendTime DATETIME,
     FOREIGN KEY (SenderID) REFERENCES Users(UserID)
 );
@@ -66,38 +70,3 @@ CREATE TABLE General_Message (
     PRIMARY KEY (MessageID),
     FOREIGN KEY (MessageID) REFERENCES Message(MessageID)
 );
-
-ALTER TABLE Transportation
-DROP COLUMN Driver;
-ALTER TABLE Transportation
-
-ADD COLUMN DriverID INT,
-ADD CONSTRAINT FK_Driver
-FOREIGN KEY (DriverID) REFERENCES Users(UserID);
-
-ALTER TABLE Users
-ADD COLUMN Uname varchar(30);
-
-ALTER TABLE Users
-MODIFY UserEmail VARCHAR(35);
-
-ALTER TABLE Users
-MODIFY UserEmail VARCHAR(35);
-
-ALTER TABLE Message
-CHANGE COLUMN GeneralMessage_Status Message_Status ENUM('Sent', 'Delivered', 'Pending', 'Failed', 'Archived', 'Not Delivered', 'Deleted');
-
-ALTER TABLE Registrations_To_Transportation
-CHANGE COLUMN Registrations_Status Registration_Status ENUM('Pending', 'Confirmed', 'Cancelled', 'Completed', 'Waiting List', 'In Transit');
-
-ALTER TABLE Transportation
-MODIFY COLUMN Transportation_Date DATE;
-
-SET SQL_SAFE_UPDATES = 0;
-UPDATE Transportation
-SET Transportation_Date = DATE(Transportation_Date);
-SET SQL_SAFE_UPDATES = 1;
-
-
-
-

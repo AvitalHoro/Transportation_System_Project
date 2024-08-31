@@ -14,6 +14,7 @@ const db = require('../config/db');
 // };
 
 const insertMessage = async (db, userId, messageText, sendTime) => {
+    console.log('insert message to the database')
     const insertMessageQuery = 'INSERT INTO Message (SenderID, MessageText, Message_Status, SendTime) VALUES (?, ?, ?, ?)';
     
     const [results] = await db.query(insertMessageQuery, [userId, messageText, 'Sent', sendTime]);

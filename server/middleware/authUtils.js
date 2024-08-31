@@ -2,6 +2,7 @@
 const blacklistedTokens = new Set();
 
 const addToBlacklist = (token) => {
+    console.log('add token to this user')
     blacklistedTokens.add(token);
 };
 

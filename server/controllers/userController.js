@@ -3,6 +3,7 @@ const { addToBlacklist } = require('../middleware/authUtils');
 const { getAllTransportations, getTransportationsOfDriver, getTransportationsOfPassenger } = require('./transportationController');
 
 const login = async (req, res) => {
+    console.log('login')
     const { email, password } = req.body;
     const db = req.db;
 
@@ -21,6 +22,7 @@ const login = async (req, res) => {
             } else if (user.UserPermission === 'Passenger') {
                 transportationResults = await getTransportationsOfPassenger(user.UserID);
             }
+            console.log('login successfully')
 
             return res.status(200).json({
                 token, 
@@ -28,14 +30,17 @@ const login = async (req, res) => {
                 transportations: transportationResults
             });
         } else {
+            console.log('User not found')
             return res.status(404).json({ message: 'User not found' });
         }
     } catch (err) {
+        console.log('error in login')
         return res.status(500).json({ message: 'Error querying the database', error: err });
     }
 };
 
 const registerUser = async (req, res) => {
+    console.log('register')
     const { username, password, phone, permission, email } = req.body;
     const db = req.db;
 
@@ -51,6 +56,7 @@ const registerUser = async (req, res) => {
         const [results] = await db.query('SELECT * FROM Users WHERE UserEmail = ?', [email]);
 
         if (results.length > 0) {
+            console.log('The user already exists')
             return res.status(400).json({ message: 'The user already exists' });
         }
 
@@ -59,8 +65,10 @@ const registerUser = async (req, res) => {
             'INSERT INTO Users (Username, UserPassword, UserPhone, UserPermission, UserEmail) VALUES (?, ?, ?, ?, ?)',
             [username, password, phone, permission, email]
         );
+        console.log('User registered successfully')
         res.status(201).json({ message: 'User registered successfully', userId: insertResults.insertId });
     } catch (err) {
+        console.log('error in register')
         res.status(500).json({ message: 'Error querying the database', error: err });
     }
 };
@@ -78,6 +86,7 @@ const registerUser = async (req, res) => {
 // };
 
 const logout = async (req, res) => {
+    console.log('logout')
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1]; // Extract token from "Bearer TOKEN"
@@ -87,9 +96,11 @@ const logout = async (req, res) => {
         }
 
         await addToBlacklist(token);
+        console.log('Logout successful')
 
         res.status(200).json({ message: 'Logout successful' });
     } catch (err) {
+        console.log('error in logout')
         res.status(500).json({ message: 'Failed to logout', error: err.message });
     }
 };
