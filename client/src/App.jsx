@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
@@ -10,9 +10,15 @@ import NotFound from './pages/NotFound';
 
 function App() {
 
-  let user = localStorage.getItem('user') || null;
+  const [user, setUser] = useState(localStorage.getItem('user'));
   console.log(user);  
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+        setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   const [openProfilePopUp, setOpenProfilePopUp] = useState(false);
 
@@ -23,9 +29,9 @@ function App() {
       <div className="app-container" dir='rtl'>
         <Routes>
           <Route path="/" element={<NavigateHandler user={user} />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/home/*" element={<Home user={user} openProfilePopUp={openProfilePopUp}/>} />
+          <Route path="/login" element={<Login  setUser={setUser}/>} />
+          <Route path="/register" element={<Register/>} />
+          <Route path="/home/*" element={<PrivateRoute><Home user={user} openProfilePopUp={openProfilePopUp}/></PrivateRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
@@ -42,6 +48,10 @@ const NavigateHandler = ({user}) => {
     console.log("no user");
     return <Navigate to="/login" />;
   }
+};
+
+const PrivateRoute = ({ children }) => {
+  return localStorage.getItem('user') ? children : <Navigate to="/login" />;
 };
 
 export default App
