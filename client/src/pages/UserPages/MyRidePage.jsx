@@ -14,7 +14,7 @@ const MyRidePage = ({user, myRides}) => {
 
     return (
         <div className="my-ride-page">
-            {messegesIsClicked? <MessegesPopUp setMessegesIsClicked={setMessegesIsClicked} userId={user.id} />: null}
+            {messegesIsClicked? <MessegesPopUp setMessegesIsClicked={setMessegesIsClicked} userId={user.UserID} />: null}
             <div className="my-ride-container" style={{width: isComputerScreen? '60%': '100%'}}>
                 <div className="my-ride-title">
                 <span>הנסיעות שלי</span>

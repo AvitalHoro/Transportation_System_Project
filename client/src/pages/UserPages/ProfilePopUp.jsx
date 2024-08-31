@@ -22,15 +22,15 @@ const ProfilePopUp = ({ user }) => {
             <div className="profile-pop-up">
                 <div className="profile-pop-up-info">
                     <div className="profile-pop-up-info-row">
-                        <span style={{fontSize: '1.2em'}}>{user.name}</span>
+                        <span style={{fontSize: '1.2em'}}>{user.Username}</span>
                     </div>
                     <div className="profile-pop-up-info-row">
                         <span>טלפון: </span>
-                        <span>{user.phone}</span>
+                        <span>{user.UserPhone}</span>
                     </div>
                     <div className="profile-pop-up-info-row">
                         <span>אימייל: </span>
-                        <span>{user.email}</span>
+                        <span>{user.UserEmail}</span>
                     </div>
                 </div>
                 <button className="log-out-button" onClick={handleLogout}>התנתק מהחשבון</button>
