@@ -22,8 +22,6 @@ const Login = ({setUser}) => {
 
       if (result) {
         console.log('Logged in successfully:', result);
-        //localStorage.setItem('token', result.token); //wait for server
-        //setUser()
         window.location.replace('/home');
       } else {
         console.error('Login failed');
@@ -39,7 +37,7 @@ const Login = ({setUser}) => {
         <h2>התחבר</h2>
         <TextField
           id='username'
-          label="username"
+          label="כתובת אימייל"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
@@ -47,7 +45,7 @@ const Login = ({setUser}) => {
         <TextField
           id='password'
           label="password"
-          type="password"
+          type="סיסמה"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required

@@ -207,3 +207,10 @@ header {
   transform: scale(1.1);
   opacity: 0.8;
 }
+
+.logout {
+  margin-right: 10px;
+  cursor: pointer;
+  color: red;
+  
+}
