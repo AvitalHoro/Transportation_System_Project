@@ -21,7 +21,7 @@ CREATE TABLE Transportation (
     Transportation_Date DATE,
     Transportation_Time TIME,
     Transportation_Status ENUM('active', 'cancel'),
-    DriverID VARCHAR(20),
+    DriverID INT,
     MaxPassengers INT,
 	FOREIGN KEY (DriverID) REFERENCES Users(UserID)
 );
