@@ -12,18 +12,14 @@ function App() {
 
   let user = localStorage.getItem('user') || null;
   console.log(user);  
-  
-  user = {
-    name: "אביטל",
-    type: "admin"
-  }
+
 
   const [openProfilePopUp, setOpenProfilePopUp] = useState(false);
 
   return (
     <Router>
 
-      {user? <Header userType={user.type} name={user.name} setOpenProfilePopUp={setOpenProfilePopUp}></Header> : <Header name={user.name}></Header>}
+      {user? <Header userType={user.type} name={user.name} setOpenProfilePopUp={setOpenProfilePopUp}></Header> : <Header name={user? user.name: null}></Header>}
       <div className="app-container" dir='rtl'>
         <Routes>
           <Route path="/" element={<NavigateHandler user={user} />} />
