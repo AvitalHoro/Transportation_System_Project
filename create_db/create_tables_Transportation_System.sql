@@ -1,3 +1,4 @@
+
 CREATE DATABASE Transportation_System;
 USE Transportation_System;
 
@@ -5,7 +6,7 @@ CREATE TABLE Users (
     UserID INT PRIMARY KEY,
     Username VARCHAR(30),
     UserPassword VARCHAR(20),
-    UserPhone VARCHAR(10),
+    UserPhone VARCHAR(11),
     UserPermission ENUM('driver', 'admin', 'user'),
     UserEmail VARCHAR(35)
 );
