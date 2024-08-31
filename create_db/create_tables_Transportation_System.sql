@@ -16,15 +16,6 @@ CREATE TABLE Station (
     City VARCHAR(20)
 );
 
-CREATE TABLE Users (
-    UserID INT AUTO_INCREMENT PRIMARY KEY,
-    Username VARCHAR(30),
-    UserPassword VARCHAR(20),
-    UserPhone VARCHAR(11),
-    UserPermission ENUM('driver', 'admin', 'user'),
-    UserEmail VARCHAR(35)
-);
-
 CREATE TABLE Transportation (
     TransportationID INT PRIMARY KEY,
     Transportation_Date DATE,
@@ -59,7 +50,7 @@ CREATE TABLE Registrations_To_Transportation (
     FOREIGN KEY (DropoffStationID) REFERENCES Station(StationID)
 );
 CREATE TABLE Message (
-    MessageID INT AUTO_INCREMENT PRIMARY KEY,
+	MessageID INT AUTO_INCREMENT PRIMARY KEY,
     SenderID INT,
     MessageText VARCHAR(300),
     Message_Status ENUM('active', 'cancel'),
@@ -69,13 +60,13 @@ CREATE TABLE Message (
 CREATE TABLE Message_To_Transportation (
     TransportationID INT,
     MessageID INT,
-    PRIMARY KEY (MessageID),
-    FOREIGN KEY (MessageID) REFERENCES Message(MessageID),
+	PRIMARY KEY (MessageID),
+	FOREIGN KEY (MessageID) REFERENCES Message(MessageID),
     FOREIGN KEY (TransportationID) REFERENCES Transportation(TransportationID)
 );
 CREATE TABLE General_Message (
     AttachedFiles TEXT, 
-    MessageID INT,
+	MessageID INT,
     PRIMARY KEY (MessageID),
     FOREIGN KEY (MessageID) REFERENCES Message(MessageID)
 );
