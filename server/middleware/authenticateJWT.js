@@ -8,6 +8,7 @@ const authenticateJWT = (req, res, next) => {
         const token = authHeader.split(' ')[1]; 
         if (token) {
             if (isBlacklisted(token)) {
+                console.log('Unauthorized - Token is blacklisted')
                 return res.status(401).json({ message: 'Unauthorized - Token is blacklisted' });
             }
 
@@ -22,8 +23,9 @@ const authenticateJWT = (req, res, next) => {
             return res.status(401).json({ message: 'Unauthorized - No token provided' });
         }
     } else {
-        next();
-        //return res.status(401).json({ message: 'Unauthorized - No Authorization header' });
+        //next();
+        console.log('problam in Authorization')
+        return res.status(401).json({ message: 'Unauthorized - No Authorization header' });
     }
 };
 
