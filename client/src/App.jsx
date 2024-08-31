@@ -10,22 +10,29 @@ import NotFound from './pages/NotFound';
 
 function App() {
 
-  const [user, setUser] = useState(localStorage.getItem('user'));
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
   console.log(user);  
+  
 
   useEffect(() => {
+    // setUser({
+    //   id: 1,
+    //   name: "אבי רבינוביץ'",
+    //   type: "Driver"
+    // })
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
         setUser(JSON.parse(storedUser));
     }
   }, []);
 
+
   const [openProfilePopUp, setOpenProfilePopUp] = useState(false);
 
   return (
     <Router>
 
-      {user? <Header userType={user.type} name={user.name} setOpenProfilePopUp={setOpenProfilePopUp}></Header> : <Header name={user? user.name: null}></Header>}
+      {user? <Header userType={user.UserPermission} name={user.name} setOpenProfilePopUp={setOpenProfilePopUp}></Header> : <Header name={user? user.name: null}></Header>}
       <div className="app-container" dir='rtl'>
         <Routes>
           <Route path="/" element={<NavigateHandler user={user} />} />
@@ -40,6 +47,8 @@ function App() {
 };
 
 const NavigateHandler = ({user}) => {
+
+  
 
   if (user) {
     console.log("user");
