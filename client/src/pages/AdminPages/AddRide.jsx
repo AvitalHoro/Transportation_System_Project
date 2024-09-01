@@ -11,7 +11,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AddStationPopUp from "./RideEditPageComponent/AddStationPopUp";
 import { request } from "../../requests";
-
+const api = 'http://localhost:5000/api';
 
 const ResponsiveTimePickers = ({timeValue, setTimeValue}) => {
     return (
@@ -44,7 +44,7 @@ const ResponsiveTimePickers = ({timeValue, setTimeValue}) => {
                                 outline: 'none',
                             },
                         }}
-                        defaultValue={dayjs()} />
+                     />
                 </DemoItem>
 
             </DemoContainer>
@@ -85,7 +85,7 @@ const ResponsiveDatePickers = ({dateValue, setDateValue}) => {
                             '& .MuiButtonBase-root:focus': {
                                 outline: 'none',
                             },
-                        }} defaultValue={dayjs()} />
+                        }} />
                 </DemoItem>
             </DemoContainer>
         </LocalizationProvider>
@@ -158,6 +158,32 @@ const AddRide = () => {
         getAllDrivers();
     }, []);
 
+    async function addStationsForTransportation(api, token, newTransportationId, selectedStationIds, station_type) {    
+        // Iterate over the selectedStationIds and perform the POST request for each stationId
+        for (const stationId of selectedStationIds) {
+            try {
+                const response = await fetch(`${api}/stations/add/${newTransportationId}/${stationId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        station_type
+                    }),
+                });
+    
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                } else {
+                    console.log("Added station", stationId);
+                }
+            } catch (error) {
+                console.error('Error during request to add station:', stationId, error);
+            }
+        }
+    }
+
     const handleAddRide = async () => {
         if(fromStation === "" || toStation === "" || dateValue === null || timeValue === null || driver === ""){
             alert("אנא מלא את כל השדות");
@@ -176,6 +202,8 @@ const AddRide = () => {
             return;
         }
 
+        let newTransportationId = null;
+
         //wait for server
         try {
             const body = { transportationDate: dateValue, 
@@ -185,13 +213,14 @@ const AddRide = () => {
                            maxPassengers: 50 
                         }
 
-            const insertTransportation = await request('/transportations/add', token, body);
+            const insertTransportation = await request('POST', '/transportations/add', token, body);
         
             if (insertTransportation.error) {
-                throw new Error(stationsData.error);
+                throw new Error(insertTransportation.error);
             }
     
-            const newTransportationId = insertTransportation.transportationId;
+            newTransportationId = insertTransportation.transportationId;
+            console.log('newTransportationId:', newTransportationId);
                 
         } catch (error) {
             console.error('Error add insertTransportation:', error);
@@ -205,64 +234,30 @@ const AddRide = () => {
             return station ? station.id : null;
         }).filter(id => id !== null); 
 
-    //     //wait for server
-    //     //add the ride to the database - don't forget new id
-    //     try {
-    //         const body = { transportationDate: dateValue, 
-    //                        transportationTime: timeValue, 
-    //                        transportationStatus: 'active', 
-    //                        driver: driverId, 
-    //                        maxPassengers: 50 
-    //                     }
+        let station_type = "Intermediate";
 
-    //         const insertTransportation = await postRequest('/transportations/add', token, body);
-        
-    //         if (insertTransportation.error) {
-    //             throw new Error(stationsData.error);
-    //         }
-    
-    //         const newTransportationId = insertTransportation.transportationId;
-                
-    //     } catch (error) {
-    //         console.error('Error add insertTransportation:', error);
-    //         return null;
-    //     }
-    //     //wait for server
-    //     selectedStationIds.forEach(id => { 
-    //         const body = {
-    //         address,
-    //         city,
-    //         station_Status: stationStatus,
-    //         station_Type: stationType
-    //     };
+        addStationsForTransportation(api, token, newTransportationId, selectedStationIds, station_type);  
 
-    //     try {
-    //         const response = await fetch(`/api/transportations/${transportationId}/stations`, {
-    //             method: 'POST',  // or 'PUT' based on your API design
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 'Authorization': `Bearer ${token}`
-    //             },
-    //             body: JSON.stringify(body)
-    //         });
 
-    //         if (!response.ok) {
-    //             throw new Error(`HTTP error! status: ${response.status}`);
-    //         }
-
-    //         const data = await response.json();
-    //         console.log('Station added:', data);
-
-    //     } catch (error) {
-    //         console.error('Error adding station:', error);
-    //     }
-    // });
-        const fromStationId = stationsListWithId.find(station => station.name === fromStation).id;
-        const toStationId = stationsListWithId.find(station => station.name === toStation).id;
-        //wait for server
         //add the fromStation and toStation to the ride with "starting" and "destination" type
 
+        const fromStationId = stationsListWithId.find(station => station.name === fromStation).id;
+        const toStationId = stationsListWithId.find(station => station.name === toStation).id;
+
+        station_type='Starting'
+        addStationsForTransportation(api, token, newTransportationId, [fromStationId], station_type);
+        
+        station_type='Destination'
+        addStationsForTransportation(api, token, newTransportationId, [toStationId], station_type);
+
         console.log("added ride");
+        setFromStation("");
+        setToStation("");
+        setDateValue(null);
+        setTimeValue(null);
+        setDriver("");
+        setStopsList([]);
+        alert("הנסיעה נוספה בהצלחה!")
     }
 
     // const stationsListWithId = getStationsList();
@@ -289,7 +284,8 @@ const AddRide = () => {
             paddingTop: "30px",
             boxSizing: "border-box",
         }}>
-            {stationsList && driversList? (<div>
+            {stationsList && driversList? (<div style={{display: 'flex', alignItems: "center",
+            justifyContent: "center", flexDirection: 'column', gap: '10px'}}>
             {openPopUpStation? <AddStationPopUp setOpenPopUpStation={setOpenPopUpStation} stationsList={stationsList} setStopsList={setStopsList} />: null}
             <div style={{
                 color: "#00bf63",

@@ -17,7 +17,7 @@ CREATE TABLE Station (
 );
 
 CREATE TABLE Transportation (
-    TransportationID INT PRIMARY KEY,
+    TransportationID INT AUTO_INCREMENT PRIMARY KEY,
     Transportation_Date DATE,
     Transportation_Time TIME,
     Transportation_Status ENUM('active', 'cancel'),
