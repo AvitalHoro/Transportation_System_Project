@@ -92,10 +92,20 @@ const ResponsiveDatePickers = ({dateValue, setDateValue}) => {
     );
 }
 
-const AddRide = async () => {
+
+const AddRide = () => {
+
     const token = localStorage.getItem('token');
-    
+
+
+    const [stationsList, setStationsList] = React.useState([]);
+    const [stationsListWithId, setStationsListWithId] = React.useState([]);
+    const [driversListWithId, setDriversListWithId] = React.useState([]);
+    const [driversList, setDriversList] = React.useState([]);
+
     const getStationsList = async () => {
+        //wait for server
+        //return all stations table 
         try {
             const stationsData = await request('GET', '/stations/all', token);
         
@@ -109,7 +119,8 @@ const AddRide = async () => {
                 id: station.StationID
             }));
         
-            return formattedStations;
+            setStationsListWithId(formattedStations);
+            setStationsList(formattedStations.map(station => station.name));
         
         } catch (error) {
             console.error('Error fetching stations:', error);
@@ -118,6 +129,8 @@ const AddRide = async () => {
     }
 
     const getAllDrivers = async () => {
+        //wait for server
+        //return all user with driver permission
         try {
             const driversData = await request('GET', `/users/getUsers/Driver`, token);
         
@@ -131,13 +144,19 @@ const AddRide = async () => {
                 id: driver.userID
             }));
         
-            return formattedDrivers;
+            setDriversListWithId(formattedDrivers);
+            setDriversList(formattedDrivers.map(driver => driver.name));
         
         } catch (error) {
             console.error('Error fetching stations:', error);
             return [];
         }
     }
+
+    React.useEffect(() => {
+        getStationsList();
+        getAllDrivers();
+    }, []);
 
     const handleAddRide = async () => {
         if(fromStation === "" || toStation === "" || dateValue === null || timeValue === null || driver === ""){
@@ -155,39 +174,65 @@ const AddRide = async () => {
         if(driverId === undefined){
             alert("נהג לא קיים");
             return;
-        }
-
-        //wait for server
-        try {
-            const body = { transportationDate: dateValue, 
-                           transportationTime: timeValue, 
-                           transportationStatus: 'active', 
-                           driver: driverId, 
-                           maxPassengers: 50 
-                        }
-
-            const insertTransportation = await postRequest('/transportations/add', token, body);
-        
-            if (insertTransportation.error) {
-                throw new Error(stationsData.error);
-            }
-    
-            const newTransportationId = insertTransportation.transportationId;
-                
-        } catch (error) {
-            console.error('Error add insertTransportation:', error);
-            return null;
-        }
-
-        //add the ride to the database - don't forget new id
+        } 
 
         const selectedStationIds = stopsList.map(selectedName => {
             const station = stationsListWithId.find(station => station.name === selectedName);
             return station ? station.id : null;
         }).filter(id => id !== null); 
-        //wait for server
-        selectedStationIds.forEach(id => {/* Add the stations to the ride with "intermidate" type*/});
 
+    //     //wait for server
+    //     //add the ride to the database - don't forget new id
+    //     try {
+    //         const body = { transportationDate: dateValue, 
+    //                        transportationTime: timeValue, 
+    //                        transportationStatus: 'active', 
+    //                        driver: driverId, 
+    //                        maxPassengers: 50 
+    //                     }
+
+    //         const insertTransportation = await postRequest('/transportations/add', token, body);
+        
+    //         if (insertTransportation.error) {
+    //             throw new Error(stationsData.error);
+    //         }
+    
+    //         const newTransportationId = insertTransportation.transportationId;
+                
+    //     } catch (error) {
+    //         console.error('Error add insertTransportation:', error);
+    //         return null;
+    //     }
+    //     //wait for server
+    //     selectedStationIds.forEach(id => { 
+    //         const body = {
+    //         address,
+    //         city,
+    //         station_Status: stationStatus,
+    //         station_Type: stationType
+    //     };
+
+    //     try {
+    //         const response = await fetch(`/api/transportations/${transportationId}/stations`, {
+    //             method: 'POST',  // or 'PUT' based on your API design
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'Authorization': `Bearer ${token}`
+    //             },
+    //             body: JSON.stringify(body)
+    //         });
+
+    //         if (!response.ok) {
+    //             throw new Error(`HTTP error! status: ${response.status}`);
+    //         }
+
+    //         const data = await response.json();
+    //         console.log('Station added:', data);
+
+    //     } catch (error) {
+    //         console.error('Error adding station:', error);
+    //     }
+    // });
         const fromStationId = stationsListWithId.find(station => station.name === fromStation).id;
         const toStationId = stationsListWithId.find(station => station.name === toStation).id;
         //wait for server
@@ -196,13 +241,9 @@ const AddRide = async () => {
         console.log("added ride");
     }
 
-    const stationsListWithId = await getStationsList();
-    console.log(stationsListWithId)
-    const stationsList = stationsListWithId.map(sat => sat.name);
-    const driversListWithId = await getAllDrivers()
-    console.log(driversListWithId)
-    const driversList = driversListWithId.map(d => d.name);
-    console.log(driversList)
+    // const stationsListWithId = getStationsList();
+    // const stationsList = stationsListWithId.map(sat => sat.name);
+    // const driversList = getAllDrivers().map(d => d.name);
 
     const [stopsList, setStopsList] = React.useState([]);
 
@@ -224,6 +265,7 @@ const AddRide = async () => {
             paddingTop: "30px",
             boxSizing: "border-box",
         }}>
+            {stationsList && driversList? (<div>
             {openPopUpStation? <AddStationPopUp setOpenPopUpStation={setOpenPopUpStation} stationsList={stationsList} setStopsList={setStopsList} />: null}
             <div style={{
                 color: "#00bf63",
@@ -352,6 +394,7 @@ const AddRide = async () => {
                 הוסף נסיעה
 
             </button>
+            </div>): <div>Loading...</div>}
         </div>
     )
 }
