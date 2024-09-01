@@ -9,50 +9,39 @@ import { request } from "../../requests";
 const AdminOptions = ({ setEditOrGallery, setRide, ride, rideStatus, setRideStatus, setMessegesIsClicked, setReplaceDriverIsClicked }) => {
     
     const handleCancelRide = async () => {
-        //wait for server 
         try {
             const token = localStorage.getItem('token'); 
-            const response = await request('DELETE', `transportations/delete/${ride.id}`, token);
+            const status = 'cancel';
+            const response = await request('PUT', `/transportations/updateStatus/${ride.id}`, token, { status });
     
             if (response.error) {
                 console.error('Failed to cancel the ride:', response.error);
             } else {
-                console.log("Cancel register ", ride.id);
+                console.log("Ride canceled:", ride.id);
                 setRideStatus("cancel");
             }
         } catch (err) {
             console.error('Error occurred while canceling the ride:', err);
         }
     }
-
+    
     const handleReturnedRide = async () => {
-        //wait for server 
         try {
             const token = localStorage.getItem('token'); 
-            const transportations = localStorage.getItem('transportations');
-            const transportationData = JSON.parse(transportations);
-            const currRide = transportationData.find(ride => ride.TransportationID === ride.id);
-            const driverId = currRide ? currRide.DriverID : null;
-            const maxPassengers = currRide ? currRide.MaxPassengers : null;
-            const body = {
-                transportationDate: ride.date, 
-                transportationTime: ride.time, 
-                transportationStatus: ride.status, 
-                driver: driverId,
-                maxPassengers: maxPassengers
-            };
-            const response = await request('POST', 'transportations/add/', token, body);
-
+            const status = 'active';
+            const response = await request('PUT', `/transportations/updateStatus/${ride.id}`, token, { status });
+    
             if (response.error) {
                 console.error('Failed to return the ride:', response.error);
             } else {
-                console.log("Returned register ", ride.id);
+                console.log("Ride returned:", ride.id);
                 setRideStatus("active");
             }
         } catch (err) {
-            console.error('Error occurred while return the ride:', err);
+            console.error('Error occurred while returning the ride:', err);
         }
     }
+    
 
     return (
         <div>
