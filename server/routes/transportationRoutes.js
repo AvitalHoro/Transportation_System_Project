@@ -11,7 +11,7 @@ router.delete('/delete/:transportationId', authenticateJWT, deleteTransportation
 // Route for getting all transportations
 router.get('/all',authenticateJWT, getTransportations);
 // Route for getting driver transportations
-router.get('/driver',authenticateJWT, getTransportationsDriver);
+router.get('/driver/:driverId',authenticateJWT, getTransportationsDriver);
 // Route for getting passenger transportations
 router.get('/passenger/registration',authenticateJWT, getTransportationsPassenger);
 // Route for getting transportations that the user can to register them

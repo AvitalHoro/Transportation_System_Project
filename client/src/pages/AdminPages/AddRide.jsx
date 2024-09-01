@@ -166,7 +166,7 @@ const AddRide = async () => {
                            maxPassengers: 50 
                         }
 
-            const insertTransportation = await postRequest('/transportations/add', token, body);
+            const insertTransportation = await request('/transportations/add', token, body);
         
             if (insertTransportation.error) {
                 throw new Error(stationsData.error);

@@ -86,6 +86,7 @@ const getTransportationsOfDriver = async (driverId) => {
             Transportation.Transportation_Date,
             Transportation.Transportation_Time,
             Transportation.Transportation_Status,
+            Transportation.MaxPassengers,
             StartStation.StationID AS StartStationID,
             StartStation.City AS StartStationCity,
             DestinationStation.StationID AS DestinationStationID,
@@ -199,7 +200,7 @@ const getTransportations = async (req, res) => {
 }
 
 const getTransportationsDriver = async (req, res) => {
-    const { driverId } = req.body;
+    const { driverId } = req.params;
     try { 
         const transportationResults = await getTransportationsOfDriver(driverId);
         return res.status(200).json({

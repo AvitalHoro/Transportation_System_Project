@@ -65,7 +65,7 @@ const addStation = async (req, res) => {
         const [stationResults] = await db.query(checkStationQuery, [address, city]);
 
         if (stationResults.length > 0) {
-            return res.status(409).json({ message: 'Station already exists' });
+            return res.status(409).json({ message: 'Station already exists', StationID: stationResults[0].StationID });
         }
 
         // Insert new station
@@ -79,7 +79,7 @@ const addStation = async (req, res) => {
     }
 };
 
-//addd station to transportation
+//add station to transportation
 const addStationTotransporatstion = async (req, res) => {
     const db = req.db;
     const {transportationId, stationId} = req.params;
@@ -144,7 +144,7 @@ const cancelStation = async (req, res) => {
         // Canceling station      
         //const deleteStationQuery = 'DELETE FROM Station_In_Transportation WHERE StationID = ? AND TransportationID = ?';
         const deleteStationQuery = `UPDATE Station_In_Transportation 
-                                    SET Station_Status = 'Cancelled' 
+                                    SET Station_Status = 'cancel' 
                                     WHERE StationID = ? AND TransportationID = ?`;
 
         await db.query(deleteStationQuery, [stationId, transportationId]);
