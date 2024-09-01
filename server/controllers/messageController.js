@@ -11,11 +11,11 @@ const insertMessage = async (db, userId, messageText, sendTime) => {
 
 //update status message to "Delivered"
 const updateStatusMessage = async (db, messageId) => {
-    const db = req.db; 
+    const db1 = req.db; 
 
     const updateMessageStatusQuery = 'UPDATE Message SET Message_Status = ? WHERE MessageID = ?';
     
-    const [results] = await db.query(updateMessageStatusQuery, ['Delivered', messageId]);
+    const [results] = await db1.query(updateMessageStatusQuery, ['Delivered', messageId]);
     return results;
 };
 

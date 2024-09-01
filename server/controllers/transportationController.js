@@ -369,4 +369,4 @@ const replaceDriver = async (req, res) => {
 };
 
 
-module.exports = { addTransportation, deleteTransportation, getTransportations, getTransportationsDriver, getTransportationsPassenger, getAllTransportations, getTransportationsOfDriver , getTransportationsOfPassenger, replaceDriver, getDetailsTransportation, getTransportationsForUser};
+module.exports = { addTransportation, deleteTransportation, getTransportations, getTransportationsDriver, getTransportationsPassenger, getAllTransportations, getTransportationsOfDriver , getTransportationsOfPassenger, replaceDriver, getTransportationsForUser};
