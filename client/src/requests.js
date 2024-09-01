@@ -3,6 +3,7 @@ const api = 'http://localhost:5000/api';
 
 //general function for request
 export const request = async (method, url, token, body = null) => {
+    console.log('request ' + method + ' ' + url + ' ' + token + ' ' + body);
     try {
         const response = await fetch(`${api}${url}`, {
             method: method,

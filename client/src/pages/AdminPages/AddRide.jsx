@@ -94,49 +94,7 @@ const ResponsiveDatePickers = ({dateValue, setDateValue}) => {
 
 const AddRide = async () => {
     const token = localStorage.getItem('token');
-    // const getStationsList = () => {
-    //     //wait for server
-    //     //return all stations table 
-    //     return [
-    //         {
-    //             name: "תחנה מרכזית ירושלים",
-    //             id: 1,
-    //         },
-    //         {
-    //             name: "תחנה מרכזית תל אביב",
-    //             id: 2,
-    //         },
-    //         {
-    //             name: "מחלף חמד",
-    //             id: 3,
-    //         }
-    //     ]
-    // }
-
-    // const getAllDrivers = () => {
-    //     //wait for server
-    //     //return all user with driver permission
-    //     return [
-    //         {
-    //             name: "אבי רבינוביץ'",
-    //             id: 78,
-    //         },
-    //         {
-    //             name: "שמחה מוצים",
-    //             id: 79,
-    //         },
-    //         {
-    //             name: "אבי רון",
-    //             id: 80,
-    //         },
-    //         {
-    //             name: "עמית נקש",
-    //             id: 81,
-    //         }
-
-    //     ]
-    // }
-
+    
     const getStationsList = async () => {
         try {
             const stationsData = await request('GET', '/stations/all', token);
@@ -161,7 +119,7 @@ const AddRide = async () => {
 
     const getAllDrivers = async () => {
         try {
-            const driversData = await request('POST', '/users/getUsers/driver', token);
+            const driversData = await request('GET', `/users/getUsers/Driver`, token);
         
             if (driversData.error) {
                 throw new Error(stationsData.error);
