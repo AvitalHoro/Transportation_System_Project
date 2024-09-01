@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NavBar from "../../layout/NavBar";
 import "../../style/UserPage.css";
 import { Routes, Route, Navigate } from 'react-router-dom';
@@ -9,93 +9,98 @@ import ContactPage from "./ContactPage";
 import MyMessagePage from "./MyMessagePage";
 import { register } from "../../requests";
 import ProfilePopUp from "./ProfilePopUp";
+const api = 'http://localhost:5000/api';
+const token = localStorage.getItem('token');
 
 
 const MainUserPage = ({user, openProfilePopUp}) => {
 
-    const getMyRides = () => {
-        //wait for server
-        // rteurns only rides that not passed yet
-        return [
-            {
-                rideId: 123,
-                registerId: 1,
-                toStation: "תחנה מרכזית ירושלים",
-                fromStation: "תל אביב השלום",
-                ExecutionDate: "2021-06-01",
-                RegistrationsStatus: "active",
-                Time: "08:00",
-                Date: "2021-06-01",
-                fromCity: "ירושלים",
-                toCity: "תל אביב",
-                RideStations: [{
-                    name: "תחנה מרכזית ירושלים",
-                    id: 1,
-                    type: "Starting"
-                },
-                {
-                    name: "תחנה מרכזית תל אביב",
-                    id: 2,
-                    type: "Destination"
-                },
-                {
-                    name: "מחלף חמד",
-                    id: 3,
-                    type: "Intermediate"
-                }
-            ],
-            },
-            {
-                id: 124,
-                registerId: 2,
-                toStation: "תחנה מרכזית תל אביב",
-                fromStation: "תחנה מרכזית חיפה",
-                ExecutionDate: "2021-06-01",
-                RegistrationsStatus: "active",
-                Time: "08:00",
-                Date: "2021-06-01",
-                fromCity: "חיפה",
-                toCity: "תל אביב",
-                RideStations: [
-                    {
-                        name: "תחנה מרכזית תל אביב",
-                        id: 1,
-                        type: "Destination"
-                    },
-                    {
-                        name: "תחנה מרכזית חיפה",
-                        id: 2,
-                        type: "Starting"
-                    },
-                    {
-                        name: "צומת מסובים",
-                        id: 3,
-                        type: "Intermediate"
-                    }
-                ],
-            }
-        ]
-    }
+    const [myRides, setMyRides] = useState(null);
 
-    const myRides = getMyRides();
+    const getMyRides = async () => {
+        try {
+            const response = await fetch(`${api}/transportations/passenger/registration?userId=${user.UserID}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const data = await response.json();
+    
+            if (data.transportations) {
+                console.log('my ride:', data.transportations);
+                
+                const myRideIn = data.transportations.map(ride => {
+                    return {
+                        rideId: ride.TransportationID,
+                        toStation: ride.DropoffStationAddress,
+                        fromStation: ride.PickupStationAddress,
+                        RegistrationsStatus: ride.Registration_Status,
+                        Time: ride.Transportation_Time,
+                        Date: new Date(ride.ExecutionDate).toLocaleDateString(),  // Changed to full date
+                        fromCity: ride.StartStationCity,
+                        toCity: ride.DestinationStationCity,
+                        RideStations: ride.stations.map(station => {
+                            return {
+                                name: station.Address,
+                                id: station.StationID,
+                                type: station.Station_Type
+                            };
+                        })
+                    };
+                });
+
+                return myRideIn;
+            } else {
+                console.error('Request failed:', data.message);
+                return null;
+            }
+    
+        } catch (error) {
+            console.error('Error during request your ride: ', error);
+            return null;
+        }
+    };
+
+    useEffect(() => {
+        getMyRides().then(rides => {
+            setMyRides(rides);
+            console.log('my rides in effect:', rides);
+        });
+    }, []); // Empty dependency array means this effect runs once on mount
+
+    console.log('my rides in finish:', myRides); // This might log `null` initially, before state updates
+
 
     const [navigateNum, setNavigateNum] = useState(0);
 
     return (
         <div>
+            {myRides ? (
+                <div>
             <NavBar navigateNum={navigateNum} setNavigateNum={setNavigateNum} />
             {openProfilePopUp? <ProfilePopUp user={user}/> : null}
             <div className="user-page-container">
                 <Routes>
                     <Route path="/" element={<NavigateHandler navigateNum={navigateNum} />} />
                     <Route path="my-rides" element={<MyRidePage myRides={myRides} user={user}/>} />
-                    <Route path="register-to-ride" element={<RegisterPage myRidesIds={myRides.map(ride => ride.id)} userId={user? user.UserID: null}/>} />
+                    <Route path="register-to-ride" element={<RegisterPage myRidesIds={myRides? myRides.map(ride => ride.id) : null} userId={user? user.UserID: null}/>} />
                     <Route path="info" element={<InfoPage />} />
                     <Route path="contact" element={<ContactPage/>} />
-                    <Route path="messages" element={<MyMessagePage user={user} rideIds={myRides.map(ride => ride.id)}/>} />
+                    <Route path="messages" element={<MyMessagePage user={user} rideIds={myRides? myRides.map(ride => ride.id): null}/>} />
                 </Routes>
             </div>
-        </div>
+            </div>
+        ) : (
+                <p>Loading rides...</p>
+            )}
+        </div> 
     )
 }
 

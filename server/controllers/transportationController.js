@@ -48,6 +48,7 @@ const getAllTransportations = async () => {
 const getStationsTransportation = async (transportationId) => {
     const query = `    
                 SELECT 
+                    SIT.Station_Type,
                     S.StationID, 
                     S.Address, 
                     S.City
@@ -180,6 +181,8 @@ const getTransportationsOfPassenger = async (passengerId) => {
 
     const [transportationPassenger] = await db.query(query, [passengerId]);
 
+    console.log(transportationPassenger);
+
     const transportationDetails = [];
     
     for (const row of transportationPassenger) {
@@ -189,6 +192,8 @@ const getTransportationsOfPassenger = async (passengerId) => {
             stations
         });
     }
+
+    console.log(transportationDetails);
     return transportationDetails
 };
 
@@ -217,10 +222,16 @@ const getTransportationsDriver = async (req, res) => {
 }
 
 const getTransportationsPassenger = async (req, res) => {
-    const { passengerId } = req.body;
-    const userId = req.userId; //להוסיף בדיקת אימות
+    const userId = req.query.userId;
+
+    // Add your authentication and validation logic here
+    //wait for ahuva
+    
+    if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
+    }
     try { 
-        const transportationResults = await getTransportationsOfPassenger(52);
+        const transportationResults = await getTransportationsOfPassenger(userId);
         return res.status(200).json({
             transportations: transportationResults
         });
