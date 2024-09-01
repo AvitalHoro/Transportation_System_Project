@@ -1,20 +1,9 @@
 const db = require('../config/db');
 const { getStationsOfTransportation } = require('./stationController');
-const { getPassengersOfTransportation } = require('./registrationController');
-
-// const getAllTransportations = () => {
-//     return new Promise((resolve, reject) => {
-//         const query = 'SELECT * FROM Transportation';
-//         db.query(query, (err, results) => {
-//             if (err) {
-//                 return reject(err);
-//             }
-//             resolve(results);
-//         });
-//     });
-// };
+//const { getPassengersOfTransportation } = require('./registrationController');
 
 const getAllTransportations = async () => {
+    const db = req.db;
     const query = `
         SELECT 
             T.TransportationID,
@@ -46,6 +35,7 @@ const getAllTransportations = async () => {
 
 //get details about ststions of transportation 
 const getStationsTransportation = async (transportationId) => {
+    const db = req.db;
     const query = `    
                 SELECT 
                     SIT.Station_Type,
@@ -64,6 +54,7 @@ const getStationsTransportation = async (transportationId) => {
 
 //get details about passengers registered to transportation 
 const get_passengers_registered_transportation = async (transportationId) => {
+    const db = req.db;
     const query = `    
                 SELECT 
                     U.UserID, 
@@ -91,6 +82,7 @@ const get_passengers_registered_transportation = async (transportationId) => {
 };
 
 const getTransportationsOfDriver = async (driverId) => {
+    const db = req.db;
     const query = ` 
         SELECT 
             Transportation.TransportationID,
@@ -142,7 +134,9 @@ const getTransportationsOfDriver = async (driverId) => {
     return passengersRegisteredDetails
 };
 
+//all the transporttions of passenger
 const getTransportationsOfPassenger = async (passengerId) => {
+    const db = req.db;
     const query = `SELECT T.TransportationID, 
                     T.Transportation_Date, 
                     T.Transportation_Time, 
@@ -210,7 +204,6 @@ const getTransportations = async (req, res) => {
 
 const getTransportationsDriver = async (req, res) => {
     const { driverId } = req.body;
-    const userId = req.userId; //להוסיף בדיקת אימות
     try { 
         const transportationResults = await getTransportationsOfDriver(driverId);
         return res.status(200).json({
@@ -284,8 +277,7 @@ const getTransportationsForUser = async (req, res) => {
     }
 };
 
-
-const addTransportation = (req, res) => {
+const addTransportation = async (req, res) => {
     const db = req.db;
     const { transportationDate, transportationTime, transportationStatus, driver, maxPassengers } = req.body;
     const userId = req.userId;
@@ -294,123 +286,85 @@ const addTransportation = (req, res) => {
         return res.status(400).json({ message: 'All fields are required' });
     }
 
-    const checkUserPermissionQuery = 'SELECT UserPermission FROM Users WHERE UserID = ?';
-    db.query(checkUserPermissionQuery, [userId], (err, results) => {
-        if (err) {
-            return res.status(500).json({ message: 'Error querying the database', error: err });
-        }
+    try {
+        // Check user permissions
+        const [results] = await db.query('SELECT UserPermission FROM Users WHERE UserID = ?', [userId]);
 
-        if (results.length === 0 || results[0].UserPermission !== 'Manager') {
+        if (results.length === 0 || results[0].UserPermission !== 'admin') {
             return res.status(403).json({ message: 'You do not have permission to add a transportation' });
         }
 
-        const insertTransportationQuery = 'INSERT INTO Transportation (Transportation_Date, Transportation_Time, Transportation_Status, Driver, MaxPassengers) VALUES (?, ?, ?, ?, ?)';
-        db.query(insertTransportationQuery, [transportationDate, transportationTime, transportationStatus, driver, maxPassengers], (err, results) => {
-            if (err) {
-                return res.status(500).json({ message: 'Error inserting transportation into the database', error: err });
-            }
+        // Insert new transportation
+        const [insertResults] = await db.query(
+            'INSERT INTO Transportation (Transportation_Date, Transportation_Time, Transportation_Status, Driver, MaxPassengers) VALUES (?, ?, ?, ?, ?)',
+            [transportationDate, transportationTime, transportationStatus, driver, maxPassengers]
+        );
 
-            res.status(201).json({ message: 'Transportation added successfully', transportationId: results.insertId });
-        });
-    });
+        res.status(201).json({ message: 'Transportation added successfully', transportationId: insertResults.insertId });
+
+    } catch (err) {
+        res.status(500).json({ message: 'Error querying the database', error: err });
+    }
 };
 
-const deleteTransportation = (req, res) => {
+const deleteTransportation = async (req, res) => {
     const db = req.db;
     const { transportationId } = req.params;
-    const userId = req.userId; 
+    const userId = req.userId;
 
-    // Validate input
     if (!transportationId) {
         return res.status(400).json({ message: 'TransportationID is required' });
     }
 
-    //check permission user
-    const checkUserPermissionQuery = 'SELECT UserPermission FROM Users WHERE UserID = ?';
-    db.query(checkUserPermissionQuery, [userId], (err, results) => {
-        if (err) {
-            return res.status(500).json({ message: 'Error querying the database', error: err });
-        }
+    try {
+        // Check user permissions
+        const [results] = await db.query('SELECT UserPermission FROM Users WHERE UserID = ?', [userId]);
 
-        if (results.length === 0 || results[0].UserPermission !== 'Manager') {
+        if (results.length === 0 || results[0].UserPermission !== 'admin') {
             return res.status(403).json({ message: 'You do not have permission to delete transportation' });
         }
 
-        //Delete the transportation
-        const deleteTransportationQuery = 'DELETE FROM Transportation WHERE TransportationID = ?';
-        db.query(deleteTransportationQuery, [transportationId], (err, results) => {
-            if (err) {
-                return res.status(500).json({ message: 'Error deleting transportation from the database', error: err });
-            }
+        // Delete transportation
+        const [deleteResults] = await db.query('DELETE FROM Transportation WHERE TransportationID = ?', [transportationId]);
 
-            if (results.affectedRows === 0) {
-                return res.status(404).json({ message: 'Transportation not found' });
-            }
+        if (deleteResults.affectedRows === 0) {
+            return res.status(404).json({ message: 'Transportation not found' });
+        }
 
-            res.status(200).json({ message: 'Transportation deleted successfully' });
-        });
-    });
+        res.status(200).json({ message: 'Transportation deleted successfully' });
+
+    } catch (err) {
+        res.status(500).json({ message: 'Error querying the database', error: err });
+    }
 };
 
+
 // Function to replace the driver of a specific transportation
-const replaceDriver = (req, res) => {
+const replaceDriver = async (req, res) => {
     const db = req.db;
     const { transportationId } = req.params;
     const { newDriver } = req.body;
     const userId = req.userId;
 
-    // Check if the current user is a Manager
-    const checkUserQuery = 'SELECT UserPermission FROM Users WHERE UserID = ?';
-    db.query(checkUserQuery, [userId], (err, userResults) => {
-        if (err) {
-            return res.status(500).json({ message: 'Error querying the database', error: err });
-        }
-
-        if (userResults.length === 0 || userResults[0].UserPermission !== 'Manager') {
-            return res.status(403).json({ message: 'You do not have permission to perform this action' });
-        }
-
-        // Update the driver for the specific transportation
-        const updateDriverQuery = 'UPDATE Transportation SET DriverID = ? WHERE TransportationID = ?';
-        db.query(updateDriverQuery, [newDriver, transportationId], (err, updateResults) => {
-            if (err) {
-                return res.status(500).json({ message: 'Error updating the driver', error: err });
-            }
-
-            if (updateResults.affectedRows === 0) {
-                return res.status(404).json({ message: 'Transportation not found' });
-            }
-
-            res.status(200).json({ message: 'Driver replaced successfully' });
-        });
-    });
-};
-
-const getDetailsTransportation = async (req, res) => {
-    const db = req.db;
-    const { transportationId } = req.params;
-    const userId = req.userId;
-
-    if (!transportationId) {
-        return res.status(400).json({ message: 'transportationId is required' });
-    }
-
     try {
-        // Check if the current user has the correct permissions
+        // Check user permissions
         const [userResults] = await db.query('SELECT UserPermission FROM Users WHERE UserID = ?', [userId]);
 
-        if (userResults.length === 0 || (userResults[0].UserPermission !== 'Manager' && userResults[0].UserPermission !== 'Driver')) {
+        if (userResults.length === 0 || userResults[0].UserPermission !== 'admin') {
             return res.status(403).json({ message: 'You do not have permission to perform this action' });
         }
 
-        // Get details of passengers
-        const passengersDetails = await getPassengersOfTransportation(transportationId);
-        // Get details of stations
-        const stationsDetails = await getStationsOfTransportation(transportationId);
+        // Update driver
+        const [updateResults] = await db.query('UPDATE Transportation SET DriverID = ? WHERE TransportationID = ?', [newDriver, transportationId]);
 
-        res.status(200).json({ passengers: passengersDetails, stations: stationsDetails });
+        if (updateResults.affectedRows === 0) {
+            return res.status(404).json({ message: 'Transportation not found' });
+        }
+
+        res.status(200).json({ message: 'Driver replaced successfully' });
+
     } catch (err) {
-        res.status(500).json({ message: 'Error querying transportation data', error: err });
+        res.status(500).json({ message: 'Error querying the database', error: err });
     }
 };
 

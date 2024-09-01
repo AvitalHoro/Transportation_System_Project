@@ -2,6 +2,7 @@ const db = require('../config/db');
 
 // Return details passengers of specific transportation
 const getPassengersOfTransportation = async (transportationID) => {
+    const db = req.db; 
     const query = `SELECT 
             u.UserID,
             u.Username,
@@ -140,7 +141,7 @@ const updateStatus = async (req, res) => {
  
          const userPermission = permissionResults[0].UserPermission;
  
-         if (userPermission !== 'Manager') {
+         if (userPermission !== 'admin') {
              return res.status(403).json({ message: 'Unauthorized' });
          }
 

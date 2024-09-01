@@ -2,6 +2,7 @@ const db = require('../config/db');
 
 //return details stations of specific transportation
 const getStationsOfTransportation = async (transportationID) => {
+    const db = req.db; 
     const query = `SELECT 
         s.StationID,
         s.Address,
@@ -17,6 +18,23 @@ const getStationsOfTransportation = async (transportationID) => {
     const [results] = await db.query(query, [transportationID]);
     return results;
 };
+
+const getAllStations = async (req, res) => {
+    console.log('get all statnios')
+    const db = req.db; 
+    const query = 'SELECT * FROM Station';
+    
+    try {
+        const [stations] = await db.query(query);
+        console.log('stations')
+        return res.status(200).json({
+            stations: stations
+        });
+    } catch (err) {
+        return res.status(500).json({ message: 'Error querying stations data', error: err });
+    }
+};
+
 
 const addStation = async (req, res) => {
     const db = req.db;
@@ -39,7 +57,7 @@ const addStation = async (req, res) => {
 
         const userPermission = permissionResults[0].UserPermission;
 
-        if (userPermission !== 'Manager' && userPermission !== 'Driver') {
+        if (userPermission !== 'admin' && userPermission !== 'driver') {
             return res.status(403).json({ message: 'Unauthorized' });
         }
 
@@ -99,7 +117,7 @@ const cancelStation = async (req, res) => {
 
         const userPermission = permissionResults[0].UserPermission;
 
-        if (userPermission !== 'Manager' && userPermission !== 'Driver') {
+        if (userPermission !== 'admin' && userPermission !== 'driver') {
             return res.status(403).json({ message: 'Unauthorized' });
         }
 
@@ -138,7 +156,7 @@ const updateStation = async (req, res) => {
  
          const userPermission = permissionResults[0].UserPermission;
  
-         if (userPermission !== 'Manager' && userPermission !== 'Driver') {
+         if (userPermission !== 'admin' && userPermission !== 'driver') {
              return res.status(403).json({ message: 'Unauthorized' });
          }
 
@@ -158,4 +176,4 @@ const updateStation = async (req, res) => {
 };
 
     
-module.exports = { addStation, cancelStation, getStationsOfTransportation, updateStation};
+module.exports = {getAllStations,  addStation, cancelStation, getStationsOfTransportation, updateStation};

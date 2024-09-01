@@ -183,14 +183,6 @@ INSERT INTO Station_In_Transportation (TransportationID, StationID, Station_Stat
 (15, 42, 'active', 'Starting'),
 (15, 48, 'active', 'Destination');
 
-select * from Station_In_Transportation
-
-
-
-select * from transportation
-select * from station
-
-
 INSERT INTO Registrations_To_Transportation (TransportationID, UserID, PickupStationID, DropoffStationID, ExecutionDate, Registration_Status) VALUES 
 (1, 1, 60, 6, '2024-08-01 09:30:00', 'active'),
 (1, 2, 2, 5, '2024-08-02 10:15:00', 'cancel'),
@@ -258,8 +250,4 @@ INSERT INTO General_Message (MessageID, AttachedFiles) VALUES
 (10, 'file1.pdf'),
 (11, 'file2.pdf'),
 (12, 'file3.pdf'),
-<<<<<<< HEAD
 (13, 'file4.docx');
-=======
-(13, 'file4.docx');
->>>>>>> af21e62ea7f59b75c98a0bddfee9a7bce50a67ae
