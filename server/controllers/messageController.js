@@ -215,23 +215,22 @@ const getGeneralMessages = async (req, res) => {
 
 const getMessagesOfTransportation = async (req, res) => {
     const { transportationId } = req.params; 
-    const userId = req.userId; 
     const db = req.db;
     
     try {
         // Check user permissions
-        const checkPermissionQuery = 'SELECT UserPermission FROM Users WHERE UserID = ?';
-        const [permissionResults] = await db.query(checkPermissionQuery, [userId]);
+        // const checkPermissionQuery = 'SELECT UserPermission FROM Users WHERE UserID = ?';
+        // const [permissionResults] = await db.query(checkPermissionQuery, [userId]);
 
-        if (permissionResults.length === 0) {
-            return res.status(404).json({ message: 'User not found' });
-        }
+        // if (permissionResults.length === 0) {
+        //     return res.status(404).json({ message: 'User not found' });
+        // }
 
-        const userPermission = permissionResults[0].UserPermission;
+        // const userPermission = permissionResults[0].UserPermission;
 
-        if (userPermission !== 'admin' && userPermission !== 'driver') {
-            return res.status(403).json({ message: 'Unauthorized' });
-        }
+        // if (userPermission !== 'admin' && userPermission !== 'driver') {
+        //     return res.status(403).json({ message: 'Unauthorized' });
+        // }
 
         // return the messges of this transportationId
         
@@ -246,13 +245,13 @@ const getMessagesOfTransportation = async (req, res) => {
                                                 WHERE 
                                                     mt.TransportationID = ?;
                                                     `;
-        await db.query(message_of_transportation_query, [transportationId]);
+        const response = await db.query(message_of_transportation_query, [transportationId]);
 
         // Get registered users
-        const messagesOfTransportation = await getRegisteredUsers(db, transportationId);
+        // const messagesOfTransportation = await getRegisteredUsers(db, transportationId);
 
         // Return ok response with the messages
-        res.status(200).json({ messages: messagesOfTransportation });
+        res.status(200).json({ messages: response });
 
     } catch (err) {
         res.status(500).json({ message: 'Error inserting message', error: err });

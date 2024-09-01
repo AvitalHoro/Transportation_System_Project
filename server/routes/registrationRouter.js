@@ -5,7 +5,7 @@ const { registerForTransportation, deleteRegistration, updateStation, updateStat
 const router = express.Router();
 
 // Route for registering a user for transportation
-router.post('/register', authenticateJWT, registerForTransportation);
+router.post('/register/:userId', authenticateJWT, registerForTransportation);
 // Route for deleting a registration
 router.delete('/delete/:transportationID', authenticateJWT, deleteRegistration);
 // Route for updating station details

@@ -16,6 +16,8 @@ const token = localStorage.getItem('token');
 const MainUserPage = ({user, openProfilePopUp}) => {
 
     const [myRides, setMyRides] = useState(null);
+    const [registerUpdate, setRegisterUpdate] = useState(false);
+
 
     const getMyRides = async () => {
         try {
@@ -73,7 +75,7 @@ const MainUserPage = ({user, openProfilePopUp}) => {
             setMyRides(rides);
             console.log('my rides in effect:', rides);
         });
-    }, []); // Empty dependency array means this effect runs once on mount
+    }, [registerUpdate]); // Empty dependency array means this effect runs once on mount
 
     console.log('my rides in finish:', myRides); // This might log `null` initially, before state updates
 
@@ -90,10 +92,10 @@ const MainUserPage = ({user, openProfilePopUp}) => {
                 <Routes>
                     <Route path="/" element={<NavigateHandler navigateNum={navigateNum} />} />
                     <Route path="my-rides" element={<MyRidePage myRides={myRides} user={user}/>} />
-                    <Route path="register-to-ride" element={<RegisterPage myRidesIds={myRides? myRides.map(ride => ride.id) : null} userId={user? user.UserID: null}/>} />
-                    <Route path="info" element={<InfoPage />} />
+                    <Route path="register-to-ride" element={<RegisterPage myRidesIds={myRides? myRides.map(ride => ride.id) : null} userId={user? user.UserID: null} registerUpdate={registerUpdate} setRegisterUpdate={setRegisterUpdate}/>} />
+                    <Route path="info" element={<InfoPage userId={user.UserID} />} />
                     <Route path="contact" element={<ContactPage/>} />
-                    <Route path="messages" element={<MyMessagePage user={user} rideIds={myRides? myRides.map(ride => ride.id): null}/>} />
+                    <Route path="messages" element={<MyMessagePage user={user} rideIds={myRides? myRides.map(ride => ride.rideId): null}/>} />
                 </Routes>
             </div>
             </div>

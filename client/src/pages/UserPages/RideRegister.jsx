@@ -5,20 +5,59 @@ import ScheduleIcon from '@mui/icons-material/Schedule';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Stations from "./Stations";
+const api = 'http://localhost:5000/api';
+const token = localStorage.getItem('token');
 
-const RideRegister = ({userId, rideId, exit, target, date, time, stationsList}) => {
+const RideRegister = ({userId, rideId, exit, target, date, time, stationsList, setRegisterUpdate}) => {
 
     const [fromStation, setFromStation] = React.useState(null);
     const [toStation, setToStation] = React.useState(null);
 
-    const handleRegister = () => {
+    function getIdByName(name) {
+        const station = stationsList.find(station => station.name === name);
+        return station ? station.id : null; // Return the id if found, otherwise return null
+    }
+
+    const handleRegister = async () => {
         if (!fromStation || !toStation) {
             alert("אנא בחר תחנות");
             return;
         }
-        //wait for server
-        //send rideId, fromStation, toStation, userId
-        console.log("Register to ride ", rideId, fromStation, toStation);
+
+        const transportationId = rideId;
+        const pickupStationId = getIdByName(fromStation);
+        const dropoffStationId = getIdByName(toStation);
+        const executionDate = new Date();
+
+        try {
+            const response = await fetch(`${api}/registrations/register/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    transportationId,
+                    pickupStationId,
+                    dropoffStationId,
+                    executionDate
+                }),
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            else{
+                console.log("Register to ride ", rideId, fromStation, toStation);
+                alert("הרשמתך לנסיעה נרשמה בהצלחה");
+                setRegisterUpdate(rideId);
+            }
+    
+
+        } catch (error) {
+            console.error('Error during request your ride: ', error);
+        }        
+
     }
 
     return (

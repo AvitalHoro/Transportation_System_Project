@@ -38,7 +38,7 @@ const MyRidePage = ({user, myRides}) => {
             
             {isComputerScreen && (
                 <div className="my-message-container">
-            <MymessagePage rideIds={myRides.map(ride => ride.id)} />
+            <MymessagePage rideIds={myRides.map(ride => ride.rideId)} />
             </div>
         )}
 
