@@ -36,9 +36,16 @@ const getPassengersOfTransportation = async (transportationID) => {
 
 //register passenger to transpportation
 const registerForTransportation = async (req, res) => {
+
+    console.log('registerForTransportation');
     const { transportationId, pickupStationId, dropoffStationId, executionDate } = req.body;
-    const userId = req.userId;
+    const {userId} = req.params;
     const db = req.db;
+
+    const mysqlDate = new Date(executionDate).toISOString().slice(0, 19).replace('T', ' ');
+
+
+    console.log('transportationId:', transportationId, 'pickupStationId:', pickupStationId, 'dropoffStationId:', dropoffStationId, 'executionDate:', executionDate);
 
     // Validate input
     if (!transportationId || !pickupStationId || !dropoffStationId || !executionDate) {
@@ -48,30 +55,23 @@ const registerForTransportation = async (req, res) => {
     try {
         // Insert registration details
         const insertRegistrationQuery = `
-            INSERT INTO Registrations_To_Transportation 
-            (UserID, TransportationID, PickupStationID, DropoffStationID, ExecutionDate, Registration_Status) 
-            VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO Registrations_To_Transportation 
+        (TransportationID, UserID, PickupStationID, DropoffStationID, ExecutionDate, Registration_Status) VALUES 
+        (?, ?, ?, ?, ?, 'active')
         `;
-        await db.query(insertRegistrationQuery, [userId, transportationId, pickupStationId, dropoffStationId, executionDate, 'Confirmed']);
-
-        // Update registration status to Completed
-        const updateStatusQuery = `
-            UPDATE Registrations_To_Transportation 
-            SET Registration_Status = 'Completed' 
-            WHERE UserID = ? AND TransportationID = ?
-        `;
-        await db.query(updateStatusQuery, [userId, transportationId]);
-
+        await db.query(insertRegistrationQuery, [transportationId, userId, pickupStationId, dropoffStationId, mysqlDate]);
+        console.log('User registered for transportation successfully');
         res.status(201).json({ message: 'User registered for transportation successfully' });
 
     } catch (err) {
+        console.log('Error registering user for transportation', err);
         res.status(500).json({ message: 'Error registering user for transportation', error: err });
     }
 };
 
 const deleteRegistration = async (req, res) => {
     const { transportationID } = req.params;
-    const userId = req.userId;
+    const {userId} = req.params;
     const db = req.db;
 
     // Validate input

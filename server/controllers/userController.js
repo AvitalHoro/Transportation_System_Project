@@ -95,6 +95,7 @@ const logout = async (req, res) => {
 
 
 const getUsers = async (req, res) => {
+    console.log('getUsers')
     const db = req.db;
     const userId = req.userId;
     const { typeUser } = req.params; 

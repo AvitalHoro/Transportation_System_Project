@@ -5,7 +5,7 @@ const api = 'http://localhost:5000/api';
 const token = localStorage.getItem('token');
 
 
-const RegisterPage = ({userId, myRidesIds}) => {
+const RegisterPage = ({userId, myRidesIds, registerUpdate, setRegisterUpdate}) => {
 
 
     const [allRides, setAllRides] = useState(null); // Store the full list of rides
@@ -14,6 +14,7 @@ const RegisterPage = ({userId, myRidesIds}) => {
     const [filterDate, setFilterDate] = useState("");
     const [filterToStation, setFilterToStation] = useState("");
     const [filterFromStation, setFilterFromStation] = useState("");
+
 
     const getAllNextRides = async () => {
         try {
@@ -66,6 +67,7 @@ const RegisterPage = ({userId, myRidesIds}) => {
         if (allRides) {
             const filtered = allRides
                 .filter(ride => !myRidesIds.includes(ride.id))
+                .filter(ride => ride.id !== registerUpdate)
                 .filter(ride => {
                     return (
                         (ride.date === filterDate || filterDate === "") &&
@@ -75,101 +77,9 @@ const RegisterPage = ({userId, myRidesIds}) => {
                 });
             setFilteredRides(filtered); // Update the filtered rides list
         }
-    }, [filterToStation, filterFromStation, filterDate, allRides]); // Run whenever filters or allRides change
+    }, [filterToStation, filterFromStation, filterDate, allRides, registerUpdate]); // Run whenever filters or allRides change
 
     console.log('Filtered rides list:', filteredRides);
-
-    // const getAllNextRides = () => {
-    //     //wait for server
-    //     //return only rides that not passed yet
-    //     //return only ride not in myRidesIds!!!!!!
-    //     return [
-    //         {
-    //             id: 1234,
-    //             exit: "תל אביב",
-    //             target: "ירושלים",
-    //             date: "2021-06-01",
-    //             time: "08:00",
-    //             stationsList: [
-    //                 {
-    //                     name: "תחנה מרכזית תל אביב",
-    //                     id: 1,
-    //                     type: "Starting"
-    //                 },
-    //                 {
-    //                     name: "תחנה מרכזית ירושלים",
-    //                     id: 2,
-    //                     type: "Destination"
-    //                 },
-    //                 {
-    //                     name: "מחלף חמד",
-    //                     id: 3,
-    //                     type: "Intermediate"
-    //                 }
-    //             ]
-    //         },
-    //         {
-    //             id: 456,
-    //             exit: "חיפה",
-    //             target: "קצרין",
-    //             date: "2024-06-01",
-    //             time: "16:30",
-    //             stationsList: [
-    //                 {
-    //                     name: "תחנה מרכזית חיפה",
-    //                     id: 1,
-    //                     type: "Starting"
-    //                 },
-    //                 {
-    //                     name: "תחנה מרכזית קצרין",
-    //                     id: 2,
-    //                     type: "Destination"
-    //                 },
-    //                 {
-    //                     name: "צומת מסובים",
-    //                     id: 3,
-    //                     type: "Intermediate"
-    //                 }
-    //             ]
-    //         },
-    //         {
-    //             id: 789,
-    //             exit: "תל אביב",
-    //             target: "חיפה",
-    //             date: "2021-06-01",
-    //             time: "08:00",
-    //             stationsList: [
-    //                 {
-    //                     name: "תחנה מרכזית תל אביב",
-    //                     id: 1,
-    //                     type: "Starting"
-    //                 },
-    //                 {
-    //                     name: "תחנה מרכזית חיפה",
-    //                     id: 2,
-    //                     type: "Destination"
-    //                 },
-    //                 {
-    //                     name: "צומת מסובים",
-    //                     id: 3,
-    //                     type: "Intermediate"
-    //                 }
-    //             ]
-    //         },
-
-    //     ];
-    // }
-
-   
-
-    // const allRideList = getAllNextRides().filter(ride => {
-    //     return (
-    //         (ride.date === filterDate || filterDate === "") &&
-    //         (filterToStation === "" || ride.stationsList.find(station => station.name === filterToStation && station.type !== "Starting")) &&
-    //         (filterFromStation === "" || ride.stationsList.find(station => station.name === filterFromStation && station.type !== "Destination"))
-    //     );
-    // });
-
     
     return (
         <div className="register-page">
@@ -193,7 +103,8 @@ const RegisterPage = ({userId, myRidesIds}) => {
                             date={ride.date}
                             time={ride.time}
                             stationsList={ride.stationsList}
-                        />
+                            setRegisterUpdate={setRegisterUpdate}
+                            />
                     )
                 }
             </div>
