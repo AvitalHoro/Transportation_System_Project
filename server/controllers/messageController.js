@@ -1,17 +1,5 @@
 const db = require('../config/db');
 
-// const insertMessage = async (userId, messageText, sendTime) => {
-//     const insertMessageQuery = 'INSERT INTO Message (SenderID, MessageText, Message_Status, SendTime) VALUES (?, ?, ?, ?)';
-    
-//     return new Promise((resolve, reject) => {
-//         db.query(insertMessageQuery, [userId, messageText, 'Sent', sendTime], (err, results) => {
-//             if (err) {
-//                 return reject(err);
-//             }
-//             resolve(results.insertId);
-//         });
-//     });
-// };
 
 const insertMessage = async (db, userId, messageText, sendTime) => {
     console.log('insert message to the database')
@@ -23,6 +11,8 @@ const insertMessage = async (db, userId, messageText, sendTime) => {
 
 //update status message to "Delivered"
 const updateStatusMessage = async (db, messageId) => {
+    const db = req.db; 
+
     const updateMessageStatusQuery = 'UPDATE Message SET Message_Status = ? WHERE MessageID = ?';
     
     const [results] = await db.query(updateMessageStatusQuery, ['Delivered', messageId]);

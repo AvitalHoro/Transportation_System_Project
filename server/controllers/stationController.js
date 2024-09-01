@@ -2,6 +2,7 @@ const db = require('../config/db');
 
 //return details stations of specific transportation
 const getStationsOfTransportation = async (transportationID) => {
+    const db = req.db; 
     const query = `SELECT 
         s.StationID,
         s.Address,
@@ -19,7 +20,7 @@ const getStationsOfTransportation = async (transportationID) => {
 };
 
 const getAllStations = async (req, res) => {
-    console.log('get')
+    console.log('get all statnios')
     const db = req.db; 
     const query = 'SELECT * FROM Station';
     

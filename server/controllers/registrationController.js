@@ -2,6 +2,7 @@ const db = require('../config/db');
 
 // Return details passengers of specific transportation
 const getPassengersOfTransportation = async (transportationID) => {
+    const db = req.db; 
     const query = `SELECT 
             u.UserID,
             u.Username,
