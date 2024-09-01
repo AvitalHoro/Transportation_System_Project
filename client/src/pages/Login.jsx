@@ -44,8 +44,8 @@ const Login = ({setUser}) => {
         />
         <TextField
           id='password'
-          label="password"
-          type="סיסמה"
+          label="סיסמה"
+          type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required

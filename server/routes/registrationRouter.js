@@ -11,7 +11,7 @@ router.delete('/delete/:transportationID', authenticateJWT, deleteRegistration);
 // Route for updating station details
 router.put('/update/station/:transportationID/:stationID', authenticateJWT, updateStation);
 // Route for updating status of registering
-router.put('/update/status/:transportationID/:stationID', authenticateJWT, updateStatus);
+router.put('/update/status/:transportationID/:registresionID', authenticateJWT, updateStatus);
 
 
 module.exports = router;

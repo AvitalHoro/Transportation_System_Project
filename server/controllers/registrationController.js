@@ -160,4 +160,6 @@ const updateStatus = async (req, res) => {
     }
 };
 
+
+
 module.exports = { registerForTransportation, deleteRegistration, updateStation, getPassengersOfTransportation, updateStatus };

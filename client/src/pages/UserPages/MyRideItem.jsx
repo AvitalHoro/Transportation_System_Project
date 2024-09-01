@@ -11,13 +11,64 @@ import Stations from "./Stations";
 const MyRideItem = ({ registerId, exitCity, targetCity, date, time, status, toStation, fromStation, stationsList, setMessegesIsClicked }) => {
 
 
-    const handleCancelRgister = () => {
-        //wait for server 
+    const [rgisterStatus, setRegisterStatus] = useState(status);
 
+    const handleCancelRgister = async () => {
+
+            try {
+                const response = await fetch(`${api}/update/status/registrations/${transportationID}/${registrationID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+        
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+        
+                const data = await response.json();
+        
+                if (data.transportations) {
+                    console.log('my ride:', data.transportations);
+                    
+                    const myRideIn = data.transportations.map(ride => {
+                        return {
+                            rideId: ride.TransportationID,
+                            toStation: ride.DropoffStationAddress,
+                            fromStation: ride.PickupStationAddress,
+                            RegistrationsStatus: ride.Registration_Status,
+                            Time: ride.Transportation_Time,
+                            Date: new Date(ride.ExecutionDate).toLocaleDateString(),  // Changed to full date
+                            fromCity: ride.StartStationCity,
+                            toCity: ride.DestinationStationCity,
+                            RideStations: ride.stations.map(station => {
+                                return {
+                                    name: station.Address,
+                                    id: station.StationID,
+                                    type: station.Station_Type
+                                };
+                            })
+                        };
+                    });
+    
+                    return myRideIn;
+                } else {
+                    console.error('Request failed:', data.message);
+                    return null;
+                }
+        
+            } catch (error) {
+                console.error('Error during request your ride: ', error);
+                return null;
+            }
+    
+       
         //send registerId
         console.log("Cancel register ", registerId);
         setRegisterStatus("cancel");
-    }
+    };
 
     const handleReturnedRegister = () => {
         //wait for server 
@@ -26,8 +77,6 @@ const MyRideItem = ({ registerId, exitCity, targetCity, date, time, status, toSt
         console.log("Returned register ", registerId);
         setRegisterStatus("active");
     }
-
-    const [rgisterStatus, setRegisterStatus] = useState(status);
 
     return (
         <div className="ride-register-container" 
