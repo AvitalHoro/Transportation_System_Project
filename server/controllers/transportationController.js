@@ -86,6 +86,7 @@ const getTransportationsOfDriver = async (driverId) => {
             Transportation.Transportation_Date,
             Transportation.Transportation_Time,
             Transportation.Transportation_Status,
+            Transportation.MaxPassengers,
             StartStation.StationID AS StartStationID,
             StartStation.City AS StartStationCity,
             DestinationStation.StationID AS DestinationStationID,
@@ -199,7 +200,7 @@ const getTransportations = async (req, res) => {
 }
 
 const getTransportationsDriver = async (req, res) => {
-    const { driverId } = req.body;
+    const { driverId } = req.params;
     try { 
         const transportationResults = await getTransportationsOfDriver(driverId);
         return res.status(200).json({
@@ -365,4 +366,39 @@ const replaceDriver = async (req, res) => {
 };
 
 
-module.exports = { addTransportation, deleteTransportation, getTransportations, getTransportationsDriver, getTransportationsPassenger, getAllTransportations, getTransportationsOfDriver , getTransportationsOfPassenger, replaceDriver, getTransportationsForUser};
+// Function to update the status of transportation
+const updateStatus = async (req, res) => {
+    const db = req.db;
+    const { transportationId } = req.params;
+    const { newStatus } = req.body;
+    const userId = req.userId;
+
+    try {
+        // Validate input
+        if (!newStatus) {
+            return res.status(400).json({ message: 'New status is required' });
+        }
+
+        // Check user permissions
+        const [userResults] = await db.query('SELECT UserPermission FROM Users WHERE UserID = ?', [userId]);
+
+        if (userResults.length === 0 || userResults[0].UserPermission !== 'admin') {
+            return res.status(403).json({ message: 'You do not have permission to perform this action' });
+        }
+
+        // Update status
+        const [updateResults] = await db.query('UPDATE Transportation SET Transportation_Status = ? WHERE TransportationID = ?', [newStatus, transportationId]);
+
+        if (updateResults.affectedRows === 0) {
+            return res.status(404).json({ message: 'Transportation not found' });
+        }
+
+        res.status(200).json({ message: `Status updated successfully for transportation ID ${transportationId}` });
+
+    } catch (err) {
+        res.status(500).json({ message: 'Error querying the database', error: err });
+    }
+};
+
+
+module.exports = { addTransportation, deleteTransportation, getTransportations, getTransportationsDriver, getTransportationsPassenger, getAllTransportations, getTransportationsOfDriver , getTransportationsOfPassenger, replaceDriver, getTransportationsForUser, updateStatus};

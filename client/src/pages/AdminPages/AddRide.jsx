@@ -174,7 +174,31 @@ const AddRide = () => {
         if(driverId === undefined){
             alert("נהג לא קיים");
             return;
-        } 
+        }
+
+        //wait for server
+        try {
+            const body = { transportationDate: dateValue, 
+                           transportationTime: timeValue, 
+                           transportationStatus: 'active', 
+                           driver: driverId, 
+                           maxPassengers: 50 
+                        }
+
+            const insertTransportation = await request('/transportations/add', token, body);
+        
+            if (insertTransportation.error) {
+                throw new Error(stationsData.error);
+            }
+    
+            const newTransportationId = insertTransportation.transportationId;
+                
+        } catch (error) {
+            console.error('Error add insertTransportation:', error);
+            return null;
+        }
+
+        //add the ride to the database - don't forget new id
 
         const selectedStationIds = stopsList.map(selectedName => {
             const station = stationsListWithId.find(station => station.name === selectedName);
