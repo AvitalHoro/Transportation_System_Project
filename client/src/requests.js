@@ -30,7 +30,9 @@ export const request = async (method, url, token, body = null) => {
 
 export const login = async (email, password) => {
     try {
+        console.log('login')
         const data = await request('POST', '/users/login', '', { email, password });
+        console.log(data)
 
         if (data.token) {
             console.log('Login successful:', data);

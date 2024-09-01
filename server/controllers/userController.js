@@ -34,7 +34,7 @@ const login = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
     } catch (err) {
-        console.log('error in login')
+        console.log(err)
         return res.status(500).json({ message: 'Error querying the database', error: err });
     }
 };
@@ -52,19 +52,18 @@ const registerUser = async (req, res) => {
     }
 
     try {
-        console.log('try')
         // Check if email already exists
         const [results] = await db.query('SELECT * FROM Users WHERE UserEmail = ?', [email]);
-        console.log('try1')
         if (results.length > 0) {
             console.log('The user already exists')
             return res.status(400).json({ message: 'The user already exists' });
         }
-        console.log('try2')
         // Insert new user into the database
+        let formattedPhone = `${phone.slice(0, 3)}-${phone.slice(3)}`;
+        console.log(username, password, formattedPhone, permission, email)
         const [insertResults] = await db.query(
             'INSERT INTO Users (Username, UserPassword, UserPhone, UserPermission, UserEmail) VALUES (?, ?, ?, ?, ?)',
-            [username, password, phone, permission, email]
+            [username, password, formattedPhone, permission, email]
         );
         console.log('User registered successfully')
         res.status(201).json({ message: 'User registered successfully', userId: insertResults.insertId });

@@ -3,7 +3,6 @@ const { getStationsOfTransportation } = require('./stationController');
 //const { getPassengersOfTransportation } = require('./registrationController');
 
 const getAllTransportations = async () => {
-    const db = req.db;
     const query = `
         SELECT 
             T.TransportationID,
@@ -35,7 +34,6 @@ const getAllTransportations = async () => {
 
 //get details about ststions of transportation 
 const getStationsTransportation = async (transportationId) => {
-    const db = req.db;
     const query = `    
                 SELECT 
                     SIT.Station_Type,
@@ -54,7 +52,6 @@ const getStationsTransportation = async (transportationId) => {
 
 //get details about passengers registered to transportation 
 const get_passengers_registered_transportation = async (transportationId) => {
-    const db = req.db;
     const query = `    
                 SELECT 
                     U.UserID, 
@@ -82,7 +79,6 @@ const get_passengers_registered_transportation = async (transportationId) => {
 };
 
 const getTransportationsOfDriver = async (driverId) => {
-    const db = req.db;
     const query = ` 
         SELECT 
             Transportation.TransportationID,
@@ -136,7 +132,6 @@ const getTransportationsOfDriver = async (driverId) => {
 
 //all the transporttions of passenger
 const getTransportationsOfPassenger = async (passengerId) => {
-    const db = req.db;
     const query = `SELECT T.TransportationID, 
                     T.Transportation_Date, 
                     T.Transportation_Time, 
