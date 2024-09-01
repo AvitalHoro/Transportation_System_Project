@@ -35,11 +35,9 @@ const getAllStations = async (req, res) => {
     }
 };
 
-
 const addStation = async (req, res) => {
     const db = req.db;
     const { address, city, station_Status, station_Type } = req.body;
-    const { transportationId } = req.params;
     const userId = req.userId;
 
     try {
@@ -47,6 +45,7 @@ const addStation = async (req, res) => {
         if (!address || !city || !station_Status || !station_Type) {
             return res.status(400).json({ message: 'All the fields are required' });
         }
+        
         // Check user permissions
         const checkPermissionQuery = 'SELECT UserPermission FROM Users WHERE UserID = ?';
         const [permissionResults] = await db.query(checkPermissionQuery, [userId]);
@@ -62,43 +61,64 @@ const addStation = async (req, res) => {
         }
 
         // Check if station already exists
-        const checkStationQuery = 'SELECT StationID FROM Station WHERE Address = ? AND City = ?';
+        const checkStationQuery = 'SELECT * FROM Station WHERE Address = ? AND City = ?';
         const [stationResults] = await db.query(checkStationQuery, [address, city]);
 
-        let stationId;
         if (stationResults.length > 0) {
-            // Station already exists
-            stationId = stationResults[0].StationID;
-        } else {
-            // Insert new station
-            const insertStationQuery = 'INSERT INTO Station (Address, City) VALUES (?, ?)';
-            const [insertResults] = await db.query(insertStationQuery, [address, city]);
-            stationId = insertResults.insertId;
+            return res.status(409).json({ message: 'Station already exists' });
         }
 
-        //check if station exists in Station_In_Transportation
-        const check_Station_In_Transportation_Query = 'SELECT StationID FROM Station_In_Transportation WHERE StationID = ? AND TransportationID = ?';
-        const [Station_In_Transportation_Results] = await db.query(check_Station_In_Transportation_Query, [stationId, transportationId]);
-        if (Station_In_Transportation_Results.length > 0) {
-            // Station already exists
-            const update_Station_In_Transportation_Query = `UPDATE Station_In_Transportation 
-                                                            SET Station_Status = 'Active' 
-                                                            WHERE StationID = ? AND TransportationID = ?`;
-            await db.query(update_Station_In_Transportation_Query, [stationId, transportationId]);
-            res.status(201).json({ message: 'Station updated successfully', stationId: stationId });
-        } else {
-            // Insert into Station_In_Transportation
-            const insert_Station_In_Transportation_Query = `INSERT INTO Station_In_Transportation
-                                                            (TransportationID, StationID, Station_Status, Station_Type)
-                                                            VALUES (?, ?, ?, ?)`;
-            await db.query(insert_Station_In_Transportation_Query, [transportationId, stationId, station_Status, station_Type]);
-            res.status(201).json({ message: 'Station added successfully', stationId: stationId });
-        }
+        // Insert new station
+        const insertStationQuery = 'INSERT INTO Station (Address, City, Station_Status, Station_Type) VALUES (?, ?, ?, ?)';
+        const [insertStationResult] = await db.query(insertStationQuery, [address, city, station_Status, station_Type]);
+
+        res.status(201).json({ message: 'Station added successfully', stationId: insertStationResult.insertId });
 
     } catch (err) {
         res.status(500).json({ message: 'Error adding station', error: err });
     }
 };
+
+//addd station to transportation
+const addStationTotransporatstion = async (req, res) => {
+    const db = req.db;
+    const {transportationId, stationId} = req.params;
+    const {station_type} = req.body;
+    const userId = req.userId; 
+    try {
+        // Validate input
+        if (!station_type) {
+            return res.status(400).json({ message: 'All the fields are required' });
+        }
+        // Check user permissions
+        const checkPermissionQuery = 'SELECT UserPermission FROM Users WHERE UserID = ?';
+        const [permissionResults] = await db.query(checkPermissionQuery, [userId]);
+
+        if (permissionResults.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const userPermission = permissionResults[0].UserPermission;
+
+        if (userPermission !== 'admin' && userPermission !== 'driver') {
+            return res.status(403).json({ message: 'Unauthorized' });
+        }
+        const station_status = 'active';
+
+        // Insert new station
+        const insertStationQuery = 'INSERT INTO Station_In_Transportation (TransportationID, StationID, Station_Status, Station_Type) VALUES (?, ?, ?, ?)';
+        const [insertStation] = await db.query(insertStationQuery, [transportationId, stationId, station_status, station_type]);
+
+        if (insertStation.affectedRows > 0) {
+            res.status(201).json({ message: 'Station added successfully'});
+        } else {
+            res.status(500).json({ message: 'Error adding station'});
+        }
+
+    } catch (err) {
+        res.status(500).json({ message: 'Error adding station', error: err });
+    }
+}
 
 const cancelStation = async (req, res) => {
     const db = req.db;
@@ -176,4 +196,4 @@ const updateStation = async (req, res) => {
 };
 
     
-module.exports = {getAllStations,  addStation, cancelStation, getStationsOfTransportation, updateStation};
+module.exports = {getAllStations,  addStation, cancelStation, getStationsOfTransportation, updateStation, addStationTotransporatstion};
