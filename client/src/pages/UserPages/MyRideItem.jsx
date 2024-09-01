@@ -7,8 +7,10 @@ import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import ClearIcon from '@mui/icons-material/Clear';
 import ReplayIcon from '@mui/icons-material/Replay';
 import Stations from "./Stations";
+const api = 'http://localhost:5000/api';
+const token = localStorage.getItem('token');
 
-const MyRideItem = ({ registerId, exitCity, targetCity, date, time, status, toStation, fromStation, stationsList, setMessegesIsClicked }) => {
+const MyRideItem = ({ userId, registerId, exitCity, targetCity, date, time, status, toStation, fromStation, stationsList, setMessegesIsClicked }) => {
 
 
     const [rgisterStatus, setRegisterStatus] = useState(status);
@@ -16,12 +18,15 @@ const MyRideItem = ({ registerId, exitCity, targetCity, date, time, status, toSt
     const handleCancelRgister = async () => {
 
             try {
-                const response = await fetch(`${api}/update/status/registrations/${transportationID}/${registrationID}`, {
+                const response = await fetch(`${api}/registrations/update/status/${userId}/${registerId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
-                    }
+                    },
+                    body: JSON.stringify({
+                        statusTransportation: 'cancel' // Replace 'newStatus' with the status you want to update to
+                    })
                 });
         
                 if (!response.ok) {
@@ -30,33 +35,13 @@ const MyRideItem = ({ registerId, exitCity, targetCity, date, time, status, toSt
         
                 const data = await response.json();
         
-                if (data.transportations) {
-                    console.log('my ride:', data.transportations);
-                    
-                    const myRideIn = data.transportations.map(ride => {
-                        return {
-                            rideId: ride.TransportationID,
-                            toStation: ride.DropoffStationAddress,
-                            fromStation: ride.PickupStationAddress,
-                            RegistrationsStatus: ride.Registration_Status,
-                            Time: ride.Transportation_Time,
-                            Date: new Date(ride.ExecutionDate).toLocaleDateString(),  // Changed to full date
-                            fromCity: ride.StartStationCity,
-                            toCity: ride.DestinationStationCity,
-                            RideStations: ride.stations.map(station => {
-                                return {
-                                    name: station.Address,
-                                    id: station.StationID,
-                                    type: station.Station_Type
-                                };
-                            })
-                        };
-                    });
-    
-                    return myRideIn;
+                if (data.message === 'The status of registration updated successfully') {
+                    console.log("Cancel register ", registerId);
+                    setRegisterStatus("cancel");
+                    return data.message; 
                 } else {
                     console.error('Request failed:', data.message);
-                    return null;
+                    return null; 
                 }
         
             } catch (error) {
@@ -64,18 +49,42 @@ const MyRideItem = ({ registerId, exitCity, targetCity, date, time, status, toSt
                 return null;
             }
     
-       
-        //send registerId
-        console.log("Cancel register ", registerId);
-        setRegisterStatus("cancel");
+           
     };
 
-    const handleReturnedRegister = () => {
-        //wait for server 
+    const handleReturnedRegister = async () => {
+        try {
+            const response = await fetch(`${api}/registrations/update/status/${userId}/${registerId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    statusTransportation: 'active' // Replace 'newStatus' with the status you want to update to
+                })
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const data = await response.json();
+    
+            if (data.message === 'The status of registration updated successfully') {
+                console.log("Returned register ", registerId);
+                setRegisterStatus("active");
+                return data.message; 
+            } else {
+                console.error('Request failed:', data.message);
+                return null; 
+            }
+    
+        } catch (error) {
+            console.error('Error during request your ride: ', error);
+            return null;
+        }
 
-        //send registerId
-        console.log("Returned register ", registerId);
-        setRegisterStatus("active");
     }
 
     return (

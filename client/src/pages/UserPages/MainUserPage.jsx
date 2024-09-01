@@ -43,7 +43,7 @@ const MainUserPage = ({user, openProfilePopUp}) => {
                         fromStation: ride.PickupStationAddress,
                         RegistrationsStatus: ride.Registration_Status,
                         Time: ride.Transportation_Time,
-                        Date: new Date(ride.ExecutionDate).toLocaleDateString(),  // Changed to full date
+                        Date: new Date(ride.Transportation_Date).toLocaleDateString(),  // Changed to full date
                         fromCity: ride.StartStationCity,
                         toCity: ride.DestinationStationCity,
                         RideStations: ride.stations.map(station => {

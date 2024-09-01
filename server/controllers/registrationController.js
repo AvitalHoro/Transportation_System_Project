@@ -121,10 +121,14 @@ const updateStation = async (req, res) => {
 };
 
 const updateStatus = async (req, res) => {
+
+    console.log('updateStatus');
     const db = req.db;
     const { passengerId, transportationId } = req.params;
     const { statusTransportation } = req.body;
     const userId = req.userId;  
+
+    console.log('passengerId:', passengerId, 'transportationId:', transportationId, 'statusTransportation:', statusTransportation);
 
     try {
         // Validate input
@@ -132,24 +136,25 @@ const updateStatus = async (req, res) => {
             return res.status(400).json({ message: 'passengerId is required' });
         }
          // Check user permissions
-         const checkPermissionQuery = 'SELECT UserPermission FROM Users WHERE UserID = ?';
-         const [permissionResults] = await db.query(checkPermissionQuery, [userId]);
+        //  const checkPermissionQuery = 'SELECT UserPermission FROM Users WHERE UserID = ?';
+        //  const [permissionResults] = await db.query(checkPermissionQuery, [userId]);
  
-         if (permissionResults.length === 0) {
-             return res.status(404).json({ message: 'User not found' });
-         }
+        //  if (permissionResults.length === 0) {
+        //      return res.status(404).json({ message: 'User not found' });
+        //  }
  
-         const userPermission = permissionResults[0].UserPermission;
+        //  const userPermission = permissionResults[0].UserPermission;
  
-         if (userPermission !== 'admin') {
-             return res.status(403).json({ message: 'Unauthorized' });
-         }
+        //  if (userPermission !== 'admin') {
+        //      return res.status(403).json({ message: 'Unauthorized' });
+        //  }
 
         // Update status registratin
-        const updateStatusQuery = 'UPDATE Registrations_To_Transportation SET Registrations_Status = ? WHERE UserID = ? AND TransportationID = ?';
+        const updateStatusQuery = 'UPDATE Registrations_To_Transportation SET Registration_Status = ? WHERE UserID = ? AND TransportationID = ?';
         const [updateResults] = await db.query(updateStatusQuery, [statusTransportation, passengerId, transportationId]);
 
         if (updateResults.affectedRows === 0) {
+            console.log('Registrations_To_Transportation not found');
             return res.status(404).json({ message: 'Registrations_To_Transportation not found' });
         }
 

@@ -19,7 +19,7 @@ const ResponsiveDatePickers = ({ setFilterDate, dateValue }) => {
         const month = String(thisDate.getMonth() + 1).padStart(2, '0'); // Adding 1 because getMonth() returns 0-11
         const day = String(thisDate.getDate()).padStart(2, '0');
 
-        const formattedDate = `${year}-${month}-${day}`;
+        const formattedDate = `${day}.${month}.${year}`;
         console.log(formattedDate);
         setFilterDate(formattedDate);
     }

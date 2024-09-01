@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
-
+const api = 'http://localhost:5000/api';
+const token = localStorage.getItem('token');
 
 const Stations = ({ registerId, defaultToStation, defaultFromStation, stationsList, isRegister, setToStation, setFromStation }) => {
 
@@ -11,27 +12,84 @@ const Stations = ({ registerId, defaultToStation, defaultFromStation, stationsLi
         return station ? station.id : null; // Return the id if found, otherwise return null
     }
 
-    const handleSetStation = (station, type) => {
+    const handleSetStation = async (station, type) => {
+
         if (isRegister) {
             if (type === "from") {
+
+                if (station === defaultTo) {
+                    alert("לא ניתן לעלות ולרדת באותה תחנה");
+                    return;
+                }
                 setFromStation(station);
             } else {
+                if (station === defaultFrom) {
+                    alert("לא ניתן לעלות ולרדת באותה תחנה");
+                    return;
+                }
                 setToStation(station);
             }
             return;
         }
         const newStationId = getIdByName(station);
-        if (type === "from") {
 
+        let typeStation = '';
+
+        if (type === "from") {
+ if (station === defaultTo) {
+                    alert("לא ניתן לעלות ולרדת באותה תחנה");
+                    return;
+                }
+            //type = 'PickupStationID'
             //wait for server
             //replace the station id in the register, use newStationId
-            console.log("From station:", station);
-            setDefaultFrom(station);
-        } else {
-            //wait for server
-            console.log("To station:", station);
-            setDefaultTo(station);
+
+            typeStation = 'PickupStationID';
         }
+        else {
+            if (station === defaultFrom) {
+                alert("לא ניתן לעלות ולרדת באותה תחנה");
+                return;
+            }
+            typeStation = 'DropoffStationID';
+        }
+
+            try {
+                const response = await fetch(`${api}/registrations/update/station/${registerId}/${newStationId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`, // Include your auth token if required
+                    },
+                    body: JSON.stringify({
+                        typeStation: typeStation // Include the typeStation in the body
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.message === 'The station updated successfully') {
+                    if (type === "from") {
+                        console.log("From station:", station);
+                        setDefaultFrom(station);
+                    } else {
+                        console.log("To station:", station);
+                        setDefaultTo(station);
+                    }
+                    return data.message;
+                } else {
+                    console.error('Request failed:', data.message);
+                    return null;
+                }
+
+            } catch (error) {
+                console.error('Error during request your ride: ', error);
+                return null;
+            }
     }
 
     const [defaultFrom, setDefaultFrom] = useState(defaultFromStation);
@@ -52,14 +110,14 @@ const Stations = ({ registerId, defaultToStation, defaultFromStation, stationsLi
         }}>
 
             <Autocomplete
-                value={defaultTo}
+                value={defaultFrom}
                 disablePortal
                 disableClearable
                 id="combo-box-drop-station"
                 options={fromStations}
                 onChange={(event, newValue) => {
-                    setDefaultTo(newValue);
-                    handleSetStation(newValue, "to");
+                    setDefaultFrom(newValue);
+                    handleSetStation(newValue, "from");
                 }}
                 sx={{
                     width: "46%",
@@ -81,14 +139,14 @@ const Stations = ({ registerId, defaultToStation, defaultFromStation, stationsLi
             }} />
 
             <Autocomplete
-                value={defaultFrom}
+                value={defaultTo}
                 disablePortal
                 disableClearable
                 id="combo-box-drop-station"
                 options={toStations}
                 onChange={(event, newValue) => {
-                    setDefaultFrom(newValue);
-                    handleSetStation(newValue, "from");
+                    setDefaultTo(newValue);
+                    handleSetStation(newValue, "to");
                 }
                 }
                 sx={{

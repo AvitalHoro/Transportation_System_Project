@@ -21,7 +21,8 @@ const MyRidePage = ({user, myRides}) => {
                 </div>
                 <div className="my-ride-gallery">
                     {myRides.map(ride => <MyRideItem 
-                        registerId={ride.id}
+                    userId={user.UserID}
+                        registerId={ride.rideId}
                         exitCity={ride.fromCity}
                         targetCity={ride.toCity}
                         date={ride.Date}
