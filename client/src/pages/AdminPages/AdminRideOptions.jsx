@@ -4,25 +4,55 @@ import ClearIcon from '@mui/icons-material/Clear';
 import SyncIcon from '@mui/icons-material/Sync';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import ReplayIcon from '@mui/icons-material/Replay';
+import { request } from "../../requests";
 
 const AdminOptions = ({ setEditOrGallery, setRide, ride, rideStatus, setRideStatus, setMessegesIsClicked, setReplaceDriverIsClicked }) => {
-
-    const handleCancelRide = () => {
+    
+    const handleCancelRide = async () => {
         //wait for server 
-
-        //send registerId
-        console.log("Cancel register ", ride.id);
-        setRideStatus("cancel");
+        try {
+            const token = localStorage.getItem('token'); 
+            const response = await request('DELETE', `transportations/delete/${ride.id}`, token);
+    
+            if (response.error) {
+                console.error('Failed to cancel the ride:', response.error);
+            } else {
+                console.log("Cancel register ", ride.id);
+                setRideStatus("cancel");
+            }
+        } catch (err) {
+            console.error('Error occurred while canceling the ride:', err);
+        }
     }
 
-    const handleReturnedRide = () => {
+    const handleReturnedRide = async () => {
         //wait for server 
+        try {
+            const token = localStorage.getItem('token'); 
+            const transportations = localStorage.getItem('transportations');
+            const transportationData = JSON.parse(transportations);
+            const currRide = transportationData.find(ride => ride.TransportationID === ride.id);
+            const driverId = currRide ? currRide.DriverID : null;
+            const maxPassengers = currRide ? currRide.MaxPassengers : null;
+            const body = {
+                transportationDate: ride.date, 
+                transportationTime: ride.time, 
+                transportationStatus: ride.status, 
+                driver: driverId,
+                maxPassengers: maxPassengers
+            };
+            const response = await request('POST', 'transportations/add/', token, body);
 
-        //send registerId
-        console.log("Returned register ", ride.id);
-        setRideStatus("active");
+            if (response.error) {
+                console.error('Failed to return the ride:', response.error);
+            } else {
+                console.log("Returned register ", ride.id);
+                setRideStatus("active");
+            }
+        } catch (err) {
+            console.error('Error occurred while return the ride:', err);
+        }
     }
-
 
     return (
         <div>

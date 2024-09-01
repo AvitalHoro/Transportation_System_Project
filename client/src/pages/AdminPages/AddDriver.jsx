@@ -1,12 +1,13 @@
 import React from "react";
 import TextField from '@mui/material/TextField';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { request } from "../../requests";
 
 // , שם משתמש, סיסמה, טלפון , מייל.
 
 const AddDriver = () => {
 
-    const handleAddDriver = () => {
+    const handleAddDriver = async () => {
         // check if all fields are filled
         if(username==="" || password==="" || phone==="" || email===""){
             alert("אנא מלא את כל השדות");
@@ -22,10 +23,21 @@ const AddDriver = () => {
         }
 
         // wait for server
-        // add driver to users table with driver permission
+    try {
+        const token = localStorage.getItem('token'); 
+        const permission = 'driver'
+        const response = await request('POST', '/users/register', token, { username, password, phone, permission, email });
 
-        console.log("Add driver: ", username, password, phone, email);
+        if (response.error) {
+            console.error('add driver failed:', response.message);
+        } else {
+            console.log("Add driver: ", username, password, phone, email);
+        }
+    } catch (err) {
+        console.error('Error occurred while add the ride:', err);
     }
+}
+
 
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");

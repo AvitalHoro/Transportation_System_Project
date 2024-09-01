@@ -10,6 +10,7 @@ const getAllTransportations = async () => {
             T.Transportation_Time,
             T.Transportation_Status,
             T.DriverID,
+            T.MaxPassengers,
             U.Username AS DriverName,
             StartStation.City AS StartCity,
             DestinationStation.City AS DestinationCity

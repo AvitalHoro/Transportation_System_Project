@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import InfoRideComponent from "./RideEditPageComponent/InfoRideComponent";
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ReplaceDriver from "./RideEditPageComponent/ReplaceDriver";
@@ -8,27 +8,47 @@ import SendMessegeToPassengers from "./RideEditPageComponent/SendMessegeToPassen
 import AddStationPopUp from "./RideEditPageComponent/AddStationPopUp";
 
 const RideEditPage = ({ ride, setEditOrGallery }) => {
+    const [allStations, setStations] = useState(null);
 
-    const getStationsList = () => {
+    const getStationsList = async () => {
         //wait for server
-        //return all stations table 
-        return [
-            {
-                name: "תחנה מרכזית ירושלים",
-                id: 1,
-            },
-            {
-                name: "תחנה מרכזית תל אביב",
-                id: 2,
-            },
-            {
-                name: "מחלף חמד",
-                id: 3,
+        const token = localStorage.getItem('token'); 
+        try {
+            const response = await request('GET', 'stations/all/', token, {});
+    
+            if (response.error) {
+                console.error('Failed to return the stations:', response.error);
+                return [
+                    { name: "תחנה מרכזית ירושלים", id: 1 },
+                    { name: "תחנה מרכזית תל אביב", id: 2 },
+                    { name: "מחלף חמד", id: 3 }
+                ];
+            } else {
+                console.log(response.stations);
+                return response.stations.map(station => ({
+                    name: station.name,
+                    id: station.id
+                }));
             }
-        ]
+        } catch (err) {
+            console.error('Error occurred while return the stations:', err);
+            return [
+                { name: "תחנה מרכזית ירושלים", id: 1 },
+                { name: "תחנה מרכזית תל אביב", id: 2 },
+                { name: "מחלף חמד", id: 3 }
+            ];
+        }
     }
+   
+    useEffect(() => {
+        getStationsList().then(stations => {
+            setStations(stations);
+            console.log('the stations: ', stations);
+        });
+    }, []); 
 
-    const handleAddStation = (stationName) => {
+    const handleAddStation = async (stationName) => {
+        const token = localStorage.getItem('token'); 
 
         const stationId = stationsListWithId.find(sat => sat.name === stationName).id;
 
