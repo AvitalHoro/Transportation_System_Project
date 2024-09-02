@@ -13,7 +13,7 @@ const Home = ({ user, openProfilePopUp }) => {
             <Route path="/" element={<NavigateHandler userType={user.UserPermission} />} />
           <Route path="user/*" element={<MainUserPage user={user} openProfilePopUp={openProfilePopUp}/>} />
           <Route path="admin/*" element={<MainAdminPage userId={user.UserID} />} />
-          <Route path="driver/*" element={<MainDriverPage user={user}/>} />
+          <Route path="driver/*" element={<MainDriverPage userId={user.UserID}/>} />
         </Routes>
         </>
     )

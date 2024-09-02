@@ -76,7 +76,7 @@ const RideGalleryPage = ({ setEditOrGallery, ride, setRide, userId, driverUpdate
                     time: ride.Transportation_Time,
                     status: ride.Transportation_Status,
                     driverName: ride.DriverName,
-                    stationsList: ride.stations.map(station => ({
+                    RideStations: ride.stations.map(station => ({
                         name: station.Address,
                         id: station.StationID,
                         type: station.Station_Type
@@ -114,8 +114,8 @@ const RideGalleryPage = ({ setEditOrGallery, ride, setRide, userId, driverUpdate
                 .filter(ride => {
                     return (
                         (ride.date === filterDate || filterDate === "") &&
-                        (filterToStation === "" || ride.stationsList.find(station => station.name === filterToStation && station.type !== "Starting")) &&
-                        (filterFromStation === "" || ride.stationsList.find(station => station.name === filterFromStation && station.type !== "Destination"))
+                        (filterToStation === "" || ride.RideStations.find(station => station.name === filterToStation && station.type !== "Starting")) &&
+                        (filterFromStation === "" || ride.RideStations.find(station => station.name === filterFromStation && station.type !== "Destination"))
                     );
                 });
             setFilteredRides(filtered); // Update the filtered rides list

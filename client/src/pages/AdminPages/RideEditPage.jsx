@@ -13,8 +13,8 @@ import { api } from '../../config.json';
 const RideEditPage = ({ ride, setEditOrGallery, setDriverUpdate }) => {
     console.log(ride);
 
-    const [stationsList, setStationsList] = useState(null);
-    const [stationsListWithId, setStationsListWithId] = useState(null);
+    const [RideStations, setStationsList] = useState(null);
+    const [RideStationsWithId, setStationsListWithId] = useState(null);
 
     const getStationsList = async () => {
         //wait for server
@@ -41,7 +41,7 @@ const RideEditPage = ({ ride, setEditOrGallery, setDriverUpdate }) => {
     const handleAddStation = async (stationName) => {
         const token = localStorage.getItem('token'); 
 
-        const stationId = stationsListWithId.find(sat => sat.name === stationName).id;
+        const stationId = RideStationsWithId.find(sat => sat.name === stationName).id;
 
 
         if(stationId === undefined){
@@ -49,7 +49,7 @@ const RideEditPage = ({ ride, setEditOrGallery, setDriverUpdate }) => {
             return;
         }
 
-        if(ride.stationsList.find(station => station.id === stationId)){
+        if(ride.RideStations.find(station => station.id === stationId)){
             alert("תחנה כבר קיימת בנסיעה");
             return;
         }
@@ -121,23 +121,23 @@ const RideEditPage = ({ ride, setEditOrGallery, setDriverUpdate }) => {
         getStationsList();
     }, []);
 
-    const [dynamicStopsList, setDynamicStopsList] = React.useState(ride.stationsList);
+    const [dynamicStopsList, setDynamicStopsList] = React.useState(ride.RideStations);
 
     const [openStationsPopUp, setOpenStationsPopUp] = React.useState(false);
 
     const [rideStatus, setRideStatus] = React.useState(ride.status);
 
 
-    //setOpenPopUpStation, stationsList, setStopsList, isEditPage, handleAddStation
+    //setOpenPopUpStation, RideStations, setStopsList, isEditPage, handleAddStation
     return (
         <div>
-            { stationsList? (
+            { RideStations? (
         <div className="page-container ride-edit-page">
             {openStationsPopUp? 
             <AddStationPopUp 
             rideId={ride.id} 
             setOpenPopUpStation={setOpenStationsPopUp} 
-            stationsList={stationsList}
+            RideStations={RideStations}
             setStopsList={setDynamicStopsList}
             isEditPage={true}
             handleAddStation={handleAddStation}
@@ -168,7 +168,7 @@ const RideEditPage = ({ ride, setEditOrGallery, setDriverUpdate }) => {
                 <Passengers registers={ride.Registers} />
                 <Stops 
                 rideId={ride.id}
-                stops={ride.stationsList} 
+                stops={ride.RideStations} 
                 isAdmin={true} 
                 setOpenStationsPopUp={setOpenStationsPopUp} 
                 dynamicStopsList={dynamicStopsList} 

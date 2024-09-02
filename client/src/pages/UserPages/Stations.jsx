@@ -5,10 +5,10 @@ import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 const api = 'http://localhost:5000/api';
 const token = localStorage.getItem('token');
 
-const Stations = ({ registerId, defaultToStation, defaultFromStation, stationsList, isRegister, setToStation, setFromStation }) => {
+const Stations = ({ registerId, defaultToStation, defaultFromStation, RideStations, isRegister, setToStation, setFromStation }) => {
 
     function getIdByName(name) {
-        const station = stationsList.find(station => station.name === name);
+        const station = RideStations.find(station => station.name === name);
         return station ? station.id : null; // Return the id if found, otherwise return null
     }
 
@@ -95,8 +95,8 @@ const Stations = ({ registerId, defaultToStation, defaultFromStation, stationsLi
     const [defaultFrom, setDefaultFrom] = useState(defaultFromStation);
     const [defaultTo, setDefaultTo] = useState(defaultToStation);
 
-    const fromStations = stationsList.filter(station => station.type !== "Destination").map(station => station.name);
-    const toStations = stationsList.filter(station => station.type !== "Starting").map(station => station.name);
+    const fromStations = RideStations.filter(station => station.type !== "Destination").map(station => station.name);
+    const toStations = RideStations.filter(station => station.type !== "Starting").map(station => station.name);
 
     return (
         <div style={{

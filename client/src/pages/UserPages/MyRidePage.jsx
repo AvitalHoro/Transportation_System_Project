@@ -30,7 +30,7 @@ const MyRidePage = ({user, myRides}) => {
                         status={ride.RegistrationsStatus}
                         toStation={ride.toStation}
                         fromStation={ride.fromStation}
-                        stationsList={ride.RideStations}
+                        RideStations={ride.RideStations}
                         setMessegesIsClicked={setMessegesIsClicked}/>)}
                 </div>
 

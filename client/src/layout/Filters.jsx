@@ -116,7 +116,7 @@ const Filters = ({ _color, setFilterDate, setFilterToStation, setFilterFromStati
 
     const isComputerScreen = useMediaQuery('(min-width:830px)');
 
-    const stationsList = getAllStations();
+    const RideStations = getAllStations();
     return (
         <div className="filters-container">
             <div className="row-flex">
@@ -140,7 +140,7 @@ const Filters = ({ _color, setFilterDate, setFilterToStation, setFilterFromStati
                     disablePortal
                     disableClearable
                     id="combo-box-drop-station"
-                    options={stationsList}
+                    options={RideStations}
                     sx={{
                         minWidth: '200px',
                         '& .MuiOutlinedInput-root': {
@@ -169,7 +169,7 @@ const Filters = ({ _color, setFilterDate, setFilterToStation, setFilterFromStati
                     disablePortal
                     disableClearable
                     id="combo-box-drop-station"
-                    options={stationsList}
+                    options={RideStations}
                     sx={{
                         minWidth: '200px',
                         '& .MuiOutlinedInput-root': {

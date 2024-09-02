@@ -8,13 +8,13 @@ import Stations from "./Stations";
 const api = 'http://localhost:5000/api';
 const token = localStorage.getItem('token');
 
-const RideRegister = ({userId, rideId, exit, target, date, time, stationsList, setRegisterUpdate}) => {
+const RideRegister = ({userId, rideId, exit, target, date, time, RideStations, setRegisterUpdate}) => {
 
     const [fromStation, setFromStation] = React.useState(null);
     const [toStation, setToStation] = React.useState(null);
 
     function getIdByName(name) {
-        const station = stationsList.find(station => station.name === name);
+        const station = RideStations.find(station => station.name === name);
         return station ? station.id : null; // Return the id if found, otherwise return null
     }
 
@@ -97,7 +97,7 @@ const RideRegister = ({userId, rideId, exit, target, date, time, stationsList, s
                 </div>
             </div>
             <Stations 
-            stationsList={stationsList}
+            RideStations={RideStations}
             isRegister={true}
             setToStation={setToStation}
             setFromStation={setFromStation}

@@ -1,107 +1,92 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import RideItem from "./RideItem";
 import Filters from "../../layout/Filters";
 import RideViewPage from "./RideViewPage";
-import Register from "../Register";
+import { api } from "../../config.json";
 
-const MainDriverPage = () => {
+const MainDriverPage = ({userId}) => {
 
 
-    const getMyRides = () => {
+    const [allRides, setAllRides] = useState(null); // Store the full list of rides
+    const [filteredRides, setFilteredRides] = useState(null); // Store the filtered rides
 
-        //wait for server
-        return [
-            {
-                rideId: 123,
-                time: "08:00",
-                date: "2021-06-01",
-                fromCity: "ירושלים",
-                toCity: "תל אביב",
-                RideStations: [{
-                    name: "תחנה מרכזית ירושלים",
-                    id: 1,
-                    type: "Starting"
-                },
-                {
-                    name: "תחנה מרכזית תל אביב",
-                    id: 2,
-                    type: "Destination"
-                },
-                {
-                    name: "מחלף חמד",
-                    id: 3,
-                    type: "Intermediate"
+    const [filterDate, setFilterDate] = useState("");
+    const [filterToStation, setFilterToStation] = useState("");
+    const [filterFromStation, setFilterFromStation] = useState("");
+
+    const getMyRides = async () => {
+
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`${api}/transportations/driver/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 }
-                ],
-                Registers: [
-                    {
-                        name: "אבי רבינוביץ'",
-                        fromStation: "תחנה מרכזית חיפה",
-                        toStation: "צומת מסובים",
-                    },
-                    {
-                        name: "יסכה גדות",
-                        fromStation: "תחנה מרכזית חיפה",
-                        toStation: "צומת מסובים",
-                    },
-                    {
-                        name: "אבי רבינוביץ'",
-                        fromStation: "תחנה מרכזית קצרין",
-                        toStation: "מחלף חמד",
-                    }
+            });
 
-                ]
-            },
-            {
-                id: 124,
-                time: "08:00",
-                date: "2021-06-01",
-                fromCity: "חיפה",
-                toCity: "תל אביב",
-                RideStations: [
-                    {
-                        name: "תחנה מרכזית תל אביב",
-                        id: 1,
-                        type: "Destination"
-                    },
-                    {
-                        name: "תחנה מרכזית חיפה",
-                        id: 2,
-                        type: "Starting"
-                    },
-                    {
-                        name: "צומת מסובים",
-                        id: 3,
-                        type: "Intermediate"
-                    }
-                ],
-                Registers: [
-                    {
-                        name: "אבי רבינוביץ'",
-                        fromStation: "תחנה מרכזית חיפה",
-                        toStation: "צומת מסובים",
-                    },
-                    {
-                        name: "יסכה גדות",
-                        fromStation: "תחנה מרכזית חיפה",
-                        toStation: "צומת מסובים",
-                    },
-                ],
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        ]
-    }
 
-    const [filterDate, setFilterDate] = React.useState("");
-    const [filterToStation, setFilterToStation] = React.useState("");
-    const [filterFromStation, setFilterFromStation] = React.useState("");
+            const data = await response.json();
 
-    const myRideList = getMyRides().filter(ride => {
-        return (
-            (ride.date === filterDate || filterDate === "") &&
-            (filterToStation === "" || ride.RideStations.find(station => station.name === filterToStation && station.type !== "Starting")) &&
-            (filterFromStation === "" || ride.RideStations.find(station => station.name === filterFromStation && station.type !== "Destination"))
-        );
-    });
+            if (data.transportations) {
+                console.log('my ride:', data.transportations);
+                const myRideIn = data.transportations.map(ride => ({
+                    rideId: ride.TransportationID,
+                    fromCity: ride.StartStationCity,
+                    toCity: ride.DestinationStationCity,
+                    date: new Date(ride.Transportation_Date).toLocaleDateString(),
+                    time: ride.Transportation_Time.slice(0, 5),
+                    RideStations: ride.stations.map(station => ({
+                        name: station.Address,
+                        id: station.StationID,
+                        type: station.Station_Type
+                    })),
+                    Registers: ride.passengers.map(
+                        register => ({
+                            name: register.Username,
+                            fromStation: register.PickupStationAddress,
+                            toStation: register.DropoffStationAddress,
+                        })
+                    )
+                }));
+
+                setAllRides(myRideIn); // Store all rides
+                console.log('All rides:', myRideIn);
+                setFilteredRides(myRideIn); // Initial filtering
+            } else {
+                console.error('Request failed:', data.message);
+                setAllRides([]);
+            }
+
+        } catch (error) {
+            console.error('Error during request your ride: ', error);
+            setAllRides([]);
+        }
+    };
+
+    useEffect(() => {
+        getMyRides();
+    }, []); // Only run on mount
+
+    useEffect(() => {
+        if (allRides) {
+            const filtered = allRides
+                .filter(ride => {
+                    return (
+                        (ride.date === filterDate || filterDate === "") &&
+                        (filterToStation === "" || ride.RideStations.find(station => station.name === filterToStation && station.type !== "Starting")) &&
+                        (filterFromStation === "" || ride.RideStations.find(station => station.name === filterFromStation && station.type !== "Destination"))
+                    );
+                });
+            setFilteredRides(filtered); // Update the filtered rides list
+        }
+    }, [filterToStation, filterFromStation, filterDate, allRides]); // Run whenever filters or allRides change
+
+    console.log('Filtered rides list:', filteredRides);
 
 
     const [viewOrGallery, setViewOrGallery] = useState(0);
@@ -109,7 +94,7 @@ const MainDriverPage = () => {
 
     return (
         <div style={{ padding: '1.5em' }}>
-
+            {filteredRides?( <div>
             {viewOrGallery ?
                 <RideViewPage
                     ride={ride}
@@ -124,9 +109,10 @@ const MainDriverPage = () => {
                         setFilterToStation={setFilterToStation}
                         setFilterFromStation={setFilterFromStation}
                     />
+                    {filteredRides.length > 0? (
                     <div className="ride-gallery-content">
                         {
-                            myRideList.map((ride) =>
+                            filteredRides.map((ride) =>
                                 <RideItem
                                     setViewOrGallery={setViewOrGallery}
                                     setRide={setRide}
@@ -134,8 +120,8 @@ const MainDriverPage = () => {
                                 />
                             )
                         }
-                    </div>
-                </div>}
+                    </div>):(<p>אין לך נסיעות קרובות</p>)}
+                </div>} </div>): <p>Loading rides...</p>}
         </div>
     )
 }

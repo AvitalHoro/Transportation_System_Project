@@ -10,7 +10,7 @@ import Stations from "./Stations";
 const api = 'http://localhost:5000/api';
 const token = localStorage.getItem('token');
 
-const MyRideItem = ({ userId, registerId, exitCity, targetCity, date, time, status, toStation, fromStation, stationsList, setMessegesIsClicked }) => {
+const MyRideItem = ({ userId, registerId, exitCity, targetCity, date, time, status, toStation, fromStation, RideStations, setMessegesIsClicked }) => {
 
 
     const [rgisterStatus, setRegisterStatus] = useState(status);
@@ -154,7 +154,7 @@ const MyRideItem = ({ userId, registerId, exitCity, targetCity, date, time, stat
 
             </div>
             <Stations 
-            stationsList={stationsList}
+            RideStations={RideStations}
             defaultToStation={toStation} 
             defaultFromStation={fromStation}
             registerId={registerId}

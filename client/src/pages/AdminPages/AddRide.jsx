@@ -98,8 +98,8 @@ const AddRide = () => {
     const token = localStorage.getItem('token');
 
 
-    const [stationsList, setStationsList] = React.useState([]);
-    const [stationsListWithId, setStationsListWithId] = React.useState([]);
+    const [RideStations, setStationsList] = React.useState([]);
+    const [RideStationsWithId, setStationsListWithId] = React.useState([]);
     const [driversListWithId, setDriversListWithId] = React.useState([]);
     const [driversList, setDriversList] = React.useState([]);
 
@@ -230,7 +230,7 @@ const AddRide = () => {
         //add the ride to the database - don't forget new id
 
         const selectedStationIds = stopsList.map(selectedName => {
-            const station = stationsListWithId.find(station => station.name === selectedName);
+            const station = RideStationsWithId.find(station => station.name === selectedName);
             return station ? station.id : null;
         }).filter(id => id !== null); 
 
@@ -241,8 +241,8 @@ const AddRide = () => {
 
         //add the fromStation and toStation to the ride with "starting" and "destination" type
 
-        const fromStationId = stationsListWithId.find(station => station.name === fromStation).id;
-        const toStationId = stationsListWithId.find(station => station.name === toStation).id;
+        const fromStationId = RideStationsWithId.find(station => station.name === fromStation).id;
+        const toStationId = RideStationsWithId.find(station => station.name === toStation).id;
 
         station_type='Starting'
         addStationsForTransportation(api, token, newTransportationId, [fromStationId], station_type);
@@ -260,8 +260,8 @@ const AddRide = () => {
         alert("הנסיעה נוספה בהצלחה!")
     }
 
-    // const stationsListWithId = getStationsList();
-    // const stationsList = stationsListWithId.map(sat => sat.name);
+    // const RideStationsWithId = getStationsList();
+    // const RideStations = RideStationsWithId.map(sat => sat.name);
     // const driversList = getAllDrivers().map(d => d.name);
 
     const [stopsList, setStopsList] = React.useState([]);
@@ -284,9 +284,9 @@ const AddRide = () => {
             paddingTop: "30px",
             boxSizing: "border-box",
         }}>
-            {stationsList && driversList? (<div style={{display: 'flex', alignItems: "center",
+            {RideStations && driversList? (<div style={{display: 'flex', alignItems: "center",
             justifyContent: "center", flexDirection: 'column', gap: '10px'}}>
-            {openPopUpStation? <AddStationPopUp setOpenPopUpStation={setOpenPopUpStation} stationsList={stationsList} setStopsList={setStopsList} />: null}
+            {openPopUpStation? <AddStationPopUp setOpenPopUpStation={setOpenPopUpStation} RideStations={RideStations} setStopsList={setStopsList} />: null}
             <div style={{
                 color: "#00bf63",
                 fontWeight: "bold",
@@ -304,7 +304,7 @@ const AddRide = () => {
                         disablePortal
                         disableClearable
                         id="combo-box-drop-station"
-                        options={stationsList}
+                        options={RideStations}
                         sx={{
                             minWidth: '200px',
                             '& .MuiOutlinedInput-root': {
@@ -330,7 +330,7 @@ const AddRide = () => {
                         disablePortal
                         disableClearable
                         id="combo-box-drop-station"
-                        options={stationsList}
+                        options={RideStations}
                         sx={{
                             minWidth: '200px',
                             '& .MuiOutlinedInput-root': {

@@ -5,7 +5,7 @@ import { request } from '../../../requests';
 import { api } from '../../../config.json';
 
 
-const Stops = ({ rideId, isAdmin, dynamicStopsList, setDynamicStopsList, setOpenStationsPopUp }) => {
+const Stops = ({ rideId, isAdmin, dynamicStopsList, setDynamicStopsList, setOpenStationsPopUp, stops }) => {
 
     console.log('d', dynamicStopsList);
 
@@ -77,7 +77,8 @@ const Stops = ({ rideId, isAdmin, dynamicStopsList, setDynamicStopsList, setOpen
     return (
         <div className="stops-father-con">
             <span style={{ fontSize: "22px", fontWeight: '700', color: "#FF914D" }}>תחנות</span>
-            <div className="stops-container" style={{ marginTop: "10px" }}>
+            <div style={{ marginTop: "10px" }}>
+            {isAdmin ? <div  className="stops-container" >
                 {dynamicStopsList.map(stop => <div className="stop">
                     {stop.name}
                     {isAdmin ? <CancelIcon
@@ -93,7 +94,7 @@ const Stops = ({ rideId, isAdmin, dynamicStopsList, setDynamicStopsList, setOpen
                             }
                         }} /> : null}
                 </div>)}
-                {isAdmin ? <div className="add-stop-button-container">
+                <div className="add-stop-button-container">
                     <button className="add-stop-button"
                         onClick={handleAddStop}
                         style={{
@@ -106,7 +107,12 @@ const Stops = ({ rideId, isAdmin, dynamicStopsList, setDynamicStopsList, setOpen
                             }} />
                     </button>
 
-                </div> : null}
+                </div>
+                </div> : ( <div  className="stops-container" >
+                     {stops.map(stop => <div className="stop">
+                        {stop.name}
+                    </div>)}
+               </div> )}
             </div>
 
 

@@ -4,7 +4,7 @@ import '../../../style/popUp.css';
 import { Autocomplete } from "@mui/material";
 import { TextField } from "@mui/material";
 
-const AddStationPopUp = ({ setOpenPopUpStation, stationsList, setStopsList, isEditPage, handleAddStation }) => {
+const AddStationPopUp = ({ setOpenPopUpStation, RideStations, setStopsList, isEditPage, handleAddStation }) => {
 
     const handleAddStationsToList = () => {
         if (!newValue) {
@@ -22,7 +22,7 @@ const AddStationPopUp = ({ setOpenPopUpStation, stationsList, setStopsList, isEd
 
     const [newValue, setNewValue] = React.useState(null);
 
-    console.log('s', stationsList);
+    console.log('s', RideStations);
 
     return (
         <div className="popup">
@@ -39,7 +39,7 @@ const AddStationPopUp = ({ setOpenPopUpStation, stationsList, setStopsList, isEd
                         disablePortal
                         disableClearable
                         id="combo-box-drop-station"
-                        options={stationsList}
+                        options={RideStations}
                         sx={{
                             minWidth: '200px',
                             '& .MuiOutlinedInput-root': {
