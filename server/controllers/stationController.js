@@ -80,7 +80,7 @@ const addStation = async (req, res) => {
 };
 
 //add station to transportation
-const addStationTotransporatstion = async (req, res) => {
+const addStationToTransporatstion = async (req, res) => {
     const db = req.db;
     const {transportationId, stationId} = req.params;
     const {station_type} = req.body;
@@ -196,4 +196,4 @@ const updateStation = async (req, res) => {
 };
 
     
-module.exports = {getAllStations,  addStation, cancelStation, getStationsOfTransportation, updateStation, addStationTotransporatstion};
+module.exports = {getAllStations,  addStation, cancelStation, getStationsOfTransportation, updateStation, addStationToTransporatstion};
