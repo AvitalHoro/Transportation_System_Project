@@ -167,6 +167,7 @@ const RideEditPage = ({ ride, setEditOrGallery, setDriverUpdate }) => {
                 <div className="bottom-ride-edit-main">
                 <Passengers registers={ride.Registers} />
                 <Stops 
+                rideId={ride.id}
                 stops={ride.stationsList} 
                 isAdmin={true} 
                 setOpenStationsPopUp={setOpenStationsPopUp} 

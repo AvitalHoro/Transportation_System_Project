@@ -10,7 +10,7 @@ router.post('/add', authenticateJWT, addStation);
 // Route for adding a station to transporatstion
 router.post('/add/:transportationId/:stationId', authenticateJWT, addStationToTransporatstion);
 // Route for deleting a station
-router.post('/delete/:stationId', authenticateJWT, cancelStation);
+router.post('/cancel/:stationId', authenticateJWT, cancelStation);
 // Route for updeting a station
 router.put('/update/:stationId', authenticateJWT, updateStation);
 

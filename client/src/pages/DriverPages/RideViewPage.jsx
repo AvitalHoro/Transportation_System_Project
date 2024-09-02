@@ -32,7 +32,7 @@ const RideViewPage = ({ ride, setViewOrGallery }) => {
                     </div>
                     <div className="bottom-ride-edit-main">
                     <Passengers registers={ride.Registers} />
-                    <Stops stops={ride.stationsList} isAdmin={false}/>
+                    <Stops rideId={ride.id} stops={ride.stationsList} isAdmin={false}/>
                     <SendMessegeToPassengers rideId={ride.id} isAdmin={false} />
                     </div>
                 </div>
