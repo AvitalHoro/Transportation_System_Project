@@ -9,6 +9,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useMediaQuery } from '@mui/material';
+import { request } from '../requests';  
 
 
 const ResponsiveDatePickers = ({ setFilterDate, dateValue }) => {
@@ -87,28 +88,31 @@ const ClearFilters = ({ _color, setFilterDate, setFilterToStation, setFilterFrom
 
 const Filters = ({ _color, setFilterDate, setFilterToStation, setFilterFromStation }) => {
 
-    const getAllStations = () => {
+    const [RideStations, setRideStations] = React.useState([]);
 
-        //wait for server
-        //only station names
 
-        return [
-            "תחנה מרכזית תל אביב",
-            "תחנה מרכזית חיפה",
-            "תחנה מרכזית ירושלים",
-            "צומת מסובים",
-            "מחלף חמד",
-            "מרכזית בית שאן",
-            "מרכזית בית שמש",
-            "מרכזית בית יהושע",
-            "מרכזית בית קמה",
-            "מרכזית בית שקמה",
-            "מרכזית ביתר עילית",
-            "ארלוזורוב תל אביב",
-            "ארסוף",
-            "אשדוד עד הלום",
-        ]
+    const getAllStations = async () => {
+        const token = localStorage.getItem('token');
+
+        try {
+            const stationsData = await request('GET', '/stations/all', token);
+        
+            if (stationsData.error) {
+                throw new Error(stationsData.error);
+            }
+        
+            setRideStations(stationsData.stations.map(station => station.Address));
+        
+        } catch (error) {
+            console.error('Error fetching stations:', error);
+            return [];
+        }
+
     }
+
+    React.useEffect(() => {
+        getAllStations();
+    }, []);
 
     const [dateValue, setDateValue] = React.useState(null);
     const [toSat, setToSat] = React.useState(null);
@@ -116,7 +120,6 @@ const Filters = ({ _color, setFilterDate, setFilterToStation, setFilterFromStati
 
     const isComputerScreen = useMediaQuery('(min-width:830px)');
 
-    const RideStations = getAllStations();
     return (
         <div className="filters-container">
             <div className="row-flex">
@@ -157,7 +160,7 @@ const Filters = ({ _color, setFilterDate, setFilterToStation, setFilterFromStati
                     renderInput={(params) => <TextField {...params} label="מוצא" />}
                 />
             </div>
-
+                    {RideStations? (
             <div style={{ marginTop: "8px" }}>
                 <Autocomplete
                     value={toSat}
@@ -186,6 +189,7 @@ const Filters = ({ _color, setFilterDate, setFilterToStation, setFilterFromStati
                     renderInput={(params) => <TextField {...params} label="יעד" />}
                 />
             </div>
+            ) : <div>loading...</div>}
             <ResponsiveDatePickers setFilterDate={setFilterDate} dateValue={dateValue} />
 
             {isComputerScreen ? <ClearFilters

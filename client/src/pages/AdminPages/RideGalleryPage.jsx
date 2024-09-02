@@ -124,6 +124,8 @@ const RideGalleryPage = ({ setEditOrGallery, ride, setRide, userId, driverUpdate
 
     console.log('Filtered rides list:', filteredRides);
 
+    console.log('ride-date', ride.date, " ", filterDate);
+
 
     const [messegesIsClicked, setMessegesIsClicked] = useState(false);
     const [replaceDriverIsClicked, setReplaceDriverIsClicked] = useState(false);
