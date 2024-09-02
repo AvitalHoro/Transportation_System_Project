@@ -14,6 +14,14 @@ const MainDriverPage = ({userId}) => {
     const [filterToStation, setFilterToStation] = useState("");
     const [filterFromStation, setFilterFromStation] = useState("");
 
+    const formatDate = (date) => {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based in JavaScript
+        const year = date.getFullYear();
+    
+        return `${day}.${month}.${year}`;
+    }; 
+
     const getMyRides = async () => {
 
         const token = localStorage.getItem('token');
@@ -38,7 +46,7 @@ const MainDriverPage = ({userId}) => {
                     rideId: ride.TransportationID,
                     fromCity: ride.StartStationCity,
                     toCity: ride.DestinationStationCity,
-                    date: new Date(ride.Transportation_Date).toLocaleDateString(),
+                    date: formatDate(new Date(ride.Transportation_Date)),
                     time: ride.Transportation_Time.slice(0, 5),
                     RideStations: ride.stations.map(station => ({
                         name: station.Address,

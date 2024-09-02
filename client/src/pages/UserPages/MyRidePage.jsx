@@ -10,11 +10,11 @@ const MyRidePage = ({user, myRides}) => {
     const isComputerScreen = useMediaQuery('(min-width:730px)');
     const [messegesIsClicked, setMessegesIsClicked] = useState(false);
 
-
+    const [rideSelectedId, setRideSelectedId] = useState(null);
 
     return (
         <div className="my-ride-page">
-            {messegesIsClicked? <MessegesPopUp setMessegesIsClicked={setMessegesIsClicked} userId={user.UserID} />: null}
+            {messegesIsClicked? <MessegesPopUp setMessegesIsClicked={setMessegesIsClicked} userId={user.UserID} rideId={rideSelectedId}/>: null}
             <div className="my-ride-container" style={{width: isComputerScreen? '60%': '100%'}}>
                 <div className="my-ride-title">
                 <span>הנסיעות שלי</span>
@@ -31,7 +31,8 @@ const MyRidePage = ({user, myRides}) => {
                         toStation={ride.toStation}
                         fromStation={ride.fromStation}
                         RideStations={ride.RideStations}
-                        setMessegesIsClicked={setMessegesIsClicked}/>)}
+                        setMessegesIsClicked={setMessegesIsClicked}
+                        setRideSelectedId={setRideSelectedId}/>)}
                 </div>
 
             </div>

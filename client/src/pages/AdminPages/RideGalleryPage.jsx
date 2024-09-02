@@ -28,18 +28,13 @@ const RideGalleryPage = ({ setEditOrGallery, ride, setRide, userId, driverUpdate
 
 
 
-    // id: 123,
-    // time: "08:00",
-    // date: "2021-06-01",
-    // fromCity: "ירושלים",
-    // toCity: "תל אביב",
-    // status: "active",
-    // driverName: "אבי רבינוביץ'",
-    // RideStations: [{
-    //     name: "תחנה מרכזית ירושלים",
-    //     id: 1,
-    //     type: "Starting"
-    // },
+    const formatDate = (date) => {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based in JavaScript
+        const year = date.getFullYear();
+    
+        return `${day}.${month}.${year}`;
+    };
 
     const [allRides, setAllRides] = useState(null); // Store the full list of rides
     const [filteredRides, setFilteredRides] = useState(null); // Store the filtered rides
@@ -72,7 +67,7 @@ const RideGalleryPage = ({ setEditOrGallery, ride, setRide, userId, driverUpdate
                     id: ride.TransportationID,
                     fromCity: ride.StartCity,
                     toCity: ride.DestinationCity,
-                    date: new Date(ride.Transportation_Date).toLocaleDateString(),
+                    date: formatDate(new Date(ride.Transportation_Date)),
                     time: ride.Transportation_Time,
                     status: ride.Transportation_Status,
                     driverName: ride.DriverName,
@@ -113,7 +108,7 @@ const RideGalleryPage = ({ setEditOrGallery, ride, setRide, userId, driverUpdate
             const filtered = allRides
                 .filter(ride => {
                     return (
-                        (ride.date === filterDate || filterDate === "") &&
+                        (ride.date===filterDate || !filterDate) &&
                         (filterToStation === "" || ride.RideStations.find(station => station.name === filterToStation && station.type !== "Starting")) &&
                         (filterFromStation === "" || ride.RideStations.find(station => station.name === filterFromStation && station.type !== "Destination"))
                     );
@@ -124,7 +119,7 @@ const RideGalleryPage = ({ setEditOrGallery, ride, setRide, userId, driverUpdate
 
     console.log('Filtered rides list:', filteredRides);
 
-    console.log('ride-date', ride.date, " ", filterDate);
+    console.log('ride-date', ride.date, " filter: ", filterDate);
 
 
     const [messegesIsClicked, setMessegesIsClicked] = useState(false);

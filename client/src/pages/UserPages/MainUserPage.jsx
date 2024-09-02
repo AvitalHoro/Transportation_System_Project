@@ -92,7 +92,7 @@ const MainUserPage = ({user, openProfilePopUp}) => {
                 <Routes>
                     <Route path="/" element={<NavigateHandler navigateNum={navigateNum} />} />
                     <Route path="my-rides" element={<MyRidePage myRides={myRides} user={user}/>} />
-                    <Route path="register-to-ride" element={<RegisterPage myRidesIds={myRides? myRides.map(ride => ride.id) : null} userId={user? user.UserID: null} registerUpdate={registerUpdate} setRegisterUpdate={setRegisterUpdate}/>} />
+                    <Route path="register-to-ride" element={<RegisterPage myRidesIds={myRides? myRides.map(ride => ride.rideId) : null} userId={user? user.UserID: null} registerUpdate={registerUpdate} setRegisterUpdate={setRegisterUpdate}/>} />
                     <Route path="info" element={<InfoPage userId={user.UserID} />} />
                     <Route path="contact" element={<ContactPage/>} />
                     <Route path="messages" element={<MyMessagePage user={user} rideIds={myRides? myRides.map(ride => ride.rideId): null}/>} />

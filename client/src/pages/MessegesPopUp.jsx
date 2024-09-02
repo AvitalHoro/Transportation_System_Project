@@ -21,12 +21,12 @@ const MessegesPopUp = ({ userId, rideId, setMessegesIsClicked }) => {
                 console.log(response.messages);
                 setMessages(
                     response.messages[0].map(intenalmess => ({
-                            content: intenalmess.MessageText,
-                            date: new Date(intenalmess.SendTime).getFullYear() + '-' + (new Date(intenalmess.SendTime).getMonth() + 1) + '-' + new Date(intenalmess.SendTime).getDate(),
-                            hour: new Date(intenalmess.SendTime).getHours() + ':' + new Date(intenalmess.SendTime).getMinutes(),
-                            fromId: intenalmess.SenderID,
-                        }))
-                    );
+                        content: intenalmess.MessageText,
+                        date: new Date(intenalmess.SendTime).getFullYear() + '-' + (new Date(intenalmess.SendTime).getMonth() + 1) + '-' + new Date(intenalmess.SendTime).getDate(),
+                        hour: new Date(intenalmess.SendTime).getHours() + ':' + new Date(intenalmess.SendTime).getMinutes(),
+                        fromId: intenalmess.SenderID,
+                    }))
+                );
                 // return response.messages;
             }
         }
@@ -51,9 +51,9 @@ const MessegesPopUp = ({ userId, rideId, setMessegesIsClicked }) => {
 
 
     return (
-        <div className="popup">
+        <div>
             {messages ? (
-                <div>
+                <div className="popup">
                     <div className="popup-message-container">
                         <Cancel className="close-button" onClick={() => setMessegesIsClicked(false)} />
                         <div className="popup-message-title">

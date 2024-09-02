@@ -21,7 +21,7 @@ const ResponsiveDatePickers = ({ setFilterDate, dateValue }) => {
         const day = String(thisDate.getDate()).padStart(2, '0');
 
         const formattedDate = `${day}.${month}.${year}`;
-        console.log(formattedDate);
+        console.log('format-date ',formattedDate);
         setFilterDate(formattedDate);
     }
     return (

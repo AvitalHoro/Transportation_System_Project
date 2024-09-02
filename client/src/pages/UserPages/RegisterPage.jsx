@@ -8,6 +8,14 @@ const token = localStorage.getItem('token');
 const RegisterPage = ({userId, myRidesIds, registerUpdate, setRegisterUpdate}) => {
 
 
+    const formatDate = (date) => {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based in JavaScript
+        const year = date.getFullYear();
+    
+        return `${day}.${month}.${year}`;
+    };
+
     const [allRides, setAllRides] = useState(null); // Store the full list of rides
     const [filteredRides, setFilteredRides] = useState(null); // Store the filtered rides
 
@@ -37,7 +45,7 @@ const RegisterPage = ({userId, myRidesIds, registerUpdate, setRegisterUpdate}) =
                     id: ride.TransportationID,
                     exit: ride.stations.find(station => station.Station_Type === "Starting").City,
                     target: ride.stations.find(station => station.Station_Type === "Destination").City,
-                    date: new Date(ride.Transportation_Date).toLocaleDateString(),
+                    date: formatDate(new Date(ride.Transportation_Date)),
                     time: ride.Transportation_Time,
                     RideStations: ride.stations.map(station => ({
                         name: station.Address,
@@ -79,6 +87,7 @@ const RegisterPage = ({userId, myRidesIds, registerUpdate, setRegisterUpdate}) =
         }
     }, [filterToStation, filterFromStation, filterDate, allRides, registerUpdate]); // Run whenever filters or allRides change
 
+    console.log('my ride id:', myRidesIds);
     console.log('Filtered rides list:', filteredRides);
     
     return (

@@ -10,7 +10,7 @@ import Stations from "./Stations";
 const api = 'http://localhost:5000/api';
 const token = localStorage.getItem('token');
 
-const MyRideItem = ({ userId, registerId, exitCity, targetCity, date, time, status, toStation, fromStation, RideStations, setMessegesIsClicked }) => {
+const MyRideItem = ({ userId, registerId, exitCity, targetCity, date, time, status, toStation, fromStation, RideStations, setMessegesIsClicked, setRideSelectedId }) => {
 
 
     const [rgisterStatus, setRegisterStatus] = useState(status);
@@ -112,7 +112,7 @@ const MyRideItem = ({ userId, registerId, exitCity, targetCity, date, time, stat
 
                 <div className="option-ride-item">
                 <div className="option-container"
-                onClick={()=>setMessegesIsClicked(true)}>
+                onClick={()=>{setMessegesIsClicked(true); setRideSelectedId(registerId)}}>
                     <ChatBubbleIcon sx={{
                         color: "white",
                         fontSize: "180%",
