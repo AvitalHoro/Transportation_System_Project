@@ -9,16 +9,6 @@ const insertMessage = async (db, userId, messageText, sendTime) => {
     return results.insertId;
 };
 
-//update status message to "Delivered"
-const updateStatusMessage = async (db, messageId) => {
-    const db1 = req.db; 
-
-    const updateMessageStatusQuery = 'UPDATE Message SET Message_Status = ? WHERE MessageID = ?';
-    
-    const [results] = await db1.query(updateMessageStatusQuery, ['active', messageId]);
-    return results;
-};
-
 const getRegisteredUsers = async (db, transportationId) => {
     const getRegisteredUsersQuery = `
         SELECT u.UserID
@@ -32,13 +22,15 @@ const getRegisteredUsers = async (db, transportationId) => {
 };
 
 const addMessageForEveryOne = async (req, res) => {
-    const { messageText, sendTime, attachedFiles } = req.body;
+    const { messageContent, sendTime, attachedFiles } = req.body;
     const userId = req.userId;
     const db = req.db;
+    console.log('addMessageForEveryOne')
+    console.log(messageContent, sendTime, attachedFiles)
 
     // Validate input
-    if (!messageText || !sendTime) {
-        return res.status(400).json({ message: 'messageText and sendTime are required' });
+    if (!messageContent || !sendTime) {
+        return res.status(400).json({ message: 'messageContent and sendTime are required' });
     }
 
     try {
@@ -57,19 +49,11 @@ const addMessageForEveryOne = async (req, res) => {
         }
 
         // Insert new message and general message
-        const messageId = await insertMessage(db, userId, messageText, sendTime);
+        const messageId = await insertMessage(db, userId, messageContent, sendTime);
         
         const insertGeneralMessageQuery = 'INSERT INTO General_Message (AttachedFiles, MessageID) VALUES (?, ?)';
         await db.query(insertGeneralMessageQuery, [attachedFiles, messageId]);
-
-        const changeStatus = await updateStatusMessage(db, messageId);
-
-        if (changeStatus.affectedRows === 1) {
-            res.status(201).json({ message: 'General Message added successfully', messageId });
-        }
-        else {
-            res.status(500).json({ message: 'Error send message', messageId });
-        }
+        res.status(201).json({ message: 'General Message added successfully', messageId });
 
     } catch (err) {
         res.status(500).json({ message: 'Error send message', error: err });
@@ -78,15 +62,15 @@ const addMessageForEveryOne = async (req, res) => {
 
 const addTransportationMessage = async (req, res) => {
     const { transportationId } = req.params; 
-    const { messageText, sendTime } = req.body;
+    const { messageContent, sendTime } = req.body;
     const userId = req.userId; 
     const db = req.db;
 
-    console.log(transportationId, messageText, sendTime, userId);
+    console.log(transportationId, messageContent, sendTime, userId);
 
     // Validate input
-    if (!messageText || !sendTime || !transportationId) {
-        return res.status(400).json({ message: 'transportationId, messageText and sendTime are required' });
+    if (!messageContent || !sendTime || !transportationId) {
+        return res.status(400).json({ message: 'transportationId, messageContent and sendTime are required' });
     }
     
     try {
@@ -109,7 +93,7 @@ const addTransportationMessage = async (req, res) => {
         console.log('sendTimeSQL:', sendTimeSQL);
 
         // Insert new message and transportation message
-        const messageId = await insertMessage(db, userId, messageText, sendTimeSQL);
+        const messageId = await insertMessage(db, userId, messageContent, sendTimeSQL);
         
         const insertTransportationMessageQuery = 'INSERT INTO Message_To_Transportation (TransportationID, MessageID) VALUES (?, ?)';
         await db.query(insertTransportationMessageQuery, [transportationId, messageId]);

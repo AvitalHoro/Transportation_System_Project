@@ -5,12 +5,13 @@ import SyncIcon from '@mui/icons-material/Sync';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import ReplayIcon from '@mui/icons-material/Replay';
 import { request } from "../../requests";
+const token = localStorage.getItem('token'); 
+const api = 'http://localhost:5000/api';
 
 const AdminOptions = ({ setEditOrGallery, setRide, ride, rideStatus, setRideStatus, setMessegesIsClicked, setReplaceDriverIsClicked }) => {
-    
+
     const handleCancelRide = async () => {
         try {
-            const token = localStorage.getItem('token'); 
             const newStatus = 'cancel';
             const response = await request('PUT', `/transportations/updateStatus/${ride.id}`, token, { newStatus });
     
@@ -19,6 +20,21 @@ const AdminOptions = ({ setEditOrGallery, setRide, ride, rideStatus, setRideStat
             } else {
                 console.log("Ride canceled:", ride.id);
                 setRideStatus("cancel");
+                const sendTime = getCurrentDateTime();
+                const messageContent = "הנסיעה שנרשמתם אליה בוטלה"
+                const response = await fetch(`${api}/messages/add/${ride.id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ messageContent, sendTime }),
+                });
+                if (response.ok) {
+                    console.log("the message about the cancel send")          
+                } else {
+                    console.log("the message about the can not cancel send")      
+                }    
             }
         } catch (err) {
             console.error('Error occurred while canceling the ride:', err);
@@ -36,11 +52,40 @@ const AdminOptions = ({ setEditOrGallery, setRide, ride, rideStatus, setRideStat
             } else {
                 console.log("Ride returned:", ride.id);
                 setRideStatus("active");
+                const sendTime = getCurrentDateTime();
+                const messageContent = "הנסיעה שנרשמתם אליה שוחזרה"
+                const response = await fetch(`${api}/messages/add/${ride.id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ messageContent, sendTime }),
+                });
+                if (response.ok) {
+                    console.log("the message about the cancel send")          
+                } else {
+                    console.log("the message about the can not cancel send")      
+                }    
             }
         } catch (err) {
             console.error('Error occurred while returning the ride:', err);
         }
     }
+
+    const getCurrentDateTime = () => {
+        const now = new Date();
+    
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+    
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+    
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    };
 
     return (
         <div>

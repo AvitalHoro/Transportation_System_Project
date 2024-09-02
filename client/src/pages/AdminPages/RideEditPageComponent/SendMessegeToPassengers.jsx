@@ -2,34 +2,75 @@ import React from "react";
 import SendIcon from '@mui/icons-material/Send';
 import '../../../style/AdminRideEdit.css'
 import Cancel from "@mui/icons-material/Cancel";
-import { addMessegeToPassengers } from '../../../requests'
 import Replay from "@mui/icons-material/Replay";
+import { request } from "../../../requests";
+const api = 'http://localhost:5000/api';
+const token = localStorage.getItem('token');
 
 const CancelButton = ({setRideStatus, rideStatus, rideId}) => {
 
-    const handleCancelRide = () => {
-        //wait for server 
-
-        //send rideId
-        console.log("Cancel register ", rideId);
-        setRideStatus("cancel");
-
-        //wait for server
-        //send message to passengers in this ride "הנסיעה שנרשמתם אליה בוטלה"
+    const handleCancelRide = async () => {
+        try {
+            const newStatus = 'cancel';
+            const response = await request('PUT', `/transportations/updateStatus/${rideId}`, token, { newStatus });
+    
+            if (response.error) {
+                console.error('Failed to cancel the ride:', response.error);
+            } else {
+                console.log("Ride canceled:", rideId);
+                setRideStatus("cancel");
+                const sendTime = getCurrentDateTime();
+                const messageContent = "הנסיעה שנרשמתם אליה בוטלה"
+                const response = await fetch(`${api}/messages/add/${rideId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ messageContent, sendTime }),
+                });
+                if (response.ok) {
+                    console.log("the message about the cancel send")          
+                } else {
+                    console.log("the message about the can not cancel send")      
+                }    
+            }
+        } catch (err) {
+            console.error('Error occurred while canceling the ride:', err);
+        }
     }
-
-    const handleReturnedRide = () => {
-        //wait for server 
-
-        //send rideId
-        console.log("Returned register ", rideId);
-        setRideStatus("active");
-
-        //wait for server
-        //send message to passengers in this ride "הנסיעה שנרשמתם אליה שוחזרה"
+    
+    const handleReturnedRide = async () => {
+        try {
+            const token = localStorage.getItem('token'); 
+            const newStatus = 'active';
+            const response = await request('PUT', `/transportations/updateStatus/${rideId}`, token, { newStatus });
+    
+            if (response.error) {
+                console.error('Failed to return the ride:', response.error);
+            } else {
+                console.log("Ride returned:", rideId);
+                setRideStatus("active");
+                const sendTime = getCurrentDateTime();
+                const messageContent = "הנסיעה שנרשמתם אליה שוחזרה"
+                const response = await fetch(`${api}/messages/add/${rideId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ messageContent, sendTime }),
+                });
+                if (response.ok) {
+                    console.log("the message about the cancel send")          
+                } else {
+                    console.log("the message about the can not cancel send")      
+                }    
+            }
+        } catch (err) {
+            console.error('Error occurred while returning the ride:', err);
+        }
     }
-
-    console.log("RideStatus: ", rideStatus);
 
     return (
         <div className="cancel-button-container">
@@ -58,20 +99,21 @@ const CancelButton = ({setRideStatus, rideStatus, rideId}) => {
     )
 }
 
+const getCurrentDateTime = () => {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
+
 const SendMessegeToPassengers = ({ rideId, isAdmin, rideStatus, setRideStatus }) => {
-    const getCurrentDateTime = () => {
-        const now = new Date();
-    
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-    
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-    
-        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-    };
 
     const handleSendMessage = async () => {
         if(messageContent === "") {
@@ -80,21 +122,29 @@ const SendMessegeToPassengers = ({ rideId, isAdmin, rideStatus, setRideStatus })
         }
 
         const sendTime = getCurrentDateTime();
-
-        //wait for server
         try {
-            const response = await addMessegeToPassengers(messageContent, sendTime, rideId);
-            if (response) {                          //send message to passengers in this rideid
-
-                console.log("Send message to passengers: ", messageContent);
-                const messageId = response.messageId;
-                const registeredUsers = response.registeredUsers;
-                setMessageContent("");
+            const response = await fetch(`${api}/messages/add/${rideId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ messageContent, sendTime }),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log("messageID: ", data.messageId);
+                console.log("Send message to passengers: ", data.registeredUsers);
                 alert("ההודעה נשלחה בהצלחה");
+                setMessageContent("");
+                return data;           
+            } else {
+                alert("תקלה בשליחת ההודעה")
+                setMessageContent("");
+                return null
             }
-
-        } catch {
-            alert("תקלה בשליחת ההודעה")
+        } catch (error) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
     }
 
