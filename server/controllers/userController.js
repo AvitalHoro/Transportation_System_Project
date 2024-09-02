@@ -12,7 +12,7 @@ const login = async (req, res) => {
 
         if (userResults.length > 0) {
             const user = userResults[0];
-            const token = jwt.sign({ userId: user.UserID }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            const token = jwt.sign({ userId: user.UserID }, process.env.JWT_SECRET, { expiresIn: '3h' });
 
             let transportationResults;
             if (user.UserPermission === 'admin') {

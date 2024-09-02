@@ -2,6 +2,53 @@ const db = require('../config/db');
 const { getStationsOfTransportation } = require('./stationController');
 //const { getPassengersOfTransportation } = require('./registrationController');
 
+//כל הנסיעות. נוסעים רושמים+תחנות עליה וירידה שלהם
+
+//get details about ststions of transportation 
+const getStationsTransportation = async (transportationId) => {
+    const query = `    
+                SELECT 
+                    SIT.Station_Type,
+                    S.StationID, 
+                    S.Address, 
+                    S.City
+                FROM 
+                    Station S
+                JOIN 
+                    Station_In_Transportation SIT ON S.StationID = SIT.StationID
+                WHERE 
+                    SIT.TransportationID = ?;`;
+    const [stationTransportation] = await db.query(query, [transportationId]);
+    return stationTransportation;
+};
+
+//get details about passengers registered to transportation 
+const get_passengers_registered_transportation = async (transportationId) => {
+    const query = `    
+                SELECT 
+                    U.UserID, 
+                    U.Username, 
+                    U.UserPhone, 
+                    U.UserEmail, 
+                    R.PickupStationID, 
+                    PickupStation.Address AS PickupStationAddress, 
+                    R.DropoffStationID, 
+                    DropoffStation.Address AS DropoffStationAddress
+                FROM 
+                    Users U
+                JOIN 
+                    Registrations_To_Transportation R ON U.UserID = R.UserID
+                JOIN 
+                    Station PickupStation ON R.PickupStationID = PickupStation.StationID
+                JOIN 
+                    Station DropoffStation ON R.DropoffStationID = DropoffStation.StationID
+                WHERE 
+                    R.TransportationID = ?
+                    AND R.Registration_Status = 'active';`;
+    const [passengers_registered_transportation] = await db.query(query, [transportationId]);
+    return passengers_registered_transportation;
+};
+
 const getAllTransportations = async () => {
     const query = `
         SELECT 
@@ -28,55 +75,23 @@ const getAllTransportations = async () => {
             AND SITDestination.Station_Type = 'Destination'
         LEFT JOIN 
             Station DestinationStation ON SITDestination.StationID = DestinationStation.StationID
+        WHERE
+            T.Transportation_Date >= CURDATE() 
     `;
-    const [results] = await db.query(query);
-    return results;
-};
+    const [transportations] = await db.query(query);
 
-//get details about ststions of transportation 
-const getStationsTransportation = async (transportationId) => {
-    const query = `    
-                SELECT 
-                    SIT.Station_Type,
-                    S.StationID, 
-                    S.Address, 
-                    S.City
-                FROM 
-                    Station S
-                JOIN 
-                    Station_In_Transportation SIT ON S.StationID = SIT.StationID
-                WHERE 
-                    SIT.TransportationID = ?;`;
-    const [stationTransportation] = await db.query(query, [transportationId]);
-    return stationTransportation;
-};
-
-//get details about passengers registered to transportation 
-const get_passengers_registered_transportation = async (transportationId) => {
-    const query = `    
-                SELECT 
-                    U.UserID, 
-                    U.Username, 
-                    U.Uname,
-                    U.UserPhone, 
-                    U.UserEmail, 
-                    R.PickupStationID, 
-                    PickupStation.Address AS PickupStationAddress, 
-                    R.DropoffStationID, 
-                    DropoffStation.Address AS DropoffStationAddress
-                FROM 
-                    Users U
-                JOIN 
-                    Registrations_To_Transportation R ON U.UserID = R.UserID
-                JOIN 
-                    Station PickupStation ON R.PickupStationID = PickupStation.StationID
-                JOIN 
-                    Station DropoffStation ON R.DropoffStationID = DropoffStation.StationID
-                WHERE 
-                    R.TransportationID = ?
-                    AND R.Registration_Status = 'Completed';`;
-    const [passengers_registered_transportation] = await db.query(query, [transportationId]);
-    return passengers_registered_transportation;
+    const transportationsDetails = [];
+    
+    for (const row of transportations) {
+        const stations = await getStationsTransportation(row.TransportationID);
+        const passengers = await get_passengers_registered_transportation(row.TransportationID);
+        transportationsDetails.push({
+            ...row,
+            passengers,
+            stations
+        });
+    }
+    return transportationsDetails
 };
 
 const getTransportationsOfDriver = async (driverId) => {
@@ -114,22 +129,22 @@ const getTransportationsOfDriver = async (driverId) => {
         WHERE 
             Transportation.DriverID = ?
             AND Transportation.Transportation_Date >= CURDATE()
-            AND Transportation.Transportation_Status != 'Cancelled';
+            AND Transportation.Transportation_Status != 'cancel';
     `;
-    const [transportationsDetails] = await db.query(query, [driverId]);
+    const [transportations] = await db.query(query, [driverId]);
 
-    const passengersRegisteredDetails = [];
+    const transportationsDetails = [];
     
-    for (const row of transportationsDetails) {
-        const stations = await getStationsOfTransportation(row.TransportationID);
+    for (const row of transportations) {
+        const stations = await getStationsTransportation(row.TransportationID);
         const passengers = await get_passengers_registered_transportation(row.TransportationID);
-        passengersRegisteredDetails.push({
+        transportationsDetails.push({
             ...row,
             passengers,
             stations
         });
     }
-    return passengersRegisteredDetails
+    return transportationsDetails
 };
 
 //all the transporttions of passenger
@@ -188,11 +203,12 @@ const getTransportationsOfPassenger = async (passengerId) => {
     return transportationDetails
 };
 
-const getTransportations = async (req, res) => {
+const getTransportationsForAdmin = async (req, res) => {
     try { 
-        const transportationResults = await getAllTransportations();
+        const transportations= await getAllTransportations();
+        console.log(transportations);
         return res.status(200).json({
-            transportations: transportationResults
+            transportations: transportations
         });
     } catch (err) {
         return res.status(500).json({ message: 'Error querying transportation data', error: err });
@@ -417,4 +433,4 @@ const updateStatus = async (req, res) => {
 };
 
 
-module.exports = { addTransportation, deleteTransportation, getTransportations, getTransportationsDriver, getTransportationsPassenger, getAllTransportations, getTransportationsOfDriver , getTransportationsOfPassenger, replaceDriver, getTransportationsForUser, updateStatus};
+module.exports = { addTransportation, deleteTransportation, getTransportationsForAdmin, getTransportationsDriver, getTransportationsPassenger, getAllTransportations, getTransportationsOfDriver , getTransportationsOfPassenger, replaceDriver, getTransportationsForUser, updateStatus};

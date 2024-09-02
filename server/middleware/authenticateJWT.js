@@ -29,9 +29,9 @@ const authenticateJWT = (req, res, next) => {
         }
 
     } catch {
-        next();
+        //next();
         console.log('problam in Authorization')
-        //return res.status(401).json({ message: 'Unauthorized - No Authorization header' });
+        return res.status(401).json({ message: 'Unauthorized - No Authorization header' });
 
     }
 };
