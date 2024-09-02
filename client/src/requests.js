@@ -14,6 +14,13 @@ export const request = async (method, url, token, body = null) => {
             body: body ? JSON.stringify(body) : null
         });
 
+        //If there is an authentication error
+        if (response.status === 401 && data.message && data.message.startsWith('Unauthorized')) {
+            await handleUnauthorized();
+            throw new Error('Unauthorized'); 
+        }
+
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -28,6 +35,12 @@ export const request = async (method, url, token, body = null) => {
     }
 };
 
+const handleUnauthorized = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('transportations');
+    window.location.replace('/login');
+};
 
 export const login = async (email, password) => {
     try {
