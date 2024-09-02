@@ -58,7 +58,7 @@ const CancelButton = ({setRideStatus, rideStatus, rideId}) => {
     )
 }
 
-const SendMessegeToPassengers = ({ rideId, isAdmin }) => {
+const SendMessegeToPassengers = ({ rideId, isAdmin, rideStatus, setRideStatus }) => {
     const getCurrentDateTime = () => {
         const now = new Date();
     

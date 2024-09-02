@@ -5,6 +5,8 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 const Stops = ({ isAdmin, dynamicStopsList, setDynamicStopsList, setOpenStationsPopUp }) => {
 
+    console.log('d', dynamicStopsList);
+
     const handleAddStop = () => {
         setOpenStationsPopUp(true);
         console.log("openPopUp");
@@ -18,6 +20,9 @@ const Stops = ({ isAdmin, dynamicStopsList, setDynamicStopsList, setOpenStations
 
         //wait for server
         //change the station with id===stopId status to cancel
+        try {
+            const 
+        }
 
         //wait for server
         //send message to passengers in this ride "התחנה {שם} בוטלה"

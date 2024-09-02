@@ -32,6 +32,11 @@ const AddDriver = () => {
             console.error('add driver failed:', response.message);
         } else {
             console.log("Add driver: ", username, password, phone, email);
+            alert(`הנהג ${username} נוסף בהצלחה`);
+            setUsername("");
+            setPassword("");
+            setPhone("");
+            setEmail("");
         }
     } catch (err) {
         console.error('Error occurred while add the ride:', err);

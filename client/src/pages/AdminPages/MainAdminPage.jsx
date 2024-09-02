@@ -27,6 +27,8 @@ const MainAdminPage = ( {userId} ) => {
     const [editOrGallery, setEditOrGallery] = useState(0);
     const [ride, setRide] = useState({});
 
+    const [driverUpdate, setDriverUpdate] = useState(false);
+
 
     switch (navigate) {
         case 0:
@@ -44,9 +46,9 @@ const MainAdminPage = ( {userId} ) => {
         case 3:
             return <div>
                 
-                {editOrGallery? <RideEditPage ride={ride} setEditOrGallery={setEditOrGallery}/>: 
+                {editOrGallery? <RideEditPage setDriverUpdate={setDriverUpdate} ride={ride} setEditOrGallery={setEditOrGallery}/>: 
                 <><MenuButton setNavigate={setNavigate}/>
-                <RideGalleryPage ride={ride} setRide={setRide} setEditOrGallery={setEditOrGallery} userId={userId}/></>}
+                <RideGalleryPage setDriverUpdate={setDriverUpdate} driverUpdate={driverUpdate} ride={ride} setRide={setRide} setEditOrGallery={setEditOrGallery} userId={userId}/></>}
                 </div>;
         case 4:
             return <div>
@@ -55,9 +57,7 @@ const MainAdminPage = ( {userId} ) => {
             </div>
     }
 }
-// <AdminMainOption setNavigate={setNavigate}/>
-{/* <RideGalleryPage /> */ }
-{/* <RideEditPage ride={ride}/> */ }
+
     
 
 

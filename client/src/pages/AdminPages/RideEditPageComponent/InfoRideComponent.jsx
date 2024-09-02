@@ -27,7 +27,7 @@ const InfoRideComponent = ({ ride, _color }) => {
                 <div className="detail">
                     <PersonIcon style={{ color: _color, fontSize: '1.5rem' }} />
                     {/* <img src="./icons/date-icon.png"></img> */}
-                    <span>{ride.driver? ride.driver: "אתה הנהג"}</span>
+                    <span>{ride.driverName? ride.driverName: "אתה הנהג"}</span>
                 </div>
                 <div className="detail">
                     <PeopleIcon style={{ color: _color, fontSize: '1.5rem' }} />

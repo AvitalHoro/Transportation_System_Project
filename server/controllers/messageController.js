@@ -5,7 +5,7 @@ const insertMessage = async (db, userId, messageText, sendTime) => {
     console.log('insert message to the database')
     const insertMessageQuery = 'INSERT INTO Message (SenderID, MessageText, Message_Status, SendTime) VALUES (?, ?, ?, ?)';
     
-    const [results] = await db.query(insertMessageQuery, [userId, messageText, 'Sent', sendTime]);
+    const [results] = await db.query(insertMessageQuery, [userId, messageText, 'active', sendTime]);
     return results.insertId;
 };
 
@@ -15,7 +15,7 @@ const updateStatusMessage = async (db, messageId) => {
 
     const updateMessageStatusQuery = 'UPDATE Message SET Message_Status = ? WHERE MessageID = ?';
     
-    const [results] = await db1.query(updateMessageStatusQuery, ['Delivered', messageId]);
+    const [results] = await db1.query(updateMessageStatusQuery, ['active', messageId]);
     return results;
 };
 
@@ -82,6 +82,8 @@ const addTransportationMessage = async (req, res) => {
     const userId = req.userId; 
     const db = req.db;
 
+    console.log(transportationId, messageText, sendTime, userId);
+
     // Validate input
     if (!messageText || !sendTime || !transportationId) {
         return res.status(400).json({ message: 'transportationId, messageText and sendTime are required' });
@@ -102,18 +104,22 @@ const addTransportationMessage = async (req, res) => {
             return res.status(403).json({ message: 'Unauthorized' });
         }
 
+        const sendTimeSQL = new Date(sendTime);
+
+        console.log('sendTimeSQL:', sendTimeSQL);
+
         // Insert new message and transportation message
-        const messageId = await insertMessage(db, userId, messageText, sendTime);
+        const messageId = await insertMessage(db, userId, messageText, sendTimeSQL);
         
         const insertTransportationMessageQuery = 'INSERT INTO Message_To_Transportation (TransportationID, MessageID) VALUES (?, ?)';
         await db.query(insertTransportationMessageQuery, [transportationId, messageId]);
 
-        const changeStatus = await updateStatusMessage(db, messageId);
+        // const changeStatus = await updateStatusMessage(db, messageId);
 
-        if (!changeStatus.affectedRows) {
-            res.status(500).json({ message: 'Error send message', messageId });
-        }
-        else {
+        // if (!changeStatus.affectedRows) {
+        //     res.status(500).json({ message: 'Error send message', messageId });
+        // }
+        // else {
             // Get registered users
             const registeredUsers = await getRegisteredUsers(db, transportationId);
 
@@ -123,7 +129,7 @@ const addTransportationMessage = async (req, res) => {
                 messageId, 
                 registeredUsers: registeredUsers.map(user => user.UserID)
             });        
-        }
+        
 
     } catch (err) {
         res.status(500).json({ message: 'Error send message', error: err });

@@ -382,6 +382,9 @@ const replaceDriver = async (req, res) => {
         if (userResults.length === 0 || userResults[0].UserPermission !== 'admin') {
             return res.status(403).json({ message: 'You do not have permission to perform this action' });
         }
+        if(!newDriver){
+            return res.status(400).json({ message: 'New driver is required' });
+        }
 
         // Update driver
         const [updateResults] = await db.query('UPDATE Transportation SET DriverID = ? WHERE TransportationID = ?', [newDriver, transportationId]);

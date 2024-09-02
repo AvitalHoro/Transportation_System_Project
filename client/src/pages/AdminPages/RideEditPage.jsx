@@ -6,84 +6,132 @@ import Passengers from "./RideEditPageComponent/Passengers";
 import Stops from "./RideEditPageComponent/Stops";
 import SendMessegeToPassengers from "./RideEditPageComponent/SendMessegeToPassengers";
 import AddStationPopUp from "./RideEditPageComponent/AddStationPopUp";
+import { request } from '../../requests';
+import { api } from '../../config.json';
 
-const RideEditPage = ({ ride, setEditOrGallery }) => {
-    const [allStations, setStations] = useState(null);
+
+const RideEditPage = ({ ride, setEditOrGallery, setDriverUpdate }) => {
+    console.log(ride);
+
+    const [stationsList, setStationsList] = useState(null);
+    const [stationsListWithId, setStationsListWithId] = useState(null);
 
     const getStationsList = async () => {
         //wait for server
         const token = localStorage.getItem('token'); 
         try {
-            const response = await request('GET', 'stations/all/', token, {});
+            const response = await request('GET', '/stations/all/', token);
     
             if (response.error) {
                 console.error('Failed to return the stations:', response.error);
-                return [
-                    { name: "תחנה מרכזית ירושלים", id: 1 },
-                    { name: "תחנה מרכזית תל אביב", id: 2 },
-                    { name: "מחלף חמד", id: 3 }
-                ];
             } else {
                 console.log(response.stations);
-                return response.stations.map(station => ({
-                    name: station.name,
-                    id: station.id
-                }));
+                setStationsListWithId(response.stations.map(station => ({
+                    name: station.Address,
+                    id: station.StationID,
+                })));
+                setStationsList(response.stations.map(station => station.Address));
             }
         } catch (err) {
             console.error('Error occurred while return the stations:', err);
-            return [
-                { name: "תחנה מרכזית ירושלים", id: 1 },
-                { name: "תחנה מרכזית תל אביב", id: 2 },
-                { name: "מחלף חמד", id: 3 }
-            ];
         }
     }
-   
-    useEffect(() => {
-        getStationsList().then(stations => {
-            setStations(stations);
-            console.log('the stations: ', stations);
-        });
-    }, []); 
+
 
     const handleAddStation = async (stationName) => {
         const token = localStorage.getItem('token'); 
 
         const stationId = stationsListWithId.find(sat => sat.name === stationName).id;
 
+
         if(stationId === undefined){
             alert("תחנה לא תקינה");
             return;
         }
 
+        if(ride.stationsList.find(station => station.id === stationId)){
+            alert("תחנה כבר קיימת בנסיעה");
+            return;
+        }
+
         const rideId = ride.id;
 
-        const maxId = Math.max(...dynamicStopsList.map(sat => sat.id));
 
         //wait for server
-        //add station to ride, type is intermediate new id is maxid+1
+        //add station to ride, type is intermediate
+        const station_type = "Intermediate";
 
-        //wait for server
+        try {
+            const response = await fetch(`${api}/stations/add/${rideId}/${stationId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    station_type
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            } else {
+                console.log("Added station", stationId);
+            }
+        } catch (error) {
+            console.error('Error during request to add station:', stationId, error);
+        }
+
         //send message to passengers in this ride "התחנה {שם} נוספה לנסיעה"
+        const messageText = `נוסעים יקרים שלום וברכה. הרינו להודיעכם כי נוספה התחנה ${stationName} לנסיעה. נשמח לראותכם בנסיעה.`; 
+        const sendTime = new Date().toISOString();
 
-        setDynamicStopsList([...dynamicStopsList, { id: maxId+1, name: stationName, type: "Intermediate" }]);
+        try {
+            const response = await fetch(`${api}/messages/add/${rideId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ messageText, sendTime }),
+            });
+        
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+        
+            const data = await response.json(); // or response.text() depending on your API response
+        
+            console.log('Message added successfully:', data);
+            // Perform other actions as needed after the message is successfully added
+        
+        } catch (error) {
+            console.error('Error adding message:', error);
+            // Handle the error, for example by showing a notification to the user
+        }
+        
 
-        console.log("Add station: ", stationName, maxId+1);
+        setDynamicStopsList([...dynamicStopsList, { id: stationId, name: stationName, type: "Intermediate" }]);
+
+        console.log("Add station: ", stationName, stationId);
         console.log(dynamicStopsList);
     }
 
-    const stationsListWithId = getStationsList();
-    const stationsList = stationsListWithId.map(sat => sat.name);
+    useEffect(() => {
+        getStationsList();
+    }, []);
 
-    const [dynamicStopsList, setDynamicStopsList] = React.useState(ride.RideStations);
+    const [dynamicStopsList, setDynamicStopsList] = React.useState(ride.stationsList);
 
     const [openStationsPopUp, setOpenStationsPopUp] = React.useState(false);
 
     const [rideStatus, setRideStatus] = React.useState(ride.status);
 
+
     //setOpenPopUpStation, stationsList, setStopsList, isEditPage, handleAddStation
     return (
+        <div>
+            { stationsList? (
         <div className="page-container ride-edit-page">
             {openStationsPopUp? 
             <AddStationPopUp 
@@ -114,12 +162,12 @@ const RideEditPage = ({ ride, setEditOrGallery }) => {
             <div className="ride-edit-main" style={{border: rideStatus==="active"? "" : "rgb(237, 29, 43) 4px solid" }}>
                 <div className="top-ride-edit-main">
                 <InfoRideComponent ride={ride} _color={"#FF914D"}/>
-                <ReplaceDriver driverName={ride.driverName} rideId={ride.id} />
+                <ReplaceDriver setDriverUpdate={setDriverUpdate} driverName={ride.driverName} rideId={ride.id} />
                 </div>
                 <div className="bottom-ride-edit-main">
                 <Passengers registers={ride.Registers} />
                 <Stops 
-                stops={ride.RideStations} 
+                stops={ride.stationsList} 
                 isAdmin={true} 
                 setOpenStationsPopUp={setOpenStationsPopUp} 
                 dynamicStopsList={dynamicStopsList} 
@@ -128,6 +176,8 @@ const RideEditPage = ({ ride, setEditOrGallery }) => {
                 <SendMessegeToPassengers rideId={ride.id} isAdmin={true} setRideStatus={setRideStatus} rideStatus={rideStatus} />
                 </div>
             </div>
+        </div>
+            ) : <p>loading...</p>}
         </div>
     )
 }

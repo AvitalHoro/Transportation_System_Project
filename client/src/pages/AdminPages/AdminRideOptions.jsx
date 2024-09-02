@@ -11,8 +11,8 @@ const AdminOptions = ({ setEditOrGallery, setRide, ride, rideStatus, setRideStat
     const handleCancelRide = async () => {
         try {
             const token = localStorage.getItem('token'); 
-            const status = 'cancel';
-            const response = await request('PUT', `/transportations/updateStatus/${ride.id}`, token, { status });
+            const newStatus = 'cancel';
+            const response = await request('PUT', `/transportations/updateStatus/${ride.id}`, token, { newStatus });
     
             if (response.error) {
                 console.error('Failed to cancel the ride:', response.error);
@@ -28,8 +28,8 @@ const AdminOptions = ({ setEditOrGallery, setRide, ride, rideStatus, setRideStat
     const handleReturnedRide = async () => {
         try {
             const token = localStorage.getItem('token'); 
-            const status = 'active';
-            const response = await request('PUT', `/transportations/updateStatus/${ride.id}`, token, { status });
+            const newStatus = 'active';
+            const response = await request('PUT', `/transportations/updateStatus/${ride.id}`, token, { newStatus });
     
             if (response.error) {
                 console.error('Failed to return the ride:', response.error);

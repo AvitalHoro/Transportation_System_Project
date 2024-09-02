@@ -22,6 +22,8 @@ const AddStationPopUp = ({ setOpenPopUpStation, stationsList, setStopsList, isEd
 
     const [newValue, setNewValue] = React.useState(null);
 
+    console.log('s', stationsList);
+
     return (
         <div className="popup">
             <div className="add-station-popup">
