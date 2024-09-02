@@ -134,13 +134,13 @@ const MyMessagePage = ({ rideIds, userId }) => {
                     <span>הודעות כלליות</span>
                 </div>
                 <div className="general-message-content">
-                    {generalmessage.map(message => <Message
+                    {generalmessage.map((message, index) => <Message
+                        key={index}
                         isMymessage={message.fromId === userId}
                         content={message.content}
                         date={message.date}
                         hour={message.hour}
                     />)}
-
                 </div>
             </div>
 
@@ -150,7 +150,8 @@ const MyMessagePage = ({ rideIds, userId }) => {
 
                 </div>
                 <div className="ride-message-content">
-                    {ridemessage.map(message => <Message
+                    {ridemessage.map((message, index) => <Message
+                        key={index}
                         isMymessage={message.fromId === userId}
                         content={message.content}
                         date={message.date}

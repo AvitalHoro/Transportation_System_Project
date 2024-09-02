@@ -106,7 +106,7 @@ const AdminOptions = ({ setEditOrGallery, setRide, ride, rideStatus, setRideStat
                             className="option-container"
                             style={{ backgroundColor: "#ED1D2B" }}
                             onClick={handleCancelRide}
-                        >
+                        > 
                             <ClearIcon
                                 sx={{
                                     color: "white",
@@ -121,11 +121,11 @@ const AdminOptions = ({ setEditOrGallery, setRide, ride, rideStatus, setRideStat
                     </div>
                 ) : (
                     <div className="option-ride-item">
-                        <div
+                        <div 
                             className="option-container"
                             style={{ backgroundColor: "#50BB82" }}
-                            onClick={handleReturnedRide}
-                        >
+                            onClick={handleReturnedRide} 
+                        > 
                             <ReplayIcon
                                 sx={{
                                     color: "white",

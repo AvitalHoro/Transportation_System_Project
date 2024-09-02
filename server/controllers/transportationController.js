@@ -314,16 +314,24 @@ const addTransportation = async (req, res) => {
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const day = String(date.getDate()).padStart(2, '0');
+        
+            return `${year}-${month}-${day}`;
+        };
+
+        const formatTimeForMySQL = (dateString) => {
+            const date = new Date(dateString);
             const hours = String(date.getHours()).padStart(2, '0');
             const minutes = String(date.getMinutes()).padStart(2, '0');
             const seconds = String(date.getSeconds()).padStart(2, '0');
         
-            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+            return `${hours}:${minutes}:${seconds}`;
         };
         
         const transportationDateSQL = formatDateForMySQL(transportationDate);
-        const transportationTimeSQL = formatDateForMySQL(transportationTime);
+        const transportationTimeSQL = formatTimeForMySQL(transportationTime);
+        console.log(transportationDateSQL, transportationTimeSQL, transportationStatus, driver, maxPassengers)
                 // Insert new transportation
+                
         const [insertResults] = await db.query(
             'INSERT INTO Transportation (Transportation_Date, Transportation_Time, Transportation_Status, DriverID, MaxPassengers) VALUES (?, ?, ?, ?, ?)',
             [transportationDateSQL, transportationTimeSQL, transportationStatus, driver, maxPassengers]

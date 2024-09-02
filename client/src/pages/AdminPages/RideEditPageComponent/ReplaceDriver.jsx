@@ -44,29 +44,6 @@ const ReplaceDriver = ({ driverName, rideId, isInPopUp, setDriverUpdate }) => {
             console.error('Error during request drivers:', error);
             return null;
         }
-
-
-        //wait for server
-        //return all user with driver permission
-        // return [
-        //     {
-        //         name: "אבי רבינוביץ'",
-        //         id: 78,
-        //     },
-        //     {
-        //         name: "שמחה מוצים",
-        //         id: 79,
-        //     },
-        //     {
-        //         name: "אבי רון",
-        //         id: 80,
-        //     },
-        //     {
-        //         name: "עמית נקש",
-        //         id: 81,
-        //     }
-
-        // ]
     }
 
     const handleReplaceDriver = async (driverName) => {

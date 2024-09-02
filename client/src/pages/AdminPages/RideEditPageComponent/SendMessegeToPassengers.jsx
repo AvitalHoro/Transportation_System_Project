@@ -122,6 +122,7 @@ const SendMessegeToPassengers = ({ rideId, isAdmin, rideStatus, setRideStatus })
         }
 
         const sendTime = getCurrentDateTime();
+        console.log(rideId, messageContent, sendTime);
         try {
             const response = await fetch(`${api}/messages/add/${rideId}`, {
                 method: 'POST',
@@ -139,6 +140,7 @@ const SendMessegeToPassengers = ({ rideId, isAdmin, rideStatus, setRideStatus })
                 setMessageContent("");
                 return data;           
             } else {
+                console.log(response.error);
                 alert("תקלה בשליחת ההודעה")
                 setMessageContent("");
                 return null

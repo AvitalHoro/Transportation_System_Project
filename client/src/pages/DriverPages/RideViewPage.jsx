@@ -8,6 +8,8 @@ import '../../style/AdminRideEdit.css'
 import { register } from "../../requests";
 
 const RideViewPage = ({ ride, setViewOrGallery }) => {
+        console.log(ride);
+        console.log(ride.rideId);
         return (
             <div className="page-container ride-edit-page">
                 <div className="top-ride-edit-container">
@@ -32,8 +34,8 @@ const RideViewPage = ({ ride, setViewOrGallery }) => {
                     </div>
                     <div className="bottom-ride-edit-main">
                     <Passengers registers={ride.Registers} />
-                    <Stops rideId={ride.id} stops={ride.RideStations} isAdmin={false}/>
-                    <SendMessegeToPassengers rideId={ride.id} isAdmin={false} />
+                    <Stops rideId={ride.rideId} stops={ride.RideStations} isAdmin={false}/>
+                    <SendMessegeToPassengers rideId={ride.rideId} isAdmin={false} />
                     </div>
                 </div>
             </div>
