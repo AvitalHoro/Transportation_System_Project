@@ -116,5 +116,4 @@ const getUsers = async (req, res) => {
     }      
 };
 
-
 module.exports = { login, registerUser, logout, getUsers };

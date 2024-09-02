@@ -1,6 +1,5 @@
 const api = 'http://localhost:5000/api';
 
-
 //general function for request
 export const request = async (method, url, token, body = null) => {
     console.log('request ' + method + ' ' + url + ' ' + token + ' ' + body);
@@ -13,13 +12,6 @@ export const request = async (method, url, token, body = null) => {
             },
             body: body ? JSON.stringify(body) : null
         });
-
-        //If there is an authentication error
-        if (response.status === 401 && data.message && data.message.startsWith('Unauthorized')) {
-            await handleUnauthorized();
-            throw new Error('Unauthorized'); 
-        }
-
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -35,13 +27,6 @@ export const request = async (method, url, token, body = null) => {
     }
 };
 
-const handleUnauthorized = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('transportations');
-    window.location.replace('/login');
-};
-
 export const login = async (email, password) => {
     try {
         console.log('login')
@@ -54,6 +39,7 @@ export const login = async (email, password) => {
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
             localStorage.setItem('transportations', JSON.stringify(data.transportations));
+            localStorage.setItem('lastActivity', new Date().toISOString());
 
             return data; // Return the full data, including token, user, and transportations
         } else {
@@ -99,6 +85,7 @@ export const logout = async () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         localStorage.removeItem('transportations');
+        localStorage.removeItem('lastActivity')
         console.log('Logout successful and local storage cleared');
         return "logout successful";
 

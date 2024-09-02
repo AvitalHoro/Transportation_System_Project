@@ -41,7 +41,6 @@ const AdminOptions = ({ setEditOrGallery, setRide, ride, rideStatus, setRideStat
             console.error('Error occurred while returning the ride:', err);
         }
     }
-    
 
     return (
         <div>
