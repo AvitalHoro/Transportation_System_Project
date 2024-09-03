@@ -39,6 +39,7 @@ const RegisterPage = ({userId, myRidesIds, registerUpdate, setRegisterUpdate}) =
             }
     
             const data = await response.json();
+            console.log(data);
     
             if (data.transportations) {
                 const myRideIn = data.transportations.map(ride => ({
@@ -105,6 +106,7 @@ const RegisterPage = ({userId, myRidesIds, registerUpdate, setRegisterUpdate}) =
                 {
                     filteredRides.map((ride) =>
                         <RideRegister
+                        key={ride.id} 
                         userId={userId}
                             rideId={ride.id}
                             exit={ride.exit}

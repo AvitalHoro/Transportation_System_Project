@@ -252,7 +252,7 @@ const getTransportationsForUser = async (req, res) => {
         const db = req.db;
         const getTransportationsQuary = `SELECT * 
                                             FROM Transportation T
-                                            WHERE T.Transportation_Status != 'Cancelled'
+                                            WHERE T.Transportation_Status != 'cancel'
                                             AND T.MaxPassengers > (
                                                 SELECT COUNT(*) AS RegisteredCount
                                                 FROM Registrations_To_Transportation
@@ -267,6 +267,8 @@ const getTransportationsForUser = async (req, res) => {
                                                 )
                                             );`;
         const [transportations] = await db.query(getTransportationsQuary);
+        console.log('getTransportationsForUser')
+        console.log(transportations)
 
         if (transportations.length === 0) {
             return res.status(200).json({ message: 'No available transportations found' });

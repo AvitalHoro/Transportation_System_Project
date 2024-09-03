@@ -89,14 +89,14 @@ const InfoPage = ({userId}) => {
                 <span>לו"ז נסיעות לשבוע הקרוב</span>
             </div>
             <div className="info-schedule">
-                {days.filter(day=> day!=="שבת").map(day => 
-                <div className="day-container">
+                {days.filter(day=> day!=="שבת").map((day, index) => 
+                <div className="day-container" key={index}>
                 <div className="day-title">
                     <span>{day}</span>
                 </div>
                 <div className="ride-in-day">
-                {gatAllridesinThisDay(day).map(ride =>
-                    <div className="ride-item">
+                {gatAllridesinThisDay(day).map((ride, rideIndex) =>
+                    <div className="ride-item" key={rideIndex}>
                         <span>{(ride.time).slice(0, 5)}</span>
                         <span>{ride.fromCity} - {ride.toCity}</span>
                     </div>
