@@ -9,7 +9,7 @@ router.post('/login', login);
 // Route for user registration
 router.post('/register', registerUser); 
 // Route for logout
-router.post('/logout', logout); 
+router.post('/logout', authenticateJWT, logout); 
 // Route for get user of specific type
 router.get('/getUsers/:typeUser', authenticateJWT, getUsers); 
 
